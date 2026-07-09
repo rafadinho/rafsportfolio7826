@@ -2127,7 +2127,7 @@ const musicPlaylist = [
 ];
 
 let musicAudio = null;
-let musicIndex = 0;
+let musicIndex = Math.floor(Math.random() * musicPlaylist.length);
 let musicWindowReady = false;
 let musicHistory = [];
 
@@ -2273,13 +2273,13 @@ function setupMusicPlayer(win) {
   if (volDownBtn) {
     volDownBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      musicAudio.volume = Math.max(0, Math.round((musicAudio.volume - 0.1) * 100) / 100);
+      musicAudio.volume = Math.max(0, Math.round((musicAudio.volume - 0.01) * 100) / 100);
     });
   }
   if (volUpBtn) {
     volUpBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      musicAudio.volume = Math.min(1, Math.round((musicAudio.volume + 0.1) * 100) / 100);
+      musicAudio.volume = Math.min(1, Math.round((musicAudio.volume + 0.01) * 100) / 100);
     });
   }
 
@@ -2561,7 +2561,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
 (function () {
   const tracks = musicPlaylist;
 
-  let index = 0;
+  let index = musicIndex;
 
   function ready(fn) {
     if (document.readyState === "loading") {
@@ -2679,7 +2679,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
         e.preventDefault();
         e.stopPropagation();
         audio.muted = false;
-        audio.volume = Math.max(0, Math.round((audio.volume - 0.1) * 100) / 100);
+        audio.volume = Math.max(0, Math.round((audio.volume - 0.01) * 100) / 100);
         update();
       };
     }
@@ -2689,7 +2689,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
         e.preventDefault();
         e.stopPropagation();
         audio.muted = false;
-        audio.volume = Math.min(1, Math.round((audio.volume + 0.1) * 100) / 100);
+        audio.volume = Math.min(1, Math.round((audio.volume + 0.01) * 100) / 100);
         update();
       };
     }
@@ -2702,7 +2702,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
       update();
     });
 
-    loadTrack(0);
+    loadTrack(index);
     player.style.display = "block";
 
     // Try to autoplay quietly. Most browsers allow this at low/no volume,

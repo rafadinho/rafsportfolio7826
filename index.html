@@ -8,6 +8,116 @@
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Baloo+2:wght@500;700&family=VT323&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; user-select: none; }
+
+  /* ---------- 8-BIT BOOT SCREEN ---------- */
+  #bootScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  #bootScreen::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.05) 0px,
+      rgba(255,255,255,0.05) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    pointer-events: none;
+    z-index: 2;
+  }
+  #bootScreen.hidden {
+    display: none;
+  }
+  #bootStars {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .pixel-alien {
+    position: absolute;
+    image-rendering: pixelated;
+  }
+  #bootContent {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    font-family: 'Press Start 2P', monospace;
+    color: #fff;
+  }
+  #bootTitle {
+    font-size: 28px;
+    line-height: 1.6;
+    color: #fff;
+    text-shadow:
+      3px 3px 0 #e52521,
+      6px 6px 0 #000;
+    margin-bottom: 48px;
+    letter-spacing: 1px;
+  }
+  #bootStartBtn {
+    display: inline-block;
+    font-size: 16px;
+    padding: 14px 24px;
+    color: #fff;
+    border: 3px solid #fff;
+    cursor: pointer;
+    letter-spacing: 2px;
+    animation: bootBlinkColor 0.8s steps(1) infinite;
+  }
+  #bootStartBtn:active {
+    transform: translate(2px, 2px);
+  }
+  @keyframes bootBlinkColor {
+    0%, 50% { color: #fff; border-color: #fff; }
+    51%, 100% { color: #f5c518; border-color: #f5c518; }
+  }
+  @keyframes bootBlink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.25; }
+  }
+  #bootLoadingBar {
+    display: none;
+    gap: 6px;
+    justify-content: center;
+    margin: 0 0 18px;
+  }
+  #bootLoadingBar.active {
+    display: flex;
+  }
+  .boot-square {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #fff;
+    background: transparent;
+  }
+  .boot-square.filled {
+    background: #f5c518;
+  }
+  #bootLoadingText {
+    display: none;
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-bottom: 18px;
+    animation: bootBlink 0.6s steps(1) infinite;
+  }
+  #bootLoadingText.active {
+    display: block;
+  }
+  @media (max-width: 480px) {
+    #bootTitle { font-size: 20px; margin-bottom: 32px; }
+    #bootStartBtn { font-size: 12px; padding: 12px 18px; }
+    .boot-square { width: 14px; height: 14px; }
+  }
   html, body {
     margin: 0; padding: 0; height: 100%; overflow: hidden;
     font-family: Tahoma, "Trebuchet MS", Verdana, Arial, sans-serif;
@@ -1155,11 +1265,22 @@
 </head>
 <body>
 
+<div id="bootScreen">
+  <div id="bootStars"></div>
+  <div id="bootContent">
+    <div id="bootTitle">RAF'S<br>PORTFOLIO</div>
+    <div id="bootStartBtn">PRESS START</div>
+    <div id="bootLoadingBar"></div>
+    <div id="bootLoadingText">LOADING</div>
+  </div>
+</div>
+
 <div id="desktop">
 
   <div id="icons"></div>
 
   <!-- Video player window, open by default -->
+
   <div class="win" id="videoWin" style="left: 40%; top: 22%;">
     <div class="titlebar">
       <div class="title"><span>🎬</span><span>Now Playing.avi</span></div>
@@ -2431,6 +2552,107 @@ function tick() {
 tick();
 setInterval(tick, 1000 * 10);
 
+/* ---------------- 8-BIT BOOT SCREEN ---------------- */
+const bootScreenEl = document.getElementById('bootScreen');
+const bootStartBtnEl = document.getElementById('bootStartBtn');
+const bootLoadingBarEl = document.getElementById('bootLoadingBar');
+const bootLoadingTextEl = document.getElementById('bootLoadingText');
+const bootStarsEl = document.getElementById('bootStars');
+const BOOT_SQUARE_COUNT = 10;
+
+// Classic 11x8 pixel-invader sprite, built as an SVG so edges stay crisp at any size.
+const ALIEN_PATTERN = [
+  "00100000100",
+  "00010001000",
+  "00111111100",
+  "01101110110",
+  "11111111111",
+  "10111111101",
+  "10100000101",
+  "00011011000"
+];
+
+function buildAlienSVG(color, cell) {
+  const w = ALIEN_PATTERN[0].length * cell;
+  const h = ALIEN_PATTERN.length * cell;
+  let rects = '';
+  ALIEN_PATTERN.forEach((row, y) => {
+    for (let x = 0; x < row.length; x++) {
+      if (row[x] === '1') {
+        rects += `<rect x="${x * cell}" y="${y * cell}" width="${cell}" height="${cell}" fill="${color}"/>`;
+      }
+    }
+  });
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${rects}</svg>`;
+}
+
+let bootAliensRunning = true;
+if (bootStarsEl) {
+  const alienColors = ['#4caf50', '#e52521', '#f5c518'];
+  const aliens = [];
+  alienColors.forEach((color, i) => {
+    const el = document.createElement('div');
+    el.className = 'pixel-alien';
+    el.innerHTML = buildAlienSVG(color, 3);
+    bootStarsEl.appendChild(el);
+    aliens.push({
+      el,
+      x: 20 + i * 90,
+      y: 40 + i * 60,
+      vx: (i % 2 === 0 ? 1 : -1) * (1.1 + i * 0.4),
+      vy: (i % 2 === 0 ? -1 : 1) * (0.9 + i * 0.3),
+      w: 33, h: 24
+    });
+  });
+
+  function stepAliens() {
+    if (!bootAliensRunning) return;
+    const bounds = bootScreenEl.getBoundingClientRect();
+    aliens.forEach(a => {
+      a.x += a.vx;
+      a.y += a.vy;
+      if (a.x <= 0 || a.x + a.w >= bounds.width) a.vx *= -1;
+      if (a.y <= 0 || a.y + a.h >= bounds.height) a.vy *= -1;
+      a.x = Math.max(0, Math.min(a.x, bounds.width - a.w));
+      a.y = Math.max(0, Math.min(a.y, bounds.height - a.h));
+      a.el.style.transform = `translate(${a.x}px, ${a.y}px)`;
+    });
+    requestAnimationFrame(stepAliens);
+  }
+  requestAnimationFrame(stepAliens);
+}
+
+if (bootLoadingBarEl) {
+  for (let i = 0; i < BOOT_SQUARE_COUNT; i++) {
+    const sq = document.createElement('div');
+    sq.className = 'boot-square';
+    bootLoadingBarEl.appendChild(sq);
+  }
+}
+
+if (bootStartBtnEl && bootScreenEl) {
+  bootStartBtnEl.addEventListener('click', () => {
+    bootStartBtnEl.style.display = 'none';
+    if (bootLoadingBarEl) bootLoadingBarEl.classList.add('active');
+    if (bootLoadingTextEl) bootLoadingTextEl.classList.add('active');
+
+    const squares = bootLoadingBarEl ? bootLoadingBarEl.querySelectorAll('.boot-square') : [];
+    let filled = 0;
+    const fillInterval = setInterval(() => {
+      if (filled < squares.length) {
+        squares[filled].classList.add('filled');
+        filled++;
+      } else {
+        clearInterval(fillInterval);
+        setTimeout(() => {
+          bootScreenEl.classList.add('hidden');
+          bootAliensRunning = false;
+        }, 400);
+      }
+    }, 180);
+  });
+}
+
 /* ---------------- START BUTTON ---------------- */
 document.getElementById('startBtn').addEventListener('click', () => {
   document.getElementById('startBtn').style.boxShadow = 'inset 1px 1px 0 #000, inset -1px -1px 0 #fff';
@@ -2851,7 +3073,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
   }
 
   // All buttons, plus non-button chrome elements (icons, taskbar items, Start button).
-  const CHROME_SELECTOR = "button, .icon, .task-item, #startBtn";
+  const CHROME_SELECTOR = "button, .icon, .task-item, #startBtn, #bootStartBtn";
 
   document.addEventListener(
     "click",

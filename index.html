@@ -966,10 +966,15 @@
 
   #vidMute {
     min-width: 54px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   #vidVolDown, #vidVolUp {
     min-width: 28px;
+    height: 20px;
   }
 
 
@@ -1071,7 +1076,7 @@
 
   #desktopMusicMute {
     height: 22px;
-    min-width: 30px;
+    min-width: 48px;
     padding: 2px 6px;
     background: #c0c0c0;
     color: #000;
@@ -1153,12 +1158,12 @@
       <div class="vid-arrow right" id="vidNext">›</div>
       <div class="vid-controls" id="vidControls">
         <button id="vidBack5" title="Back 5 seconds">« 5s</button>
-        <button id="vidPlayPause" title="Play/Pause">⏸</button>
+        <button id="vidPlayPause" title="Play/Pause">II</button>
         <button id="vidForward5" title="Forward 5 seconds">5s »</button>
         <input id="vidSeek" type="range" min="0" max="100" value="0" step="0.1" title="Playback position">
         <span class="vid-time" id="vidTime">0:00 / 0:00</span>
         <div class="vid-volume">
-          <button id="vidMute" title="Mute/Unmute">🔇</button>
+          <button id="vidMute" title="Mute/Unmute"></button>
           <button id="vidVolDown" title="Volume down">–</button>
           <button id="vidVolUp" title="Volume up">+</button>
         </div>
@@ -1215,16 +1220,16 @@
     </div>
     <div id="desktopMusicTitle">LIFETIMES</div>
     <div id="desktopMusicControls">
-      <button id="desktopMusicPrev" type="button" title="Previous song">|◀</button>
+      <button id="desktopMusicPrev" type="button" title="Previous song">|&lt;</button>
       <button id="desktopMusicBack" type="button" title="Rewind 5 seconds">« 5s</button>
       <button id="desktopMusicPlay" type="button" title="Play / pause">▶</button>
       <button id="desktopMusicForward" type="button" title="Forward 5 seconds">5s »</button>
-      <button id="desktopMusicNext" type="button" title="Next song">▶|</button>
+      <button id="desktopMusicNext" type="button" title="Next song">&gt;|</button>
       <span id="desktopMusicTime">0:00 / 0:00</span>
     </div>
     <input id="desktopMusicSeek" type="range" min="0" max="0" value="0" step="0.01" title="Song progress">
     <div id="desktopMusicVolumeRow">
-      <button id="desktopMusicMute" type="button" title="Mute/Unmute">🔊</button>
+      <button id="desktopMusicMute" type="button" title="Mute/Unmute"></button>
       <button id="desktopMusicVolDown" type="button" title="Volume down">–</button>
       <button id="desktopMusicVolUp" type="button" title="Volume up">+</button>
     </div>
@@ -1242,6 +1247,9 @@
 
 
 <script>
+const ICON_UNMUTED = '<svg width="12" height="10" viewBox="0 0 15 12" style="display:block;"><polygon points="0,4 3,4 3,8 0,8" fill="currentColor"/><polygon points="3,4 6,1 6,11 3,8" fill="currentColor"/><path d="M8.5,3 Q11.5,6 8.5,9" stroke="currentColor" fill="none" stroke-width="1.2"/></svg>';
+const ICON_MUTED = '<svg width="12" height="10" viewBox="0 0 15 12" style="display:block;"><polygon points="0,4 3,4 3,8 0,8" fill="currentColor"/><polygon points="3,4 6,1 6,11 3,8" fill="currentColor"/><line x1="0" y1="0" x2="9" y2="12" stroke="#e03030" stroke-width="1.6"/></svg>';
+
 const designWorkImages = [
   { src: 'media/design-piece-1.jpg', cap: 'Cactus 1', blurb: 'Vibe I went for: driving around late at night in the middle of a desert. Song that fits: YUKON by Justin Bieber.' },
   { src: 'media/design-piece-2.jpg', cap: 'Cactus 2', blurb: 'Vibe I went for: driving around late at night in the middle of a desert. Song that fits: YUKON by Justin Bieber.' },
@@ -1262,7 +1270,7 @@ const mysteryFolderIconDataUri = 'media/mario-block-folder-icon.gif';
 const mysteryFolderIds = ['videos', 'longvideos', 'design'];
 
 const folders = [
-  { id: 'videos',   label: 'Videos',          glyph: '🎬', type: 'video' },
+  { id: 'videos',   label: 'Short Videos',    glyph: '🎬', type: 'video' },
   { id: 'longvideos', label: 'Long Videos',   glyph: '🎬', type: 'longvideo' },
   { id: 'design',   label: 'Design Work',     glyph: '📁', type: 'gallery' },
   { id: 'about',    label: 'About Me',        glyph: '📁', type: 'placeholder' },
@@ -1867,7 +1875,7 @@ function openFolder(f) {
 const videoWinEl = document.getElementById('videoWin');
 const vidEl = document.getElementById('vidEl');
 vidEl.muted = true;
-vidEl.volume = 1;
+vidEl.volume = 0.05;
 const vidCaption = document.getElementById('vidCaption');
 openWindows['video'] = videoWinEl;
 videoWinEl.dataset.winid = 'video';
@@ -1971,7 +1979,7 @@ function syncVideoControls() {
   vidSeekEl.value = vidEl.currentTime || 0;
   vidTimeEl.textContent = `${formatTime(vidEl.currentTime)} / ${formatTime(duration)}`;
   vidPlayPauseBtn.textContent = vidEl.paused ? '▶' : '⏸';
-  if (vidMuteBtn) vidMuteBtn.textContent = vidEl.muted || vidEl.volume === 0 ? '🔇' : '🔊';
+  if (vidMuteBtn) vidMuteBtn.innerHTML = vidEl.muted || vidEl.volume === 0 ? ICON_MUTED : ICON_UNMUTED;
 }
 
 function loadVideo(i) {
@@ -2053,7 +2061,7 @@ if (vidMuteBtn) {
     e.stopPropagation();
     vidEl.muted = !vidEl.muted;
     if (!vidEl.muted && vidEl.volume === 0) {
-      vidEl.volume = 1;
+      vidEl.volume = 0.05;
     }
     syncVideoControls();
   });
@@ -2164,11 +2172,11 @@ function openMusicWindow() {
         </div>
 
         <div class="music-controls">
-          <button id="musicPrev" title="Previous track">|◀</button>
+          <button id="musicPrev" title="Previous track">|&lt;</button>
           <button id="musicBack5" title="Back 5 seconds">« 5s</button>
           <button id="musicPlayPause" title="Play/Pause">▶</button>
           <button id="musicForward5" title="Forward 5 seconds">5s »</button>
-          <button id="musicNext" title="Next track">▶|</button>
+          <button id="musicNext" title="Next track">&gt;|</button>
         </div>
 
         <div class="music-seek-row">
@@ -2430,7 +2438,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
 
     function updatePlayButton() {
       if (!playPause) return;
-      playPause.textContent = audio.paused ? "▶" : "⏸";
+      playPause.textContent = audio.paused ? '▶' : '⏸';
     }
 
     function updateTime() {
@@ -2612,8 +2620,8 @@ document.getElementById('startBtn').addEventListener('click', () => {
       seek.max = duration;
       seek.value = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
       time.textContent = fmt(audio.currentTime) + " / " + fmt(duration);
-      play.textContent = audio.paused ? "▶" : "⏸";
-      if (mute) mute.textContent = audio.muted || audio.volume === 0 ? "🔇" : "🔊";
+      play.textContent = audio.paused ? '▶' : '⏸';
+      if (mute) mute.innerHTML = audio.muted || audio.volume === 0 ? ICON_MUTED : ICON_UNMUTED;
     }
 
     play.onclick = function (e) {

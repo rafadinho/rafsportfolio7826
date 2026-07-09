@@ -1344,6 +1344,7 @@ let longVidIndex = 0;
 let vidIndex = 0;
 
 /* ---------------- ICONS ---------------- */
+const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
 const iconsEl = document.getElementById('icons');
 folders.forEach(f => {
   const div = document.createElement('div');
@@ -1355,6 +1356,7 @@ folders.forEach(f => {
   div.addEventListener('click', (e) => {
     document.querySelectorAll('.icon').forEach(i => i.classList.remove('selected'));
     div.classList.add('selected');
+    if (isTouchDevice) openFolder(f);
   });
   div.addEventListener('dblclick', () => openFolder(f));
   iconsEl.appendChild(div);

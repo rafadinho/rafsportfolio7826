@@ -743,6 +743,12 @@
   .music-controls button:active, .music-playlist button:active {
     box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #fff;
   }
+  #musicPlayPause, .music-playlist button[data-track-play] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 22px;
+  }
   #musicVolDown, #musicVolUp {
     background: #c0c0c0;
     border: none;
@@ -974,6 +980,13 @@
     justify-content: center;
   }
 
+  #vidPlayPause {
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   #vidVolDown, #vidVolUp {
     min-width: 28px;
     height: 20px;
@@ -1053,6 +1066,10 @@
   #desktopMusicPlay {
     min-width: 58px !important;
     font-weight: bold;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   #desktopMusicTime {
@@ -1160,7 +1177,7 @@
       <div class="vid-arrow right" id="vidNext">›</div>
       <div class="vid-controls" id="vidControls">
         <button id="vidBack5" title="Back 5 seconds">« 5s</button>
-        <button id="vidPlayPause" title="Play/Pause">II</button>
+        <button id="vidPlayPause" title="Play/Pause"></button>
         <button id="vidForward5" title="Forward 5 seconds">5s »</button>
         <input id="vidSeek" type="range" min="0" max="100" value="0" step="0.1" title="Playback position">
         <span class="vid-time" id="vidTime">0:00 / 0:00</span>
@@ -1224,7 +1241,7 @@
     <div id="desktopMusicControls">
       <button id="desktopMusicPrev" type="button" title="Previous song">|&lt;</button>
       <button id="desktopMusicBack" type="button" title="Rewind 5 seconds">« 5s</button>
-      <button id="desktopMusicPlay" type="button" title="Play / pause">▶</button>
+      <button id="desktopMusicPlay" type="button" title="Play / pause"></button>
       <button id="desktopMusicForward" type="button" title="Forward 5 seconds">5s »</button>
       <button id="desktopMusicNext" type="button" title="Next song">&gt;|</button>
       <span id="desktopMusicTime">0:00 / 0:00</span>
@@ -1249,6 +1266,8 @@
 
 
 <script>
+const ICON_PLAY = '<svg width="8" height="9" viewBox="0 0 8 9" style="display:block;"><polygon points="0,0 8,4.5 0,9" fill="currentColor"/></svg>';
+const ICON_PAUSE = '<svg width="8" height="9" viewBox="0 0 8 9" style="display:block;"><rect x="0" y="0" width="2.5" height="9" fill="currentColor"/><rect x="5.5" y="0" width="2.5" height="9" fill="currentColor"/></svg>';
 const ICON_UNMUTED = '<svg width="12" height="10" viewBox="0 0 15 12" style="display:block;"><polygon points="0,4 3,4 3,8 0,8" fill="currentColor"/><polygon points="3,4 6,1 6,11 3,8" fill="currentColor"/><path d="M8.5,3 Q11.5,6 8.5,9" stroke="currentColor" fill="none" stroke-width="1.2"/></svg>';
 const ICON_MUTED = '<svg width="12" height="10" viewBox="0 0 15 12" style="display:block;"><polygon points="0,4 3,4 3,8 0,8" fill="currentColor"/><polygon points="3,4 6,1 6,11 3,8" fill="currentColor"/><line x1="0" y1="0" x2="9" y2="12" stroke="#e03030" stroke-width="1.6"/></svg>';
 
@@ -2018,7 +2037,7 @@ function syncVideoControls() {
   vidSeekEl.max = duration || 100;
   vidSeekEl.value = vidEl.currentTime || 0;
   vidTimeEl.textContent = `${formatTime(vidEl.currentTime)} / ${formatTime(duration)}`;
-  vidPlayPauseBtn.textContent = vidEl.paused ? '▶' : '⏸';
+  vidPlayPauseBtn.innerHTML = vidEl.paused ? ICON_PLAY : ICON_PAUSE;
   if (vidMuteBtn) vidMuteBtn.innerHTML = vidEl.muted || vidEl.volume === 0 ? ICON_MUTED : ICON_UNMUTED;
 }
 
@@ -2192,7 +2211,7 @@ function openMusicWindow() {
   const playlistHTML = musicPlaylist.map((song, i) => `
     <div class="music-track" data-track="${i}">
       <span>${i + 1}. ${song.title}</span>
-      <button data-track-play="${i}">▶</button>
+      <button data-track-play="${i}">${ICON_PLAY}</button>
     </div>
   `).join('');
 
@@ -2214,7 +2233,7 @@ function openMusicWindow() {
         <div class="music-controls">
           <button id="musicPrev" title="Previous track">|&lt;</button>
           <button id="musicBack5" title="Back 5 seconds">« 5s</button>
-          <button id="musicPlayPause" title="Play/Pause">▶</button>
+          <button id="musicPlayPause" title="Play/Pause"></button>
           <button id="musicForward5" title="Forward 5 seconds">5s »</button>
           <button id="musicNext" title="Next track">&gt;|</button>
         </div>
@@ -2348,7 +2367,10 @@ function setupMusicPlayer(win) {
   musicAudio.addEventListener('loadedmetadata', updateMusicUI);
   musicAudio.addEventListener('play', updateMusicUI);
   musicAudio.addEventListener('pause', updateMusicUI);
-  musicAudio.addEventListener('ended', () => loadMusicTrack(musicIndex + 1, true));
+  musicAudio.addEventListener('ended', () => {
+    musicHistory.push(musicIndex);
+    loadMusicTrack(pickRandomTrackIndex(musicIndex, musicPlaylist.length), true);
+  });
   musicAudio.addEventListener('error', () => {
     const status = document.getElementById('musicStatus');
     if (status) status.textContent = 'Could not play the embedded MP3. Try clicking Play again.';
@@ -2371,7 +2393,7 @@ function updateMusicUI() {
   if (status && !musicAudio.error) {
     status.textContent = musicAudio.paused ? 'Stopped / Paused' : 'Playing';
   }
-  if (playPause) playPause.textContent = musicAudio.paused ? '▶' : '⏸';
+  if (playPause) playPause.innerHTML = musicAudio.paused ? ICON_PLAY : ICON_PAUSE;
 
   const duration = musicAudio.duration || 0;
   if (seek) {
@@ -2478,7 +2500,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
 
     function updatePlayButton() {
       if (!playPause) return;
-      playPause.textContent = audio.paused ? '▶' : '⏸';
+      playPause.innerHTML = audio.paused ? ICON_PLAY : ICON_PAUSE;
     }
 
     function updateTime() {
@@ -2660,7 +2682,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
       seek.max = duration;
       seek.value = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
       time.textContent = fmt(audio.currentTime) + " / " + fmt(duration);
-      play.textContent = audio.paused ? '▶' : '⏸';
+      play.innerHTML = audio.paused ? ICON_PLAY : ICON_PAUSE;
       if (mute) mute.innerHTML = audio.muted || audio.volume === 0 ? ICON_MUTED : ICON_UNMUTED;
     }
 
@@ -2747,7 +2769,9 @@ document.getElementById('startBtn').addEventListener('click', () => {
     audio.addEventListener("play", update);
     audio.addEventListener("pause", update);
     audio.addEventListener("ended", function () {
-      update();
+      musicHistory.push(index);
+      loadTrack(pickRandomTrackIndex(index, tracks.length));
+      audio.play().catch(function () {});
     });
 
     loadTrack(index);

@@ -538,6 +538,71 @@
     flex: 1;
     min-width: 90px;
   }
+
+  /* ---------- ANALOG-STYLE SCRUBBER (seek sliders) ---------- */
+  #vidSeek, #musicSeek, #desktopMusicSeek {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 2px;
+    border-radius: 1px;
+    background: linear-gradient(to bottom, #2a2a2a 0%, #050505 50%, #2a2a2a 100%);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.8), inset 0 -1px 0 rgba(255,255,255,0.08);
+    outline: none;
+    cursor: pointer;
+  }
+  #vidSeek::-webkit-slider-runnable-track,
+  #musicSeek::-webkit-slider-runnable-track,
+  #desktopMusicSeek::-webkit-slider-runnable-track {
+    height: 2px;
+    border-radius: 1px;
+    background: transparent;
+  }
+  #vidSeek::-webkit-slider-thumb,
+  #desktopMusicSeek::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 3px;
+    height: 16px;
+    border-radius: 1px;
+    margin-top: -7px;
+    background: linear-gradient(to bottom, #f0f0f0 0%, #c8c8c8 50%, #a0a0a0 100%);
+    border: none;
+    box-shadow: 0 0 2px rgba(0,0,0,0.7);
+  }
+  #musicSeek::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 4px;
+    height: 16px;
+    border-radius: 1px;
+    margin-top: -7px;
+    background: linear-gradient(to bottom, #f0f0f0 0%, #c8c8c8 50%, #a0a0a0 100%);
+    border: none;
+    box-shadow: 0 0 2px rgba(0,0,0,0.7);
+  }
+  #vidSeek::-moz-range-track,
+  #musicSeek::-moz-range-track,
+  #desktopMusicSeek::-moz-range-track {
+    height: 2px;
+    border-radius: 1px;
+    background: linear-gradient(to bottom, #2a2a2a 0%, #050505 50%, #2a2a2a 100%);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+  }
+  #vidSeek::-moz-range-thumb,
+  #desktopMusicSeek::-moz-range-thumb {
+    width: 3px;
+    height: 16px;
+    border-radius: 1px;
+    background: linear-gradient(to bottom, #f0f0f0 0%, #c8c8c8 50%, #a0a0a0 100%);
+    border: none;
+    box-shadow: 0 0 2px rgba(0,0,0,0.7);
+  }
+  #musicSeek::-moz-range-thumb {
+    width: 4px;
+    height: 16px;
+    border-radius: 1px;
+    background: linear-gradient(to bottom, #f0f0f0 0%, #c8c8c8 50%, #a0a0a0 100%);
+    border: none;
+    box-shadow: 0 0 2px rgba(0,0,0,0.7);
+  }
   .vid-time {
     min-width: 82px;
     text-align: right;
@@ -675,6 +740,20 @@
     color: #000;
   }
   .music-controls button:active, .music-playlist button:active {
+    box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #fff;
+  }
+  #musicVolDown, #musicVolUp {
+    background: #c0c0c0;
+    border: none;
+    box-shadow: inset -1px -1px 0 #000, inset 1px 1px 0 #fff;
+    padding: 4px 8px;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+    color: #000;
+    min-width: 26px;
+  }
+  #musicVolDown:active, #musicVolUp:active {
     box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #fff;
   }
   .music-seek-row, .music-volume-row {
@@ -889,8 +968,8 @@
     min-width: 54px;
   }
 
-  #vidVolume {
-    width: 72px;
+  #vidVolDown, #vidVolUp {
+    min-width: 28px;
   }
 
 
@@ -1015,8 +1094,29 @@
       inset -2px -2px 0 #dfdfdf;
   }
 
-  #desktopMusicVolume {
-    flex: 1;
+  #desktopMusicVolDown, #desktopMusicVolUp {
+    height: 22px;
+    min-width: 26px;
+    padding: 2px 6px;
+    background: #c0c0c0;
+    color: #000;
+    border: none;
+    box-shadow:
+      inset -1px -1px 0 #000,
+      inset 1px 1px 0 #fff,
+      inset -2px -2px 0 #808080,
+      inset 2px 2px 0 #dfdfdf;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  #desktopMusicVolDown:active, #desktopMusicVolUp:active {
+    box-shadow:
+      inset 1px 1px 0 #000,
+      inset -1px -1px 0 #fff,
+      inset 2px 2px 0 #808080,
+      inset -2px -2px 0 #dfdfdf;
   }
 
   /* Windows-95-ish scrollbars */
@@ -1036,7 +1136,7 @@
   <div id="icons"></div>
 
   <!-- Video player window, open by default -->
-  <div class="win" id="videoWin" style="left: 32%; top: 18%;">
+  <div class="win" id="videoWin" style="left: 40%; top: 22%;">
     <div class="titlebar">
       <div class="title"><span>🎬</span><span>Now Playing.avi</span></div>
       <div class="btns">
@@ -1059,7 +1159,8 @@
         <span class="vid-time" id="vidTime">0:00 / 0:00</span>
         <div class="vid-volume">
           <button id="vidMute" title="Mute/Unmute">🔇</button>
-          <input id="vidVolume" type="range" min="0" max="1" value="1" step="0.01" title="Volume">
+          <button id="vidVolDown" title="Volume down">–</button>
+          <button id="vidVolUp" title="Volume up">+</button>
         </div>
       </div>
       <div class="vid-caption" id="vidCaption">Placeholder reel 1 of 3 — swap in real clips anytime</div>
@@ -1076,7 +1177,7 @@
     <div class="resize-handle br" data-resize="br" title="Drag to resize"></div>
   </div>
 
-  <div class="win hidden" id="longVideoWin" style="left: 30%; top: 14%; width: 640px; height: 460px;">
+  <div class="win hidden" id="longVideoWin" style="left: 8%; top: 6%; width: 640px; height: 460px;">
     <div class="titlebar">
       <div class="title"><span>🎬</span><span>Long Videos</span></div>
       <div class="btns">
@@ -1124,7 +1225,8 @@
     <input id="desktopMusicSeek" type="range" min="0" max="0" value="0" step="0.01" title="Song progress">
     <div id="desktopMusicVolumeRow">
       <button id="desktopMusicMute" type="button" title="Mute/Unmute">🔊</button>
-      <input id="desktopMusicVolume" type="range" min="0" max="1" value="0.15" step="0.01" title="Volume">
+      <button id="desktopMusicVolDown" type="button" title="Volume down">–</button>
+      <button id="desktopMusicVolUp" type="button" title="Volume up">+</button>
     </div>
   </div>
 
@@ -1796,7 +1898,8 @@ const vidSeekEl = document.getElementById('vidSeek');
 const vidTimeEl = document.getElementById('vidTime');
 const ytNoteEl = document.getElementById('ytNote');
 const vidMuteBtn = document.getElementById('vidMute');
-const vidVolumeEl = document.getElementById('vidVolume');
+const vidVolDownBtn = document.getElementById('vidVolDown');
+const vidVolUpBtn = document.getElementById('vidVolUp');
 
 function openVideoWindow() {
   openWindows['video'] = videoWinEl;
@@ -1951,16 +2054,23 @@ if (vidMuteBtn) {
     vidEl.muted = !vidEl.muted;
     if (!vidEl.muted && vidEl.volume === 0) {
       vidEl.volume = 1;
-      if (vidVolumeEl) vidVolumeEl.value = 1;
     }
     syncVideoControls();
   });
 }
-if (vidVolumeEl) {
-  vidVolumeEl.addEventListener('input', (e) => {
+if (vidVolDownBtn) {
+  vidVolDownBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    vidEl.volume = Number(vidVolumeEl.value);
-    vidEl.muted = vidEl.volume === 0;
+    vidEl.muted = false;
+    vidEl.volume = Math.max(0, Math.round((vidEl.volume - 0.1) * 100) / 100);
+    syncVideoControls();
+  });
+}
+if (vidVolUpBtn) {
+  vidVolUpBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    vidEl.muted = false;
+    vidEl.volume = Math.min(1, Math.round((vidEl.volume + 0.1) * 100) / 100);
     syncVideoControls();
   });
 }
@@ -2068,7 +2178,8 @@ function openMusicWindow() {
 
         <div class="music-volume-row">
           <span>Volume</span>
-          <input id="musicVolume" type="range" min="0" max="1" value="0.8" step="0.01" title="Volume">
+          <button id="musicVolDown" title="Volume down">–</button>
+          <button id="musicVolUp" title="Volume up">+</button>
         </div>
 
         <div class="music-playlist" id="musicPlaylist">
@@ -2099,7 +2210,8 @@ function setupMusicPlayer(win) {
   const get = (id) => win.querySelector('#' + id);
   const playPause = get('musicPlayPause');
   const seek = get('musicSeek');
-  const volume = get('musicVolume');
+  const volDownBtn = get('musicVolDown');
+  const volUpBtn = get('musicVolUp');
 
   function loadMusicTrack(index, autoplay = false) {
     musicIndex = (index + musicPlaylist.length) % musicPlaylist.length;
@@ -2158,10 +2270,18 @@ function setupMusicPlayer(win) {
     musicAudio.currentTime = Number(seek.value);
     updateMusicUI();
   });
-  volume.addEventListener('input', (e) => {
-    e.stopPropagation();
-    musicAudio.volume = Number(volume.value);
-  });
+  if (volDownBtn) {
+    volDownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      musicAudio.volume = Math.max(0, Math.round((musicAudio.volume - 0.1) * 100) / 100);
+    });
+  }
+  if (volUpBtn) {
+    volUpBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      musicAudio.volume = Math.min(1, Math.round((musicAudio.volume + 0.1) * 100) / 100);
+    });
+  }
 
   win.querySelectorAll('.music-track').forEach(row => {
     row.addEventListener('click', (e) => {
@@ -2470,13 +2590,14 @@ document.getElementById('startBtn').addEventListener('click', () => {
     const time = document.getElementById("desktopMusicTime");
     const seek = document.getElementById("desktopMusicSeek");
     const mute = document.getElementById("desktopMusicMute");
-    const volume = document.getElementById("desktopMusicVolume");
+    const volDownBtn = document.getElementById("desktopMusicVolDown");
+    const volUpBtn = document.getElementById("desktopMusicVolUp");
 
     if (!player || !audio) return;
 
     setupBlurbToggle(document.getElementById('musicBlurbToggle'), document.getElementById('musicBlurbPanel'), player);
 
-    audio.volume = volume ? Number(volume.value) : 0.15;
+    audio.volume = 0.15;
 
     function loadTrack(i) {
       index = (i + tracks.length) % tracks.length;
@@ -2547,17 +2668,28 @@ document.getElementById('startBtn').addEventListener('click', () => {
         e.stopPropagation();
         audio.muted = !audio.muted;
         if (!audio.muted && audio.volume === 0) {
-          audio.volume = 0.8;
-          if (volume) volume.value = 0.8;
+          audio.volume = 0.15;
         }
         update();
       };
     }
 
-    if (volume) {
-      volume.oninput = function () {
-        audio.volume = Number(volume.value);
-        audio.muted = audio.volume === 0;
+    if (volDownBtn) {
+      volDownBtn.onclick = function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        audio.muted = false;
+        audio.volume = Math.max(0, Math.round((audio.volume - 0.1) * 100) / 100);
+        update();
+      };
+    }
+
+    if (volUpBtn) {
+      volUpBtn.onclick = function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        audio.muted = false;
+        audio.volume = Math.min(1, Math.round((audio.volume + 0.1) * 100) / 100);
         update();
       };
     }

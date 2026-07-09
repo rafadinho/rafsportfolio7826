@@ -144,6 +144,7 @@
     flex-shrink: 0;
     border-radius: 0;
     text-shadow: none;
+    touch-action: none;
   }
   .win.inactive .titlebar {
     background: linear-gradient(90deg, #7f7f7f 0%, #b5b5b5 100%);
@@ -868,6 +869,7 @@
     width: 13px;
     height: 13px;
     z-index: 20;
+    touch-action: none;
   }
   .resize-handle::after {
     content: "";
@@ -1358,26 +1360,53 @@ function bringToFront(win) {
   updateTaskbarActive(win.dataset.winid);
 }
 
+function getClientXY(e) {
+  if (e.touches && e.touches.length) {
+    return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }
+  if (e.changedTouches && e.changedTouches.length) {
+    return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+  }
+  return { x: e.clientX, y: e.clientY };
+}
+
 function makeDraggable(win, handle) {
   let ox = 0, oy = 0, dragging = false;
-  handle.addEventListener('mousedown', (e) => {
+
+  function startDrag(e) {
     if (e.target.tagName === 'BUTTON') return;
     dragging = true;
-    ox = e.clientX - win.offsetLeft;
-    oy = e.clientY - win.offsetTop;
+    const p = getClientXY(e);
+    ox = p.x - win.offsetLeft;
+    oy = p.y - win.offsetTop;
     bringToFront(win);
     e.preventDefault();
-  });
-  window.addEventListener('mousemove', (e) => {
+  }
+
+  function moveDrag(e) {
     if (!dragging) return;
-    let nx = e.clientX - ox;
-    let ny = e.clientY - oy;
+    const p = getClientXY(e);
+    let nx = p.x - ox;
+    let ny = p.y - oy;
     nx = Math.max(0, Math.min(nx, window.innerWidth - 60));
     ny = Math.max(0, Math.min(ny, window.innerHeight - 40));
     win.style.left = nx + 'px';
     win.style.top = ny + 'px';
-  });
-  window.addEventListener('mouseup', () => dragging = false);
+    if (e.cancelable) e.preventDefault();
+  }
+
+  function endDrag() {
+    dragging = false;
+  }
+
+  handle.addEventListener('mousedown', startDrag);
+  window.addEventListener('mousemove', moveDrag);
+  window.addEventListener('mouseup', endDrag);
+
+  handle.addEventListener('touchstart', startDrag, { passive: false });
+  window.addEventListener('touchmove', moveDrag, { passive: false });
+  window.addEventListener('touchend', endDrag);
+  window.addEventListener('touchcancel', endDrag);
 }
 
 
@@ -1395,12 +1424,13 @@ function makeResizable(win) {
   let corner = 'br';
 
   handles.forEach(handle => {
-    handle.addEventListener('mousedown', (e) => {
+    function startResize(e) {
       if (win.dataset.restoreStyle) return;
       resizing = true;
       corner = handle.dataset.resize || 'br';
-      startX = e.clientX;
-      startY = e.clientY;
+      const p = getClientXY(e);
+      startX = p.x;
+      startY = p.y;
       startW = win.offsetWidth;
       startH = win.offsetHeight;
       startL = win.offsetLeft;
@@ -1408,15 +1438,18 @@ function makeResizable(win) {
       bringToFront(win);
       e.preventDefault();
       e.stopPropagation();
-    });
+    }
+    handle.addEventListener('mousedown', startResize);
+    handle.addEventListener('touchstart', startResize, { passive: false });
   });
 
-  window.addEventListener('mousemove', (e) => {
+  function doResize(e) {
     if (!resizing) return;
     const minW = Number(win.dataset.minWidth) || 220;
     const minH = Number(win.dataset.minHeight) || 140;
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
+    const p = getClientXY(e);
+    const dx = p.x - startX;
+    const dy = p.y - startY;
 
     let nextW = startW;
     let nextH = startH;
@@ -1466,11 +1499,18 @@ function makeResizable(win) {
     win.style.top = nextT + 'px';
     win.style.width = Math.max(minW, nextW) + 'px';
     win.style.height = Math.max(minH, nextH) + 'px';
-  });
+    if (e.cancelable) e.preventDefault();
+  }
 
-  window.addEventListener('mouseup', () => {
+  function endResize() {
     resizing = false;
-  });
+  }
+
+  window.addEventListener('mousemove', doResize);
+  window.addEventListener('mouseup', endResize);
+  window.addEventListener('touchmove', doResize, { passive: false });
+  window.addEventListener('touchend', endResize);
+  window.addEventListener('touchcancel', endResize);
 }
 
 function addTaskbarItem(id, label) {

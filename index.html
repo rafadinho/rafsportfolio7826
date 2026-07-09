@@ -2432,16 +2432,11 @@ tick();
 setInterval(tick, 1000 * 10);
 
 /* ---------------- START BUTTON ---------------- */
-const desktopBgColors = ['#6b8cff', '#ff8c69', '#2d1b69', '#4caf50', '#e74c3c', '#f5c518', '#20b2aa'];
-let desktopBgIndex = 0;
 document.getElementById('startBtn').addEventListener('click', () => {
   document.getElementById('startBtn').style.boxShadow = 'inset 1px 1px 0 #000, inset -1px -1px 0 #fff';
   setTimeout(() => {
     document.getElementById('startBtn').style.boxShadow = '';
   }, 150);
-
-  desktopBgIndex = (desktopBgIndex + 1) % desktopBgColors.length;
-  document.getElementById('desktop').style.backgroundColor = desktopBgColors[desktopBgIndex];
 });
 </script>
 

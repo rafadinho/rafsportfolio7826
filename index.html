@@ -1124,7 +1124,7 @@
     <input id="desktopMusicSeek" type="range" min="0" max="0" value="0" step="0.01" title="Song progress">
     <div id="desktopMusicVolumeRow">
       <button id="desktopMusicMute" type="button" title="Mute/Unmute">🔊</button>
-      <input id="desktopMusicVolume" type="range" min="0" max="1" value="0.8" step="0.01" title="Volume">
+      <input id="desktopMusicVolume" type="range" min="0" max="1" value="0.15" step="0.01" title="Volume">
     </div>
   </div>
 
@@ -1979,12 +1979,56 @@ bringToFront(videoWinEl);
 /* ---------------- MUSIC PLAYER WINDOW ---------------- */
 const EMBEDDED_TRACK_SRC = 'media/lifetimes-enrico-mix-1.mp3';
 const musicPlaylist = [
-  { title: 'LIFETIMES', artist: '', src: EMBEDDED_TRACK_SRC }
+  { title: 'LIFETIMES by Enrico', artist: '', src: EMBEDDED_TRACK_SRC },
+  { title: 'BRAVE by Momma', artist: '', src: 'media/brave-momma.mp3' },
+  { title: 'ABOVE N BEYOND (WEATHERMAN) by Mykel', artist: '', src: 'media/weatherman-mykel.mp3' },
+  { title: 'BLUE EYES by Illusion Hills', artist: '', src: 'media/blue-eyes-illusion-hills.mp3' },
+  { title: '4AM by James Eichman', artist: '', src: 'media/4am-james-eichman.mp3' },
+  { title: 'SUBMERGE FM by Yaeji', artist: '', src: 'media/submerge-fm-yaeji.mp3' },
+  { title: 'WATCH THE PLANETS by Nato Kitch', artist: '', src: 'media/watch-the-planets-nato-kitch.mp3' },
+  { title: 'WHEN YOU CALL by Synedoche New York', artist: '', src: 'media/when-you-call-synedoche-new-york.mp3' },
+  { title: 'RÉU CONFESSO by Tim Maia', artist: '', src: 'media/reu-confesso-tim-maia.mp3' },
+  { title: 'GOSTAVA TANTO DE VOCÊ by Tim Maia', artist: '', src: 'media/gostava-tanto-de-voce-tim-maia.mp3' },
+  { title: "I'M NOT YOUR MAN by Junior Mesa", artist: '', src: 'media/im-not-your-man-junior-mesa.mp3' },
+  { title: 'DIOR by feeble little horse', artist: '', src: 'media/dior-feeble-little-horse.mp3' },
+  { title: 'BACK OF A TRUCK by Rostam', artist: '', src: 'media/back-of-a-truck-rostam.mp3' },
+  { title: 'CHANGE IS IN THE AIR by Jesse Welles', artist: '', src: 'media/change-is-in-the-air-jesse-welles.mp3' },
+  { title: 'BEACHES by beabadoobee', artist: '', src: 'media/beaches-beabadoobee.mp3' },
+  { title: 'JESUS TREE by Detroit California', artist: '', src: 'media/jesus-tree-detroit-california.mp3' },
+  { title: 'TOSS by Whirr', artist: '', src: 'media/toss-whirr.mp3' },
+  { title: 'FEEL NO WAYS by Drake', artist: '', src: 'media/feel-no-ways-drake.mp3' },
+  { title: 'UNDER DA SUN 2 by Duwap Kaine', artist: '', src: 'media/under-da-sun-2-duwap-kaine.mp3' },
+  { title: "PRACTICE by Pi'erre Bourne", artist: '', src: 'media/practice-pierre-bourne.mp3' },
+  { title: '11TH DIMENSION by Julian Casablancas', artist: '', src: 'media/11th-dimension-julian-casablancas.mp3' },
+  { title: 'DANCING IN THE CLUB by This is Lorelei', artist: '', src: 'media/dancing-in-the-club-this-is-lorelei.mp3' },
+  { title: 'POLICE SCANNER by Chanel Beads', artist: '', src: 'media/police-scanner-chanel-beads.mp3' },
+  { title: 'LINUS AND LUCY by Vince Guaraldi Trio', artist: '', src: 'media/linus-and-lucy-vince-guaraldi-trio.mp3' },
+  { title: 'BROOKLYN BRIDGE TO CHORUS by The Strokes', artist: '', src: 'media/brooklyn-bridge-to-chorus-the-strokes.mp3' },
+  { title: 'NUN 4 NO SCHMUCK by Glokk40Spaz', artist: '', src: 'media/nun-4-no-schmuck-glokk40spaz.mp3' },
+  { title: 'BIG STAR by Free Range', artist: '', src: 'media/big-star-free-range.mp3' },
+  { title: 'LIKE A ROLLING STONE by Bob Dylan', artist: '', src: 'media/like-a-rolling-stone-bob-dylan.mp3' },
+  { title: 'LUV SCARS K.O. 1600 by Lil Uzi Vert', artist: '', src: 'media/luv-scars-ko-1600-lil-uzi-vert.mp3' },
+  { title: 'DANCE II by Discovery Zone', artist: '', src: 'media/dance-ii-discovery-zone.mp3' },
+  { title: "SHARED DREAMS by You'll Never Get To Heaven", artist: '', src: 'media/shared-dreams-youll-never-get-to-heaven.mp3' },
+  { title: 'EVERY EXCHANGE by Hovvdy', artist: '', src: 'media/every-exchange-hovvdy.mp3' },
+  { title: 'MONDAY by Quadeca', artist: '', src: 'media/monday-quadeca.mp3' },
+  { title: 'YOU WENT IN PHASES by Brittle Stars', artist: '', src: 'media/you-went-in-phases-brittle-stars.mp3' },
+  { title: 'ABANDON ME by Quadeca, Kevin Abstract', artist: '', src: 'media/abandon-me-quadeca-kevin-abstract.mp3' }
 ];
 
 let musicAudio = null;
 let musicIndex = 0;
 let musicWindowReady = false;
+let musicHistory = [];
+
+function pickRandomTrackIndex(currentIndex, total) {
+  if (total <= 1) return currentIndex;
+  let r;
+  do {
+    r = Math.floor(Math.random() * total);
+  } while (r === currentIndex);
+  return r;
+}
 
 function openMusicWindow() {
   const playlistHTML = musicPlaylist.map((song, i) => `
@@ -2087,11 +2131,16 @@ function setupMusicPlayer(win) {
 
   get('musicPrev').addEventListener('click', (e) => {
     e.stopPropagation();
-    loadMusicTrack(musicIndex - 1, true);
+    if (musicHistory.length > 0) {
+      loadMusicTrack(musicHistory.pop(), true);
+    } else {
+      loadMusicTrack(musicIndex - 1, true);
+    }
   });
   get('musicNext').addEventListener('click', (e) => {
     e.stopPropagation();
-    loadMusicTrack(musicIndex + 1, true);
+    musicHistory.push(musicIndex);
+    loadMusicTrack(pickRandomTrackIndex(musicIndex, musicPlaylist.length), true);
   });
   get('musicBack5').addEventListener('click', (e) => {
     e.stopPropagation();
@@ -2390,9 +2439,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
 <script>
 /* ---------- DESKTOP MUSIC PLAYER CONTROLS ---------- */
 (function () {
-  const tracks = [
-    { title: "LIFETIMES", src: EMBEDDED_TRACK_SRC }
-  ];
+  const tracks = musicPlaylist;
 
   let index = 0;
 
@@ -2429,7 +2476,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
 
     setupBlurbToggle(document.getElementById('musicBlurbToggle'), document.getElementById('musicBlurbPanel'), player);
 
-    audio.volume = volume ? Number(volume.value) : 0.8;
+    audio.volume = volume ? Number(volume.value) : 0.15;
 
     function loadTrack(i) {
       index = (i + tracks.length) % tracks.length;
@@ -2474,13 +2521,18 @@ document.getElementById('startBtn').addEventListener('click', () => {
 
     prev.onclick = function (e) {
       e.preventDefault();
-      loadTrack(index - 1);
+      if (musicHistory.length > 0) {
+        loadTrack(musicHistory.pop());
+      } else {
+        loadTrack(index - 1);
+      }
       audio.play().catch(function () {});
     };
 
     next.onclick = function (e) {
       e.preventDefault();
-      loadTrack(index + 1);
+      musicHistory.push(index);
+      loadTrack(pickRandomTrackIndex(index, tracks.length));
       audio.play().catch(function () {});
     };
 
@@ -2520,6 +2572,18 @@ document.getElementById('startBtn').addEventListener('click', () => {
 
     loadTrack(0);
     player.style.display = "block";
+
+    // Try to autoplay quietly. Most browsers allow this at low/no volume,
+    // but if it's blocked outright, start on the visitor's first interaction.
+    const tryAutoplay = () => audio.play().catch(() => {});
+    tryAutoplay();
+    audio.addEventListener("canplay", tryAutoplay, { once: true });
+
+    const startOnFirstInteraction = () => {
+      if (audio.paused) audio.play().catch(() => {});
+    };
+    document.addEventListener("click", startOnFirstInteraction, { once: true });
+    document.addEventListener("keydown", startOnFirstInteraction, { once: true });
   });
 })();
 </script>

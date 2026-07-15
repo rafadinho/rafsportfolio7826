@@ -803,6 +803,58 @@
   #desktopMusicPlayer .blurb-panel.open {
     max-height: 70px;
   }
+  #desktopMusicPlayer .blurb-panel.mini-playlist-panel.open {
+    max-height: 170px;
+  }
+
+  .mini-playlist {
+    max-height: 150px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #808080;
+    box-shadow: inset -1px -1px 0 #fff, inset 1px 1px 0 #808080;
+  }
+  .mini-playlist .mini-track {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 3px 6px;
+    font-size: 11px;
+    color: #000;
+    cursor: pointer;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .mini-playlist .mini-track:last-child {
+    border-bottom: none;
+  }
+  .mini-playlist .mini-track.active {
+    background: #000080;
+    color: #fff;
+  }
+  .mini-playlist .mini-track-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+  .mini-playlist .mini-track button {
+    background: #c0c0c0;
+    color: #000;
+    border: none;
+    box-shadow: inset -1px -1px 0 #000, inset 1px 1px 0 #fff;
+    width: 20px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+  }
+  .mini-playlist .mini-track button:active {
+    box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #fff;
+  }
 
 
 
@@ -1353,10 +1405,14 @@
   <div id="desktopMusicPlayer">
     <audio id="desktopMusicAudio" preload="metadata"></audio>
     <div class="blurb-bar">
-      <button class="blurb-toggle" id="musicBlurbToggle" type="button">Open Blurb</button>
+      <button class="blurb-toggle" id="musicBlurbToggle" type="button" data-label="Blurb">Open Blurb</button>
+      <button class="blurb-toggle" id="musicPlaylistToggle" type="button" data-label="Playlist">Open Playlist</button>
     </div>
     <div class="blurb-panel" id="musicBlurbPanel">
       <p id="musicBlurbText">Some music to play while you scroll on this page!</p>
+    </div>
+    <div class="blurb-panel mini-playlist-panel" id="musicPlaylistPanel">
+      <div class="mini-playlist" id="miniPlaylist"></div>
     </div>
     <div id="desktopMusicTitle">LIFETIMES</div>
     <div id="desktopMusicControls">
@@ -1804,11 +1860,12 @@ function createWindow({ id, title, glyph, width, height, left, top, bodyHTML, st
 
 function setupBlurbToggle(toggleBtn, panel, growEl, bodyEl) {
   let open = false;
+  const label = toggleBtn.dataset.label || 'Blurb';
   toggleBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     open = !open;
     toggleBtn.classList.toggle('open', open);
-    toggleBtn.textContent = open ? 'Close Blurb' : 'Open Blurb';
+    toggleBtn.textContent = open ? `Close ${label}` : `Open ${label}`;
 
     if (bodyEl) {
       // Pin the content area to its exact current pixel height so it can't
@@ -2900,6 +2957,34 @@ document.getElementById('startBtn').addEventListener('click', () => {
     if (!player || !audio) return;
 
     setupBlurbToggle(document.getElementById('musicBlurbToggle'), document.getElementById('musicBlurbPanel'), player);
+    setupBlurbToggle(document.getElementById('musicPlaylistToggle'), document.getElementById('musicPlaylistPanel'), player);
+
+    const miniPlaylistEl = document.getElementById('miniPlaylist');
+    if (miniPlaylistEl) {
+      miniPlaylistEl.innerHTML = tracks.map((t, i) => `
+        <div class="mini-track" data-idx="${i}">
+          <span class="mini-track-name">${i + 1}. ${t.title}</span>
+          <button type="button" data-play-idx="${i}" title="Play this song">${ICON_PLAY}</button>
+        </div>
+      `).join('');
+
+      miniPlaylistEl.querySelectorAll('.mini-track').forEach(row => {
+        row.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const i = Number(row.dataset.idx);
+          musicHistory.push(index);
+          loadTrack(i);
+          audio.play().catch(function () {});
+        });
+      });
+    }
+
+    function updateMiniPlaylistActive() {
+      if (!miniPlaylistEl) return;
+      miniPlaylistEl.querySelectorAll('.mini-track').forEach(row => {
+        row.classList.toggle('active', Number(row.dataset.idx) === index);
+      });
+    }
 
     audio.volume = 0.02;
 
@@ -2918,6 +3003,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
       time.textContent = fmt(audio.currentTime) + " / " + fmt(duration);
       play.innerHTML = audio.paused ? ICON_PLAY : ICON_PAUSE;
       if (mute) mute.innerHTML = audio.muted || audio.volume === 0 ? ICON_MUTED : ICON_UNMUTED;
+      updateMiniPlaylistActive();
     }
 
     play.onclick = function (e) {

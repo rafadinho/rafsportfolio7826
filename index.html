@@ -43,9 +43,16 @@
     z-index: 1;
     pointer-events: none;
   }
-  .pixel-alien {
+  .pixel-star {
     position: absolute;
     image-rendering: pixelated;
+    animation-name: pixelTwinkle;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+  @keyframes pixelTwinkle {
+    0%, 100% { opacity: 0.15; transform: translate(0, 0); }
+    50% { opacity: 1; transform: translate(var(--dx, 0), var(--dy, 0)); }
   }
   #bootContent {
     position: relative;
@@ -58,11 +65,21 @@
     font-size: 28px;
     line-height: 1.6;
     color: #fff;
+    --blink-color: #e52521;
     text-shadow:
-      3px 3px 0 #e52521,
+      3px 3px 0 var(--blink-color),
       6px 6px 0 #000;
     margin-bottom: 48px;
     letter-spacing: 1px;
+    animation: bootTitleBlink 2.4s steps(1) infinite;
+  }
+  @keyframes bootTitleBlink {
+    0%   { --blink-color: #e52521; }
+    20%  { --blink-color: #f5c518; }
+    40%  { --blink-color: #4caf50; }
+    60%  { --blink-color: #38bdf8; }
+    80%  { --blink-color: #ff375f; }
+    100% { --blink-color: #e52521; }
   }
   #bootStartBtn {
     display: inline-block;
@@ -193,6 +210,7 @@
     border: 1px dotted #fff;
   }
   .icon .glyph {
+    position: relative;
     font-size: 34px;
     line-height: 1;
     filter: drop-shadow(1px 1px 0 rgba(0,0,0,0.4));
@@ -202,6 +220,10 @@
     height: 40px;
     image-rendering: pixelated;
     filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.5));
+    transition: filter 120ms ease-out;
+  }
+  .icon.open .glyph img {
+    filter: hue-rotate(105deg) saturate(1.8) brightness(1.05) drop-shadow(1px 1px 1px rgba(0,0,0,0.5));
   }
   .icon .label {
     color: #fff;
@@ -238,6 +260,18 @@
     top: 4px !important;
     width: calc(100vw - 8px) !important;
     height: calc(100vh - 38px) !important;
+  }
+
+  .win.win-opening {
+    animation: winOpen 360ms ease-out both;
+    transform-origin: center bottom;
+  }
+  @keyframes winOpen {
+    0%   { transform: translateY(90px) scale(0.92); opacity: 0; }
+    55%  { transform: translateY(-10px) scale(1.03); opacity: 1; }
+    75%  { transform: translateY(4px) scale(0.985); }
+    90%  { transform: translateY(-2px) scale(1.005); }
+    100% { transform: translateY(0) scale(1); }
   }
 
 
@@ -290,6 +324,21 @@
     cursor: pointer;
     color: #000;
     text-shadow: none;
+  }
+  @media (pointer: coarse) {
+    .titlebar button[data-act="min"],
+    .titlebar button[data-act="max"] {
+      opacity: 0.45;
+      cursor: default;
+    }
+    .titlebar button[data-act="min"]:active,
+    .titlebar button[data-act="max"]:active {
+      box-shadow:
+        inset -1px -1px 0 #000,
+        inset 1px 1px 0 #fff,
+        inset -2px -2px 0 #808080,
+        inset 2px 2px 0 #dfdfdf;
+    }
   }
   .titlebar button[data-act="close"] {
     background: #c0c0c0;
@@ -1335,7 +1384,7 @@
 
   <div class="win" id="videoWin" style="left: 40%; top: 22%;">
     <div class="titlebar">
-      <div class="title"><span>🎬</span><span>Now Playing.avi</span></div>
+      <div class="title"><span>🎬</span><span>Now Playing.raf</span></div>
       <div class="btns">
         <button data-act="min" title="Minimize">_</button>
         <button data-act="max" title="Expand">□</button>
@@ -1409,7 +1458,7 @@
       <button class="blurb-toggle" id="musicPlaylistToggle" type="button" data-label="Playlist">Open Playlist</button>
     </div>
     <div class="blurb-panel" id="musicBlurbPanel">
-      <p id="musicBlurbText">Some music to play while you scroll on this page!</p>
+      <p id="musicBlurbText">A collection of my favorite songs!</p>
     </div>
     <div class="blurb-panel mini-playlist-panel" id="musicPlaylistPanel">
       <div class="mini-playlist" id="miniPlaylist"></div>
@@ -1523,10 +1572,24 @@ let vidIndex = 0;
 /* ---------------- ICONS ---------------- */
 const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
 const iconsEl = document.getElementById('icons');
+
+function windowIdForFolder(f) {
+  return f.type === 'video' ? 'video' : f.id;
+}
+
+function updateIconIndicators() {
+  document.querySelectorAll('.icon[data-winid]').forEach(iconEl => {
+    const win = openWindows[iconEl.dataset.winid];
+    const isOpen = !!(win && !win.classList.contains('hidden'));
+    iconEl.classList.toggle('open', isOpen);
+  });
+}
+
 folders.forEach(f => {
   const div = document.createElement('div');
   div.className = 'icon';
   div.dataset.id = f.id;
+  div.dataset.winid = windowIdForFolder(f);
   const iconSrc = mysteryFolderIds.includes(f.id) ? mysteryFolderIconDataUri : folderIconDataUri;
   const glyphHTML = `<img src="${iconSrc}" alt="folder">`;
   div.innerHTML = `<div class="glyph">${glyphHTML}</div><div class="label">${f.label}</div>`;
@@ -1751,15 +1814,30 @@ function removeTaskbarItem(id) {
 }
 
 
+function playWindowOpenAnim(win, delay = 0) {
+  win.classList.remove('win-opening');
+  void win.offsetWidth; // force reflow so the animation can restart
+  win.style.animationDelay = delay ? delay + 'ms' : '';
+  win.classList.add('win-opening');
+  win.addEventListener('animationend', () => {
+    win.classList.remove('win-opening');
+    win.style.animationDelay = '';
+  }, { once: true });
+}
+
 function minimizeWindow(win) {
+  if (isTouchDevice) return;
   win.classList.add('hidden');
   const item = document.querySelector(`.task-item[data-winid="${win.dataset.winid}"]`);
   if (item) item.classList.remove('active');
+  updateIconIndicators();
 }
 
 function restoreWindow(win) {
   win.classList.remove('hidden');
   bringToFront(win);
+  playWindowOpenAnim(win);
+  updateIconIndicators();
 }
 
 function closeWindow(win, { removeFromDom = true } = {}) {
@@ -1770,9 +1848,11 @@ function closeWindow(win, { removeFromDom = true } = {}) {
     win.remove();
     delete openWindows[id];
   }
+  updateIconIndicators();
 }
 
 function toggleMaximize(win) {
+  if (isTouchDevice) return;
   if (!win.dataset.restoreStyle) {
     win.dataset.restoreStyle = JSON.stringify({
       left: win.style.left,
@@ -1797,6 +1877,8 @@ function createWindow({ id, title, glyph, width, height, left, top, bodyHTML, st
   if (openWindows[id]) {
     openWindows[id].classList.remove('hidden');
     bringToFront(openWindows[id]);
+    playWindowOpenAnim(openWindows[id]);
+    updateIconIndicators();
     return openWindows[id];
   }
   const win = document.createElement('div');
@@ -1855,6 +1937,8 @@ function createWindow({ id, title, glyph, width, height, left, top, bodyHTML, st
   openWindows[id] = win;
   addTaskbarItem(id, title);
   bringToFront(win);
+  playWindowOpenAnim(win);
+  updateIconIndicators();
   return win;
 }
 
@@ -2118,7 +2202,7 @@ vidEl.volume = 0.05;
 const vidCaption = document.getElementById('vidCaption');
 openWindows['video'] = videoWinEl;
 videoWinEl.dataset.winid = 'video';
-addTaskbarItem('video', 'Now Playing.avi');
+addTaskbarItem('video', 'Now Playing.raf');
 makeDraggable(videoWinEl, videoWinEl.querySelector('.titlebar'));
 makeResizable(videoWinEl);
 videoWinEl.addEventListener('mousedown', () => bringToFront(videoWinEl));
@@ -2151,7 +2235,7 @@ const vidVolUpBtn = document.getElementById('vidVolUp');
 function openVideoWindow() {
   openWindows['video'] = videoWinEl;
   videoWinEl.dataset.winid = 'video';
-  addTaskbarItem('video', 'Now Playing.avi');
+  addTaskbarItem('video', 'Now Playing.raf');
   restoreWindow(videoWinEl);
   if (vidEl.src && vidEl.paused && ytFrameEl.style.display === 'none') {
     vidEl.play().catch(() => {});
@@ -2712,66 +2796,25 @@ const bootLoadingTextEl = document.getElementById('bootLoadingText');
 const bootStarsEl = document.getElementById('bootStars');
 const BOOT_SQUARE_COUNT = 10;
 
-// Classic 11x8 pixel-invader sprite, built as an SVG so edges stay crisp at any size.
-const ALIEN_PATTERN = [
-  "00100000100",
-  "00010001000",
-  "00111111100",
-  "01101110110",
-  "11111111111",
-  "10111111101",
-  "10100000101",
-  "00011011000"
-];
-
-function buildAlienSVG(color, cell) {
-  const w = ALIEN_PATTERN[0].length * cell;
-  const h = ALIEN_PATTERN.length * cell;
-  let rects = '';
-  ALIEN_PATTERN.forEach((row, y) => {
-    for (let x = 0; x < row.length; x++) {
-      if (row[x] === '1') {
-        rects += `<rect x="${x * cell}" y="${y * cell}" width="${cell}" height="${cell}" fill="${color}"/>`;
-      }
-    }
-  });
-  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${rects}</svg>`;
-}
-
-let bootAliensRunning = true;
+// A twinkling 8-bit pixel starfield behind the boot title.
 if (bootStarsEl) {
-  const alienColors = ['#4caf50', '#e52521', '#f5c518'];
-  const aliens = [];
-  alienColors.forEach((color, i) => {
-    const el = document.createElement('div');
-    el.className = 'pixel-alien';
-    el.innerHTML = buildAlienSVG(color, 3);
-    bootStarsEl.appendChild(el);
-    aliens.push({
-      el,
-      x: 20 + i * 90,
-      y: 40 + i * 60,
-      vx: (i % 2 === 0 ? 1 : -1) * (1.1 + i * 0.4),
-      vy: (i % 2 === 0 ? -1 : 1) * (0.9 + i * 0.3),
-      w: 33, h: 24
-    });
-  });
-
-  function stepAliens() {
-    if (!bootAliensRunning) return;
-    const bounds = bootScreenEl.getBoundingClientRect();
-    aliens.forEach(a => {
-      a.x += a.vx;
-      a.y += a.vy;
-      if (a.x <= 0 || a.x + a.w >= bounds.width) a.vx *= -1;
-      if (a.y <= 0 || a.y + a.h >= bounds.height) a.vy *= -1;
-      a.x = Math.max(0, Math.min(a.x, bounds.width - a.w));
-      a.y = Math.max(0, Math.min(a.y, bounds.height - a.h));
-      a.el.style.transform = `translate(${a.x}px, ${a.y}px)`;
-    });
-    requestAnimationFrame(stepAliens);
+  const STAR_COLORS = ['#ffffff', '#38bdf8', '#f5c518', '#ff375f', '#4caf50', '#a855f7'];
+  const STAR_COUNT = 90;
+  for (let i = 0; i < STAR_COUNT; i++) {
+    const star = document.createElement('div');
+    star.className = 'pixel-star';
+    const size = [2, 2, 3, 3, 4][Math.floor(Math.random() * 5)];
+    star.style.width = size + 'px';
+    star.style.height = size + 'px';
+    star.style.left = (Math.random() * 100).toFixed(2) + '%';
+    star.style.top = (Math.random() * 100).toFixed(2) + '%';
+    star.style.background = STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)];
+    star.style.setProperty('--dx', (Math.random() * 8 - 4).toFixed(1) + 'px');
+    star.style.setProperty('--dy', (Math.random() * 8 - 4).toFixed(1) + 'px');
+    star.style.animationDuration = (1.4 + Math.random() * 2.8).toFixed(2) + 's';
+    star.style.animationDelay = (Math.random() * 3).toFixed(2) + 's';
+    bootStarsEl.appendChild(star);
   }
-  requestAnimationFrame(stepAliens);
 }
 
 if (bootLoadingBarEl) {
@@ -2798,7 +2841,11 @@ if (bootStartBtnEl && bootScreenEl) {
         clearInterval(fillInterval);
         setTimeout(() => {
           bootScreenEl.classList.add('hidden');
-          bootAliensRunning = false;
+          // "Booting into the computer" — pop open any windows that were
+          // already sitting open on the desktop, staggered slightly.
+          document.querySelectorAll('#desktop > .win:not(.hidden)').forEach((win, i) => {
+            playWindowOpenAnim(win, i * 90);
+          });
         }, 400);
       }
     }, 180);
@@ -2809,7 +2856,7 @@ if (bootStartBtnEl && bootScreenEl) {
 document.getElementById('startBtn').addEventListener('click', () => {
   document.getElementById('startBtn').style.boxShadow = 'inset 1px 1px 0 #000, inset -1px -1px 0 #fff';
   setTimeout(() => {
-    document.getElementById('startBtn').style.boxShadow = '';
+    window.location.reload();
   }, 150);
 });
 </script>

@@ -2560,23 +2560,40 @@ const musicPlaylist = [
 
 let musicAudio = null;
 
-// A handful of tracks with rap/hip-hop artists — kept in the shuffle and
-// playlist as normal, just excluded from being the song that greets someone
-// on a fresh visit.
-const RAP_TRACK_TITLES = [
-  "4U by Pi'erre Bourne",
-  'FEEL NO WAYS by Drake',
-  'LUV SCARS K.O. 1600 by Lil Uzi Vert',
-  'NUN 4 NO SCHMUCK by Glokk40Spaz',
-  "PRACTICE by Pi'erre Bourne",
-  'UNDER DA SUN 2 by Duwap Kaine'
+// On page load, start on a random pick from this curated set of songs.
+const STARTER_TRACK_TITLES = [
+  'BONES by Tabano Hollow',
+  'ABANDON ME by Quadeca, Kevin Abstract',
+  'ABOVE N BEYOND (WEATHERMAN) by Mykel',
+  'BIG STAR by Free Range',
+  'BLUE EYES by Illusion Hills',
+  'can we just forget by baileyrp',
+  'DANCE II by Discovery Zone',
+  'DIOR by feeble little horse',
+  'EVERY EXCHANGE by Hovvdy',
+  'EVOLVER by Lunchbox',
+  'FOR THE BOTH OF US by Liim',
+  'FOREVER by Alex G',
+  'KID by Tabano Hollow',
+  'LIKE A ROLLING STONE by Bob Dylan',
+  'POLICE SCANNER by Chanel Beads',
+  'righttttraaack by Truman Sinclair',
+  'SARAH by Alex G',
+  'SAY IT by Sake by the Water',
+  'SQUARE WAVE by The Voidz',
+  'TOSS by Whirr',
+  'YOU WENT IN PHASES by Brittle Stars',
+  "WHERE'S YOUR LOVE NOW by This is Lorelei",
+  'MONDAY by Quadeca',
+  'HEY JUDE by The Beatles'
 ];
-const nonRapIndices = musicPlaylist
-  .map((song, i) => RAP_TRACK_TITLES.includes(song.title) ? -1 : i)
+const starterIndices = musicPlaylist
+  .map((song, i) => STARTER_TRACK_TITLES.includes(song.title) ? i : -1)
   .filter(i => i !== -1);
 
-// On page load, start on a totally random (non-rap) song.
-let musicIndex = nonRapIndices[Math.floor(Math.random() * nonRapIndices.length)];
+let musicIndex = starterIndices.length
+  ? starterIndices[Math.floor(Math.random() * starterIndices.length)]
+  : Math.floor(Math.random() * musicPlaylist.length);
 let musicWindowReady = false;
 let musicHistory = [];
 

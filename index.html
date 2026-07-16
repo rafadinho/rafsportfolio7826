@@ -2336,84 +2336,97 @@ bringToFront(videoWinEl);
 /* ---------------- MUSIC PLAYER WINDOW ---------------- */
 const EMBEDDED_TRACK_SRC = 'media/lifetimes-enrico-mix-1.mp3';
 const musicPlaylist = [
-  { title: 'LIFETIMES by Enrico', artist: '', src: EMBEDDED_TRACK_SRC },
-  { title: 'BRAVE by Momma', artist: '', src: 'media/brave-momma.mp3' },
-  { title: 'ABOVE N BEYOND (WEATHERMAN) by Mykel', artist: '', src: 'media/weatherman-mykel.mp3' },
-  { title: 'BLUE EYES by Illusion Hills', artist: '', src: 'media/blue-eyes-illusion-hills.mp3' },
+  { title: '11TH DIMENSION by Julian Casablancas', artist: '', src: 'media/11th-dimension-julian-casablancas.mp3' },
+  { title: '1979 by Smashing Pumpkins', artist: '', src: 'media/1979-smashing-pumpkins.mp3' },
   { title: '4AM by James Eichman', artist: '', src: 'media/4am-james-eichman.mp3' },
+  { title: "4U by Pi'erre Bourne", artist: '', src: 'media/4u-pierre-bourne.mp3' },
+  { title: 'ABANDON ME by Quadeca, Kevin Abstract', artist: '', src: 'media/abandon-me-quadeca-kevin-abstract.mp3' },
+  { title: 'ABOVE N BEYOND (WEATHERMAN) by Mykel', artist: '', src: 'media/weatherman-mykel.mp3' },
+  { title: 'ALESIS by Mk.gee', artist: '', src: 'media/alesis-mk-gee.mp3' },
+  { title: 'ALL MY FRIENDS by LCD Soundsystem', artist: '', src: 'media/all-my-friends-lcd-soundsystem.mp3' },
+  { title: 'ANYTHING AT ALL by Tabano Hollow', artist: '', src: 'media/anything-at-all-tabano-hollow.mp3' },
+  { title: 'BACK OF A TRUCK by Rostam', artist: '', src: 'media/back-of-a-truck-rostam.mp3' },
+  { title: 'BAGS by Clairo', artist: '', src: 'media/bags-clairo.mp3' },
+  { title: 'BEACHES by beabadoobee', artist: '', src: 'media/beaches-beabadoobee.mp3' },
+  { title: 'BIG STAR by Free Range', artist: '', src: 'media/big-star-free-range.mp3' },
+  { title: 'BLEED by Dead Calm', artist: '', src: 'media/bleed-dead-calm.mp3' },
+  { title: 'BLUE EYES by Illusion Hills', artist: '', src: 'media/blue-eyes-illusion-hills.mp3' },
+  { title: 'BONES by Tabano Hollow', artist: '', src: 'media/bones-tabano-hollow.mp3' },
+  { title: 'BORED by The Obsessives', artist: '', src: 'media/bored-the-obsessives.mp3' },
+  { title: 'BRAVE by Momma', artist: '', src: 'media/brave-momma.mp3' },
+  { title: 'BROOKLYN BRIDGE TO CHORUS by The Strokes', artist: '', src: 'media/brooklyn-bridge-to-chorus-the-strokes.mp3' },
+  { title: 'BUTTERFLY by Beno', artist: '', src: 'media/butterfly-beno.mp3' },
+  { title: 'can we just forget by baileyrp', artist: '', src: 'media/can-we-just-forget-baileyrp.mp3' },
+  { title: 'CAN YOU HEAR THE WHISTLE BLOW by 缺省', artist: '', src: 'media/can-you-hear-the-whistle-blow-quesheng.mp3' },
+  { title: 'CHANGE IS IN THE AIR by Jesse Welles', artist: '', src: 'media/change-is-in-the-air-jesse-welles.mp3' },
+  { title: 'DANCE II by Discovery Zone', artist: '', src: 'media/dance-ii-discovery-zone.mp3' },
+  { title: 'DANCING IN THE CLUB by This is Lorelei', artist: '', src: 'media/dancing-in-the-club-this-is-lorelei.mp3' },
+  { title: 'DELETE by Ninajirachi', artist: '', src: 'media/delete-ninajirachi.mp3' },
+  { title: 'DIOR by feeble little horse', artist: '', src: 'media/dior-feeble-little-horse.mp3' },
+  { title: 'dust to dust by Truman Sinclair', artist: '', src: 'media/dust-to-dust-truman-sinclair.mp3' },
+  { title: 'EVERY EXCHANGE by Hovvdy', artist: '', src: 'media/every-exchange-hovvdy.mp3' },
+  { title: 'EVOLVER by Lunchbox', artist: '', src: 'media/evolver-lunchbox.mp3' },
+  { title: 'FEEL NO WAYS by Drake', artist: '', src: 'media/feel-no-ways-drake.mp3' },
+  { title: 'FOR THE BOTH OF US by Liim', artist: '', src: 'media/for-the-both-of-us-liim.mp3' },
+  { title: 'FOREVER by Alex G', artist: '', src: 'media/forever-alex-g.mp3' },
+  { title: 'FOUNTAIN OF SORROW (Remastered) by Jackson Browne', artist: '', src: 'media/fountain-of-sorrow-remastered-jackson-browne.mp3' },
+  { title: 'GOSTAVA TANTO DE VOCÊ by Tim Maia', artist: '', src: 'media/gostava-tanto-de-voce-tim-maia.mp3' },
+  { title: 'HEY JUDE by The Beatles', artist: '', src: 'media/hey-jude-the-beatles.mp3' },
+  { title: 'HOMERUNNER by Slayr', artist: '', src: 'media/homerunner-slayr.mp3' },
+  { title: "I WASN'T THERE by DERBY, Kevin Abstract", artist: '', src: 'media/i-wasnt-there-derby-kevin-abstract.mp3' },
+  { title: "I'LL SHOW YOU MINE by Victoryland", artist: '', src: 'media/ill-show-you-mine-victoryland.mp3' },
+  { title: "I'M NOT YOUR MAN by Junior Mesa", artist: '', src: 'media/im-not-your-man-junior-mesa.mp3' },
+  { title: 'JAMAICA SAY YOU WILL (Remastered) by Jackson Browne', artist: '', src: 'media/jamaica-say-you-will-remastered-jackson-browne.mp3' },
+  { title: 'JESUS TREE by Detroit California', artist: '', src: 'media/jesus-tree-detroit-california.mp3' },
+  { title: 'KID by Tabano Hollow', artist: '', src: 'media/kid-tabano-hollow.mp3' },
+  { title: 'LAPUTA by Panchiko', artist: '', src: 'media/laputa-panchiko.mp3' },
+  { title: 'LATE FOR THE SKY (Remastered) by Jackson Browne', artist: '', src: 'media/late-for-the-sky-remastered-jackson-browne.mp3' },
+  { title: 'LIFETIMES by Enrico', artist: '', src: EMBEDDED_TRACK_SRC },
+  { title: 'LIKE A ROLLING STONE by Bob Dylan', artist: '', src: 'media/like-a-rolling-stone-bob-dylan.mp3' },
+  { title: 'LINUS AND LUCY by Vince Guaraldi Trio', artist: '', src: 'media/linus-and-lucy-vince-guaraldi-trio.mp3' },
+  { title: 'LOVE TAKES MILES by Cameron Winter', artist: '', src: 'media/love-takes-miles-cameron-winter.mp3' },
+  { title: 'LUV SCARS K.O. 1600 by Lil Uzi Vert', artist: '', src: 'media/luv-scars-ko-1600-lil-uzi-vert.mp3' },
+  { title: 'MISSING by Louis De Schouwer', artist: '', src: 'media/missing-louis-de-schouwer.mp3' },
+  { title: 'MONDAY by Quadeca', artist: '', src: 'media/monday-quadeca.mp3' },
+  { title: 'MR. PRESIDENT by Bassvictim', artist: '', src: 'media/mr-president-bassvictim.mp3' },
+  { title: 'NUN 4 NO SCHMUCK by Glokk40Spaz', artist: '', src: 'media/nun-4-no-schmuck-glokk40spaz.mp3' },
+  { title: 'PINK HAIR by Louis De Schouwer', artist: '', src: 'media/pink-hair-louis-de-schouwer.mp3' },
+  { title: 'POLICE SCANNER by Chanel Beads', artist: '', src: 'media/police-scanner-chanel-beads.mp3' },
+  { title: "PRACTICE by Pi'erre Bourne", artist: '', src: 'media/practice-pierre-bourne.mp3' },
+  { title: 'QUEEN JANE APPROXIMATELY by Bob Dylan', artist: '', src: 'media/queen-jane-approximately-bob-dylan.mp3' },
+  { title: 'righttttraaack by Truman Sinclair', artist: '', src: 'media/righttttraaack-truman-sinclair.mp3' },
+  { title: 'RÉU CONFESSO by Tim Maia', artist: '', src: 'media/reu-confesso-tim-maia.mp3' },
+  { title: 'SARAH by Alex G', artist: '', src: 'media/sarah-alex-g.mp3' },
+  { title: 'SAY IT by Sake by the Water', artist: '', src: 'media/say-it-sake-by-the-water.mp3' },
+  { title: "SHARED DREAMS by You'll Never Get To Heaven", artist: '', src: 'media/shared-dreams-youll-never-get-to-heaven.mp3' },
+  { title: 'SIS by Clairo', artist: '', src: 'media/sis-clairo.mp3' },
+  { title: 'SQUARE WAVE by The Voidz', artist: '', src: 'media/square-wave-the-voidz.mp3' },
   { title: 'SUBMERGE FM by Yaeji', artist: '', src: 'media/submerge-fm-yaeji.mp3' },
+  { title: 'TAXES by Geese', artist: '', src: 'media/taxes-geese.mp3' },
+  { title: 'TOSS by Whirr', artist: '', src: 'media/toss-whirr.mp3' },
+  { title: 'UNDER DA SUN 2 by Duwap Kaine', artist: '', src: 'media/under-da-sun-2-duwap-kaine.mp3' },
+  { title: 'UPPERCUT by Arthur Fabbro', artist: '', src: 'media/uppercut-arthur-fabbro.mp3' },
   { title: 'WATCH THE PLANETS by Nato Kitch', artist: '', src: 'media/watch-the-planets-nato-kitch.mp3' },
   { title: 'WHEN YOU CALL by Synedoche New York', artist: '', src: 'media/when-you-call-synedoche-new-york.mp3' },
-  { title: 'RÉU CONFESSO by Tim Maia', artist: '', src: 'media/reu-confesso-tim-maia.mp3' },
-  { title: 'GOSTAVA TANTO DE VOCÊ by Tim Maia', artist: '', src: 'media/gostava-tanto-de-voce-tim-maia.mp3' },
-  { title: "I'M NOT YOUR MAN by Junior Mesa", artist: '', src: 'media/im-not-your-man-junior-mesa.mp3' },
-  { title: 'DIOR by feeble little horse', artist: '', src: 'media/dior-feeble-little-horse.mp3' },
-  { title: 'BACK OF A TRUCK by Rostam', artist: '', src: 'media/back-of-a-truck-rostam.mp3' },
-  { title: 'CHANGE IS IN THE AIR by Jesse Welles', artist: '', src: 'media/change-is-in-the-air-jesse-welles.mp3' },
-  { title: 'BEACHES by beabadoobee', artist: '', src: 'media/beaches-beabadoobee.mp3' },
-  { title: 'JESUS TREE by Detroit California', artist: '', src: 'media/jesus-tree-detroit-california.mp3' },
-  { title: 'TOSS by Whirr', artist: '', src: 'media/toss-whirr.mp3' },
-  { title: 'FEEL NO WAYS by Drake', artist: '', src: 'media/feel-no-ways-drake.mp3' },
-  { title: 'UNDER DA SUN 2 by Duwap Kaine', artist: '', src: 'media/under-da-sun-2-duwap-kaine.mp3' },
-  { title: "PRACTICE by Pi'erre Bourne", artist: '', src: 'media/practice-pierre-bourne.mp3' },
-  { title: '11TH DIMENSION by Julian Casablancas', artist: '', src: 'media/11th-dimension-julian-casablancas.mp3' },
-  { title: 'DANCING IN THE CLUB by This is Lorelei', artist: '', src: 'media/dancing-in-the-club-this-is-lorelei.mp3' },
-  { title: 'POLICE SCANNER by Chanel Beads', artist: '', src: 'media/police-scanner-chanel-beads.mp3' },
-  { title: 'LINUS AND LUCY by Vince Guaraldi Trio', artist: '', src: 'media/linus-and-lucy-vince-guaraldi-trio.mp3' },
-  { title: 'BROOKLYN BRIDGE TO CHORUS by The Strokes', artist: '', src: 'media/brooklyn-bridge-to-chorus-the-strokes.mp3' },
-  { title: 'NUN 4 NO SCHMUCK by Glokk40Spaz', artist: '', src: 'media/nun-4-no-schmuck-glokk40spaz.mp3' },
-  { title: 'BIG STAR by Free Range', artist: '', src: 'media/big-star-free-range.mp3' },
-  { title: 'LIKE A ROLLING STONE by Bob Dylan', artist: '', src: 'media/like-a-rolling-stone-bob-dylan.mp3' },
-  { title: 'LUV SCARS K.O. 1600 by Lil Uzi Vert', artist: '', src: 'media/luv-scars-ko-1600-lil-uzi-vert.mp3' },
-  { title: 'DANCE II by Discovery Zone', artist: '', src: 'media/dance-ii-discovery-zone.mp3' },
-  { title: "SHARED DREAMS by You'll Never Get To Heaven", artist: '', src: 'media/shared-dreams-youll-never-get-to-heaven.mp3' },
-  { title: 'EVERY EXCHANGE by Hovvdy', artist: '', src: 'media/every-exchange-hovvdy.mp3' },
-  { title: 'MONDAY by Quadeca', artist: '', src: 'media/monday-quadeca.mp3' },
-  { title: 'YOU WENT IN PHASES by Brittle Stars', artist: '', src: 'media/you-went-in-phases-brittle-stars.mp3' },
-  { title: 'ABANDON ME by Quadeca, Kevin Abstract', artist: '', src: 'media/abandon-me-quadeca-kevin-abstract.mp3' },
-  { title: 'BAGS by Clairo', artist: '', src: 'media/bags-clairo.mp3' },
-  { title: 'KID by Tabano Hollow', artist: '', src: 'media/kid-tabano-hollow.mp3' },
-  { title: 'BONES by Tabano Hollow', artist: '', src: 'media/bones-tabano-hollow.mp3' },
-  { title: 'TAXES by Geese', artist: '', src: 'media/taxes-geese.mp3' },
   { title: "WHERE'S YOUR LOVE NOW by This is Lorelei", artist: '', src: 'media/wheres-your-love-now-this-is-lorelei.mp3' },
-  { title: 'EVOLVER by Lunchbox', artist: '', src: 'media/evolver-lunchbox.mp3' },
-  { title: 'BUTTERFLY by Beno', artist: '', src: 'media/butterfly-beno.mp3' },
-  { title: 'ALL MY FRIENDS by LCD Soundsystem', artist: '', src: 'media/all-my-friends-lcd-soundsystem.mp3' },
-  { title: '1979 by Smashing Pumpkins', artist: '', src: 'media/1979-smashing-pumpkins.mp3' },
-  { title: 'SQUARE WAVE by The Voidz', artist: '', src: 'media/square-wave-the-voidz.mp3' },
-  { title: 'HEY JUDE by The Beatles', artist: '', src: 'media/hey-jude-the-beatles.mp3' },
-  { title: 'QUEEN JANE APPROXIMATELY by Bob Dylan', artist: '', src: 'media/queen-jane-approximately-bob-dylan.mp3' },
-  { title: "I WASN'T THERE by DERBY, Kevin Abstract", artist: '', src: 'media/i-wasnt-there-derby-kevin-abstract.mp3' },
-  { title: 'DELETE by Ninajirachi', artist: '', src: 'media/delete-ninajirachi.mp3' },
-  { title: 'righttttraaack by Truman Sinclair', artist: '', src: 'media/righttttraaack-truman-sinclair.mp3' },
-  { title: 'dust to dust by Truman Sinclair', artist: '', src: 'media/dust-to-dust-truman-sinclair.mp3' },
-  { title: 'SAY IT by Sake by the Water', artist: '', src: 'media/say-it-sake-by-the-water.mp3' },
-  { title: 'LOVE TAKES MILES by Cameron Winter', artist: '', src: 'media/love-takes-miles-cameron-winter.mp3' },
-  { title: 'MR. PRESIDENT by Bassvictim', artist: '', src: 'media/mr-president-bassvictim.mp3' },
-  { title: 'UPPERCUT by Arthur Fabbro', artist: '', src: 'media/uppercut-arthur-fabbro.mp3' },
-  { title: 'BLEED by Dead Calm', artist: '', src: 'media/bleed-dead-calm.mp3' },
-  { title: 'ALESIS by Mk.gee', artist: '', src: 'media/alesis-mk-gee.mp3' },
-  { title: 'MISSING by Louis De Schouwer', artist: '', src: 'media/missing-louis-de-schouwer.mp3' },
-  { title: 'can we just forget by baileyrp', artist: '', src: 'media/can-we-just-forget-baileyrp.mp3' },
-  { title: 'LAPUTA by Panchiko', artist: '', src: 'media/laputa-panchiko.mp3' },
-  { title: 'SIS by Clairo', artist: '', src: 'media/sis-clairo.mp3' },
-  { title: 'FOR THE BOTH OF US by Liim', artist: '', src: 'media/for-the-both-of-us-liim.mp3' },
-  { title: 'ANYTHING AT ALL by Tabano Hollow', artist: '', src: 'media/anything-at-all-tabano-hollow.mp3' },
-  { title: 'FOREVER by Alex G', artist: '', src: 'media/forever-alex-g.mp3' },
-  { title: "4U by Pi'erre Bourne", artist: '', src: 'media/4u-pierre-bourne.mp3' },
-  { title: 'JAMAICA SAY YOU WILL (Remastered) by Jackson Browne', artist: '', src: 'media/jamaica-say-you-will-remastered-jackson-browne.mp3' },
-  { title: 'FOUNTAIN OF SORROW (Remastered) by Jackson Browne', artist: '', src: 'media/fountain-of-sorrow-remastered-jackson-browne.mp3' },
-  { title: 'CAN YOU HEAR THE WHISTLE BLOW by 缺省', artist: '', src: 'media/can-you-hear-the-whistle-blow-quesheng.mp3' },
-  { title: 'BORED by The Obsessives', artist: '', src: 'media/bored-the-obsessives.mp3' },
-  { title: 'LATE FOR THE SKY (Remastered) by Jackson Browne', artist: '', src: 'media/late-for-the-sky-remastered-jackson-browne.mp3' },
-  { title: 'PINK HAIR by Louis De Schouwer', artist: '', src: 'media/pink-hair-louis-de-schouwer.mp3' },
-  { title: 'HOMERUNNER by Slayr', artist: '', src: 'media/homerunner-slayr.mp3' },
-  { title: "I'LL SHOW YOU MINE by Victoryland", artist: '', src: 'media/ill-show-you-mine-victoryland.mp3' },
-  { title: 'SARAH by Alex G', artist: '', src: 'media/sarah-alex-g.mp3' }
+  { title: 'YOU WENT IN PHASES by Brittle Stars', artist: '', src: 'media/you-went-in-phases-brittle-stars.mp3' }
 ];
 
 let musicAudio = null;
-let musicIndex = Math.floor(Math.random() * musicPlaylist.length);
+
+// On page load, start on a random pick from this small curated set of songs.
+const STARTER_TRACK_TITLES = [
+  "WHERE'S YOUR LOVE NOW by This is Lorelei",
+  'KID by Tabano Hollow',
+  'BONES by Tabano Hollow',
+  'MONDAY by Quadeca'
+];
+const starterIndices = musicPlaylist
+  .map((song, i) => STARTER_TRACK_TITLES.includes(song.title) ? i : -1)
+  .filter(i => i !== -1);
+let musicIndex = starterIndices.length
+  ? starterIndices[Math.floor(Math.random() * starterIndices.length)]
+  : Math.floor(Math.random() * musicPlaylist.length);
 let musicWindowReady = false;
 let musicHistory = [];
 
@@ -2603,16 +2616,31 @@ function setupMusicPlayer(win) {
     });
   }
 
+  function playlistRowAction(i) {
+    if (i === musicIndex && musicAudio.src) {
+      if (musicAudio.paused) {
+        musicAudio.play().catch(() => {
+          get('musicStatus').textContent = 'Could not play the embedded MP3. Try clicking Play again.';
+        });
+      } else {
+        musicAudio.pause();
+      }
+      updateMusicUI();
+    } else {
+      loadMusicTrack(i, true);
+    }
+  }
+
   win.querySelectorAll('.music-track').forEach(row => {
     row.addEventListener('click', (e) => {
       e.stopPropagation();
-      loadMusicTrack(Number(row.dataset.track), true);
+      playlistRowAction(Number(row.dataset.track));
     });
   });
   win.querySelectorAll('[data-track-play]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      loadMusicTrack(Number(btn.dataset.trackPlay), true);
+      playlistRowAction(Number(btn.dataset.trackPlay));
     });
   });
 
@@ -2656,7 +2684,11 @@ function updateMusicUI() {
   if (time) time.textContent = `${formatTime(musicAudio.currentTime)} / ${formatTime(duration)}`;
 
   document.querySelectorAll('.music-track').forEach(row => {
-    row.classList.toggle('active', Number(row.dataset.track) === musicIndex);
+    const i = Number(row.dataset.track);
+    const isActive = i === musicIndex;
+    row.classList.toggle('active', isActive);
+    const btn = row.querySelector('[data-track-play]');
+    if (btn) btn.innerHTML = (isActive && !musicAudio.paused) ? ICON_PAUSE : ICON_PLAY;
   });
 }
 
@@ -3035,9 +3067,18 @@ document.getElementById('startBtn').addEventListener('click', () => {
         row.addEventListener('click', (e) => {
           e.stopPropagation();
           const i = Number(row.dataset.idx);
-          musicHistory.push(index);
-          loadTrack(i);
-          audio.play().catch(function () {});
+          if (i === index && audio.src) {
+            if (audio.paused) {
+              audio.play().catch(function () {});
+            } else {
+              audio.pause();
+            }
+            update();
+          } else {
+            musicHistory.push(index);
+            loadTrack(i);
+            audio.play().catch(function () {});
+          }
         });
       });
     }
@@ -3045,7 +3086,11 @@ document.getElementById('startBtn').addEventListener('click', () => {
     function updateMiniPlaylistActive() {
       if (!miniPlaylistEl) return;
       miniPlaylistEl.querySelectorAll('.mini-track').forEach(row => {
-        row.classList.toggle('active', Number(row.dataset.idx) === index);
+        const i = Number(row.dataset.idx);
+        const isActive = i === index;
+        row.classList.toggle('active', isActive);
+        const btn = row.querySelector('[data-play-idx]');
+        if (btn) btn.innerHTML = (isActive && !audio.paused) ? ICON_PAUSE : ICON_PLAY;
       });
     }
 

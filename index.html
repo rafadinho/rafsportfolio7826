@@ -347,13 +347,13 @@
     background: #c0c0c0;
   }
   @media (hover: hover) {
-    button:hover {
-      background: #a8a8a8;
+    html button:hover {
+      background: #a8a8a8 !important;
     }
     .titlebar button[data-act="close"]:hover {
-      background: #8f0e17;
+      background: #8f0e17 !important;
       color: #fff;
-      box-shadow: inset 0 0 0 2px #8f0e17;
+      box-shadow: inset 0 0 0 2px #8f0e17 !important;
     }
   }
   .titlebar button:active {
@@ -661,19 +661,36 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0,0,0,0.35);
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.6);
-    width: 34px;
-    height: 44px;
-    font-size: 20px;
+    background: #c0c0c0;
+    color: #000;
+    border: none;
+    border-radius: 0;
+    box-shadow:
+      inset -1px -1px 0 #000,
+      inset 1px 1px 0 #fff,
+      inset -2px -2px 0 #808080,
+      inset 2px 2px 0 #dfdfdf;
+    width: 28px;
+    height: 40px;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 1;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     z-index: 5;
+    opacity: 0.9;
   }
-  .vid-arrow:hover { background: rgba(0,0,0,0.6); }
+  .vid-arrow:active {
+    box-shadow:
+      inset 1px 1px 0 #000,
+      inset -1px -1px 0 #fff,
+      inset 2px 2px 0 #808080,
+      inset -2px -2px 0 #dfdfdf;
+  }
   .vid-arrow.left { left: 6px; }
   .vid-arrow.right { right: 6px; }
 
@@ -1402,11 +1419,11 @@
       </div>
     </div>
     <div class="win-body">
-      <div class="vid-arrow left" id="vidPrev">‹</div>
+      <button class="vid-arrow left" id="vidPrev" type="button" title="Previous">‹</button>
       <video id="vidEl" autoplay loop playsinline></video>
       <iframe id="ytFrame" style="display:none; width:100%; height:100%; border:0;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       <div class="yt-note" id="ytNote">Use the YouTube player controls for this clip.</div>
-      <div class="vid-arrow right" id="vidNext">›</div>
+      <button class="vid-arrow right" id="vidNext" type="button" title="Next">›</button>
       <div class="vid-controls" id="vidControls">
         <button id="vidBack5" title="Back 5 seconds">« 5s</button>
         <button id="vidPlayPause" title="Play/Pause"></button>
@@ -1443,9 +1460,9 @@
       </div>
     </div>
     <div class="win-body">
-      <div class="vid-arrow left" id="longVidPrev">‹</div>
+      <button class="vid-arrow left" id="longVidPrev" type="button" title="Previous">‹</button>
       <iframe id="longYtFrame" style="width:100%; height:100%; border:0;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-      <div class="vid-arrow right" id="longVidNext">›</div>
+      <button class="vid-arrow right" id="longVidNext" type="button" title="Next">›</button>
       <div class="vid-caption" id="longVidCaption">Long video 1 of 3</div>
     </div>
     <div class="blurb-bar">
@@ -2423,6 +2440,10 @@ vidEl.addEventListener('pause', syncVideoControls);
 /* Open Long Videos by default, behind the main video window */
 openLongVideosWindow();
 
+/* Open Design Work by default too */
+const designFolder = folders.find(f => f.id === 'design');
+if (designFolder) openFolder(designFolder);
+
 bringToFront(videoWinEl);
 
 
@@ -2517,22 +2538,11 @@ try {
   if (rawMusicState) savedMusicState = JSON.parse(rawMusicState);
 } catch (e) {}
 
-// On page load, start on a random pick from this small curated set of songs
-// (unless we have a saved playback position to resume instead).
-const STARTER_TRACK_TITLES = [
-  "WHERE'S YOUR LOVE NOW by This is Lorelei",
-  'KID by Tabano Hollow',
-  'BONES by Tabano Hollow',
-  'MONDAY by Quadeca'
-];
-const starterIndices = musicPlaylist
-  .map((song, i) => STARTER_TRACK_TITLES.includes(song.title) ? i : -1)
-  .filter(i => i !== -1);
+// On page load, start on a totally random song (unless we have a saved
+// playback position from a recent reload to resume instead).
 let musicIndex = (savedMusicState && musicPlaylist[savedMusicState.index] != null)
   ? savedMusicState.index
-  : (starterIndices.length
-    ? starterIndices[Math.floor(Math.random() * starterIndices.length)]
-    : Math.floor(Math.random() * musicPlaylist.length));
+  : Math.floor(Math.random() * musicPlaylist.length);
 let musicWindowReady = false;
 let musicHistory = [];
 
@@ -2863,11 +2873,9 @@ if (bootStartBtnEl && bootScreenEl) {
         clearInterval(fillInterval);
         setTimeout(() => {
           bootScreenEl.classList.add('hidden');
-          // "Booting into the computer" — pop open any windows that were
-          // already sitting open on the desktop, staggered slightly.
-          document.querySelectorAll('#desktop > .win:not(.hidden)').forEach((win, i) => {
-            playWindowOpenAnim(win, i * 90);
-          });
+          // "Booting into the computer" — reset the desktop back to its
+          // default view; goHome() also pops each window open as it goes.
+          goHome();
         }, 400);
       }
     }, 180);
@@ -2875,10 +2883,55 @@ if (bootStartBtnEl && bootScreenEl) {
 }
 
 /* ---------------- START BUTTON ---------------- */
+const DEFAULT_OPEN_WINDOW_IDS = ['video', 'longvideos', 'design'];
+
+function goHome() {
+  // Close anything that isn't part of the default desktop view.
+  Object.keys(openWindows).forEach((winId) => {
+    if (!DEFAULT_OPEN_WINDOW_IDS.includes(winId)) {
+      closeWindow(openWindows[winId]);
+    }
+  });
+  // Make sure the default windows are open and visible again.
+  if (openWindows['video']) {
+    restoreWindow(openWindows['video']);
+  } else {
+    openVideoWindow();
+  }
+  if (openWindows['longvideos']) {
+    restoreWindow(openWindows['longvideos']);
+  } else {
+    openLongVideosWindow();
+  }
+  if (openWindows['design']) {
+    restoreWindow(openWindows['design']);
+  } else if (designFolder) {
+    openFolder(designFolder);
+  }
+  document.querySelectorAll('.icon').forEach(i => i.classList.remove('selected'));
+  if (openWindows['video']) bringToFront(openWindows['video']);
+  // Note: intentionally does not touch musicAudio/desktopMusicAudio at all,
+  // so the background song keeps playing uninterrupted.
+}
+
+function showBootScreen() {
+  if (!bootScreenEl) return;
+  bootScreenEl.classList.remove('hidden');
+  if (bootStartBtnEl) bootStartBtnEl.style.display = '';
+  if (bootLoadingBarEl) {
+    bootLoadingBarEl.classList.remove('active');
+    bootLoadingBarEl.querySelectorAll('.boot-square').forEach(sq => sq.classList.remove('filled'));
+  }
+  if (bootLoadingTextEl) bootLoadingTextEl.classList.remove('active');
+  // Note: this only shows the title screen overlay again — it doesn't touch
+  // the desktop or the music underneath, so playback stays uninterrupted.
+}
+
 document.getElementById('startBtn').addEventListener('click', () => {
   document.getElementById('startBtn').style.boxShadow = 'inset 1px 1px 0 #000, inset -1px -1px 0 #fff';
   setTimeout(() => {
-    window.location.reload();
+    document.getElementById('startBtn').style.boxShadow = '';
+    showBootScreen();
   }, 150);
 });
 </script>

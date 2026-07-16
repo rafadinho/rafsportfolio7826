@@ -914,6 +914,16 @@
     white-space: nowrap;
     flex: 1;
   }
+  .mini-playlist .track-duration {
+    flex-shrink: 0;
+    font-size: 10px;
+    color: #555;
+    min-width: 28px;
+    text-align: right;
+  }
+  .mini-playlist .mini-track.active .track-duration {
+    color: #cfd8ff;
+  }
   .mini-playlist .mini-track button {
     background: #c0c0c0;
     color: #000;
@@ -1036,9 +1046,25 @@
     padding: 4px;
     cursor: pointer;
   }
+  .music-track-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .music-track .track-duration {
+    flex-shrink: 0;
+    font-size: 10px;
+    color: #444;
+    min-width: 28px;
+    text-align: right;
+  }
   .music-track.active {
     background: #000080;
     color: #fff;
+  }
+  .music-track.active .track-duration {
+    color: #cfd8ff;
   }
   .music-note {
     margin-top: 8px;
@@ -1409,7 +1435,7 @@
 
   <!-- Video player window, open by default -->
 
-  <div class="win" id="videoWin" style="left: 430px; top: 130px;">
+  <div class="win" id="videoWin" style="left: 780px; top: 145px;">
     <div class="titlebar">
       <div class="title"><span>🎬</span><span>Now Playing.raf</span></div>
       <div class="btns">
@@ -1450,7 +1476,7 @@
     <div class="resize-handle br" data-resize="br" title="Drag to resize"></div>
   </div>
 
-  <div class="win hidden" id="longVideoWin" style="left: 40px; top: 60px; width: 640px; height: 460px;">
+  <div class="win hidden" id="longVideoWin" style="left: 160px; top: 60px; width: 640px; height: 460px;">
     <div class="titlebar">
       <div class="title"><span>🎬</span><span>Long Videos</span></div>
       <div class="btns">
@@ -2061,8 +2087,8 @@ function openFolder(f) {
       glyph: '📁',
       width: 620,
       height: 520,
-      left: 780,
-      top: 260,
+      left: jitterPos(900, 45),
+      top: jitterPos(260, 30),
       bodyHTML: `<div class="gallery">${items}</div>`,
       statusText: `${designWorkImages.length} object(s) — double-click not needed, single click to view`
     });
@@ -2437,12 +2463,17 @@ vidEl.addEventListener('loadedmetadata', syncVideoControls);
 vidEl.addEventListener('play', syncVideoControls);
 vidEl.addEventListener('pause', syncVideoControls);
 
+/* A little random jitter so the default layout doesn't look too mechanically arranged. */
+function jitterPos(base, range) {
+  return Math.round(base + (Math.random() * 2 - 1) * range);
+}
+videoWinEl.style.left = jitterPos(780, 30) + 'px';
+videoWinEl.style.top = jitterPos(145, 20) + 'px';
+longVideoWinEl.style.left = jitterPos(160, 35) + 'px';
+longVideoWinEl.style.top = jitterPos(60, 25) + 'px';
+
 /* Open Long Videos by default, behind the main video window */
 openLongVideosWindow();
-
-/* Open Design Work by default too */
-const designFolder = folders.find(f => f.id === 'design');
-if (designFolder) openFolder(designFolder);
 
 bringToFront(videoWinEl);
 
@@ -2588,10 +2619,55 @@ function pickRandomTrackIndex(currentIndex, total) {
   return total - 1;
 }
 
+/* ---------------- PLAYLIST TRACK DURATIONS ---------------- */
+// Quietly fetches just enough of each mp3 to read its duration, then fills
+// it into any visible playlist rows (CD Player window + mini playlist).
+const trackDurations = new Array(musicPlaylist.length).fill(null);
+
+function formatTrackDuration(seconds) {
+  if (!Number.isFinite(seconds) || seconds < 0) return '';
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+  return m + ':' + s;
+}
+
+function paintTrackDuration(i) {
+  const dur = trackDurations[i];
+  if (dur == null) return;
+  const text = formatTrackDuration(dur);
+  document.querySelectorAll(`[data-track-duration="${i}"]`).forEach(el => {
+    el.textContent = text;
+  });
+}
+
+function loadAllTrackDurations() {
+  const CONCURRENCY = 4;
+  const queue = musicPlaylist.map((_, i) => i);
+  let cursor = 0;
+
+  function loadNext() {
+    if (cursor >= queue.length) return;
+    const i = queue[cursor++];
+    const probe = new Audio();
+    probe.preload = 'metadata';
+    probe.addEventListener('loadedmetadata', () => {
+      trackDurations[i] = probe.duration;
+      paintTrackDuration(i);
+      loadNext();
+    }, { once: true });
+    probe.addEventListener('error', () => { loadNext(); }, { once: true });
+    probe.src = musicPlaylist[i].src;
+  }
+
+  for (let c = 0; c < CONCURRENCY; c++) loadNext();
+}
+loadAllTrackDurations();
+
 function openMusicWindow() {
   const playlistHTML = musicPlaylist.map((song, i) => `
     <div class="music-track" data-track="${i}">
-      <span>${i + 1}. ${song.title}</span>
+      <span class="music-track-name">${i + 1}. ${song.title}</span>
+      <span class="track-duration" data-track-duration="${i}"></span>
       <button data-track-play="${i}">${ICON_PLAY}</button>
     </div>
   `).join('');
@@ -2642,6 +2718,7 @@ function openMusicWindow() {
     statusText: 'Music player ready — LIFETIMES loaded'
   });
 
+  trackDurations.forEach((dur, i) => { if (dur != null) paintTrackDuration(i); });
   setupMusicPlayer(win);
   return win;
 }
@@ -2883,7 +2960,7 @@ if (bootStartBtnEl && bootScreenEl) {
 }
 
 /* ---------------- START BUTTON ---------------- */
-const DEFAULT_OPEN_WINDOW_IDS = ['video', 'longvideos', 'design'];
+const DEFAULT_OPEN_WINDOW_IDS = ['video', 'longvideos'];
 
 function goHome() {
   // Close anything that isn't part of the default desktop view.
@@ -2902,11 +2979,6 @@ function goHome() {
     restoreWindow(openWindows['longvideos']);
   } else {
     openLongVideosWindow();
-  }
-  if (openWindows['design']) {
-    restoreWindow(openWindows['design']);
-  } else if (designFolder) {
-    openFolder(designFolder);
   }
   document.querySelectorAll('.icon').forEach(i => i.classList.remove('selected'));
   if (openWindows['video']) bringToFront(openWindows['video']);
@@ -3181,6 +3253,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
       miniPlaylistEl.innerHTML = tracks.map((t, i) => `
         <div class="mini-track" data-idx="${i}">
           <span class="mini-track-name">${i + 1}. ${t.title}</span>
+          <span class="track-duration" data-track-duration="${i}"></span>
           <button type="button" data-play-idx="${i}" title="Play this song">${ICON_PLAY}</button>
         </div>
       `).join('');

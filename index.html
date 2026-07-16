@@ -195,6 +195,19 @@
     z-index: 2;
   }
 
+  /* ---------- SNOW OVERLAY ---------- */
+  #snowCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+
   .icon {
     width: 80px;
     padding: 4px 2px;
@@ -1132,6 +1145,20 @@
     padding: 3px 10px;
     font-size: 12px;
   }
+  #weatherBtn {
+    margin-left: 6px;
+    background: #c0c0c0;
+    box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #fff;
+    padding: 3px 8px;
+    font-size: 13px;
+    line-height: 1;
+    border: none;
+    cursor: pointer;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+  }
+  #weatherBtn:active {
+    box-shadow: inset -1px -1px 0 #808080, inset 1px 1px 0 #fff;
+  }
 
   /* ---------- RESIZE HANDLES ---------- */
   .resize-handle {
@@ -1431,6 +1458,8 @@
 
 <div id="desktop">
 
+  <canvas id="snowCanvas"></canvas>
+
   <div id="icons"></div>
 
   <!-- Video player window, open by default -->
@@ -1538,6 +1567,7 @@
     <div id="startBtn"><span>▣</span><span>Start</span></div>
     <div id="taskbar-sep"></div>
     <div id="taskItems" style="display:flex; gap:4px; flex:1; overflow:hidden;"></div>
+    <button id="weatherBtn" type="button" title="Change weather">❄️</button>
     <div id="clock">--:--</div>
   </div>
 </div>
@@ -3494,6 +3524,243 @@ document.getElementById('startBtn').addEventListener('click', () => {
     },
     true
   );
+})();
+</script>
+
+<script>
+/* ---------- WEATHER / ENVIRONMENT OVERLAY ---------- */
+(function () {
+  const canvas = document.getElementById("snowCanvas");
+  const weatherBtn = document.getElementById("weatherBtn");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const desktop = document.getElementById("desktop");
+
+  // Chunky pixel size — bump up for even blockier "8-bit" particles.
+  const PIXEL = 4;
+  // Retro low frame-rate stepping — particles jump instead of gliding smoothly.
+  const STEP_MS = 80;
+
+  const MODES = ["snow", "rain", "leaves", "fireflies", "off"];
+  const MODE_META = {
+    snow:      { icon: "❄️", label: "Snowy" },
+    rain:      { icon: "🌧️", label: "Rainy" },
+    leaves:    { icon: "🍂", label: "Autumn" },
+    fireflies: { icon: "✨", label: "Fireflies" },
+    off:       { icon: "☀️", label: "Clear" }
+  };
+
+  let mode = "snow";
+  try {
+    const saved = localStorage.getItem("desktopWeather");
+    if (saved && MODE_META[saved]) mode = saved;
+  } catch (e) { /* ignore */ }
+
+  let particles = [];
+  let dpr = Math.max(1, window.devicePixelRatio || 1);
+  let running = true;
+  let lastTick = 0;
+
+  function sizeCanvas() {
+    const w = desktop.clientWidth;
+    const h = desktop.clientHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + "px";
+    canvas.style.height = h + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    return { w, h };
+  }
+
+  /* ---- per-mode particle factories ---- */
+  const SNOW_COLORS = ["#ffffff", "#e8f4ff", "#cfe8ff"];
+  const RAIN_COLORS = ["#bcd8ff", "#8fb8ee", "#6ea2e0"];
+  const LEAF_COLORS = ["#d9772e", "#c1481f", "#e0a83a", "#8a3b1f"];
+  const FIREFLY_COLORS = ["#f2ff9c", "#d8ff6e", "#eaff4d"];
+
+  function randX(w) { return Math.floor(Math.random() * (w / PIXEL)) * PIXEL; }
+  function randY(h) { return Math.floor(Math.random() * (h / PIXEL)) * PIXEL; }
+
+  function makeParticle(m, w, h, randomY) {
+    switch (m) {
+      case "snow":
+        return {
+          x: randX(w),
+          y: randomY ? randY(h) : -PIXEL * 2,
+          size: PIXEL * (1 + Math.floor(Math.random() * 3)),
+          dropEvery: 1 + Math.floor(Math.random() * 2),
+          driftDir: Math.random() < 0.5 ? -1 : 1,
+          driftEvery: 3 + Math.floor(Math.random() * 4),
+          tick: Math.floor(Math.random() * 4),
+          color: SNOW_COLORS[Math.floor(Math.random() * SNOW_COLORS.length)]
+        };
+      case "rain":
+        return {
+          x: randX(w),
+          y: randomY ? randY(h) : -PIXEL * 4,
+          w: PIXEL,
+          h: PIXEL * (2 + Math.floor(Math.random() * 2)),
+          dropEvery: 1,
+          dropAmt: PIXEL * (2 + Math.floor(Math.random() * 2)),
+          driftEvery: 1,
+          driftDir: -1, // constant windward slant
+          tick: Math.floor(Math.random() * 4),
+          color: RAIN_COLORS[Math.floor(Math.random() * RAIN_COLORS.length)]
+        };
+      case "leaves":
+        return {
+          x: randX(w),
+          y: randomY ? randY(h) : -PIXEL * 2,
+          size: PIXEL * (1 + Math.floor(Math.random() * 2)),
+          dropEvery: 2 + Math.floor(Math.random() * 2),
+          driftDir: Math.random() < 0.5 ? -1 : 1,
+          driftEvery: 2 + Math.floor(Math.random() * 2),
+          flutter: Math.random() < 0.5,
+          tick: Math.floor(Math.random() * 4),
+          color: LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)]
+        };
+      case "fireflies":
+        return {
+          x: randX(w),
+          y: randomY ? randY(h) : randY(h),
+          size: PIXEL,
+          moveEvery: 2 + Math.floor(Math.random() * 3),
+          blinkEvery: 4 + Math.floor(Math.random() * 6),
+          lit: Math.random() < 0.5,
+          tick: Math.floor(Math.random() * 6),
+          color: FIREFLY_COLORS[Math.floor(Math.random() * FIREFLY_COLORS.length)]
+        };
+      default:
+        return null;
+    }
+  }
+
+  function targetCount(m, w, h) {
+    if (m === "off") return 0;
+    const area = w * h;
+    if (m === "rain") return Math.max(50, Math.min(160, Math.round(area / 8000)));
+    if (m === "fireflies") return Math.max(14, Math.min(40, Math.round(area / 30000)));
+    return Math.max(30, Math.min(100, Math.round(area / 12000)));
+  }
+
+  function init() {
+    const { w, h } = sizeCanvas();
+    const count = targetCount(mode, w, h);
+    particles = Array.from({ length: count }, () => makeParticle(mode, w, h, true)).filter(Boolean);
+  }
+
+  function draw() {
+    const w = canvas.width / dpr;
+    const h = canvas.height / dpr;
+    ctx.clearRect(0, 0, w, h);
+
+    for (const p of particles) {
+      if (mode === "rain") {
+        ctx.fillStyle = p.color;
+        ctx.fillRect(Math.round(p.x), Math.round(p.y), p.w, p.h);
+      } else if (mode === "fireflies") {
+        if (!p.lit) continue;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(Math.round(p.x), Math.round(p.y), p.size, p.size);
+      } else {
+        ctx.fillStyle = p.color;
+        ctx.fillRect(Math.round(p.x), Math.round(p.y), p.size, p.size);
+      }
+    }
+  }
+
+  function tick() {
+    const w = canvas.width / dpr;
+    const h = canvas.height / dpr;
+
+    for (const p of particles) {
+      p.tick++;
+
+      if (mode === "snow") {
+        if (p.tick % p.dropEvery === 0) p.y += PIXEL;
+        if (p.tick % p.driftEvery === 0) p.x += PIXEL * p.driftDir;
+      } else if (mode === "rain") {
+        if (p.tick % p.dropEvery === 0) p.y += p.dropAmt;
+        if (p.tick % p.driftEvery === 0) p.x += PIXEL * p.driftDir;
+      } else if (mode === "leaves") {
+        if (p.tick % p.dropEvery === 0) p.y += PIXEL;
+        if (p.tick % p.driftEvery === 0) {
+          p.x += PIXEL * p.driftDir;
+          if (p.flutter && Math.random() < 0.15) p.driftDir *= -1;
+        }
+      } else if (mode === "fireflies") {
+        if (p.tick % p.moveEvery === 0) {
+          p.x += PIXEL * (Math.random() < 0.5 ? -1 : 1);
+          p.y += PIXEL * (Math.random() < 0.5 ? -1 : 1);
+        }
+        if (p.tick % p.blinkEvery === 0) p.lit = !p.lit;
+      }
+
+      const overflowY = mode === "rain" ? PIXEL * 4 : PIXEL * 2;
+      if (mode !== "fireflies" && p.y > h + overflowY) {
+        Object.assign(p, makeParticle(mode, w, h, false));
+      }
+      if (mode === "fireflies") {
+        if (p.y < -PIXEL * 2) p.y = h + PIXEL * 2;
+        if (p.y > h + PIXEL * 2) p.y = -PIXEL * 2;
+      }
+      if (p.x > w + PIXEL * 2) p.x = -PIXEL * 2;
+      if (p.x < -PIXEL * 2) p.x = w + PIXEL * 2;
+    }
+    draw();
+  }
+
+  function step(timestamp) {
+    if (!running) return;
+    requestAnimationFrame(step);
+    if (timestamp - lastTick < STEP_MS) return;
+    lastTick = timestamp;
+    if (mode !== "off") tick();
+  }
+
+  const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function updateButton() {
+    if (!weatherBtn) return;
+    const meta = MODE_META[mode];
+    weatherBtn.textContent = meta.icon;
+    weatherBtn.title = "Change weather (currently: " + meta.label + ")";
+  }
+
+  function setMode(next) {
+    mode = next;
+    updateButton();
+    try { localStorage.setItem("desktopWeather", mode); } catch (e) { /* ignore */ }
+    init();
+    draw();
+  }
+
+  function start() {
+    updateButton();
+    init();
+    draw();
+    if (!prefersReducedMotion) requestAnimationFrame(step);
+  }
+
+  document.addEventListener("DOMContentLoaded", start);
+  if (document.readyState !== "loading") start();
+
+  window.addEventListener("resize", init);
+
+  document.addEventListener("visibilitychange", function () {
+    running = !document.hidden;
+    if (running && !prefersReducedMotion) requestAnimationFrame(step);
+  });
+
+  if (weatherBtn) {
+    weatherBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const idx = MODES.indexOf(mode);
+      setMode(MODES[(idx + 1) % MODES.length]);
+    });
+  }
 })();
 </script>
 

@@ -2560,20 +2560,23 @@ const musicPlaylist = [
 
 let musicAudio = null;
 
-// Remember where playback was (track + position + playing state) across a
-// reload — e.g. hitting the Start button shouldn't reset the song.
-const MUSIC_STATE_KEY = 'rafPortfolioMusicState';
-let savedMusicState = null;
-try {
-  const rawMusicState = sessionStorage.getItem(MUSIC_STATE_KEY);
-  if (rawMusicState) savedMusicState = JSON.parse(rawMusicState);
-} catch (e) {}
+// A handful of tracks with rap/hip-hop artists — kept in the shuffle and
+// playlist as normal, just excluded from being the song that greets someone
+// on a fresh visit.
+const RAP_TRACK_TITLES = [
+  "4U by Pi'erre Bourne",
+  'FEEL NO WAYS by Drake',
+  'LUV SCARS K.O. 1600 by Lil Uzi Vert',
+  'NUN 4 NO SCHMUCK by Glokk40Spaz',
+  "PRACTICE by Pi'erre Bourne",
+  'UNDER DA SUN 2 by Duwap Kaine'
+];
+const nonRapIndices = musicPlaylist
+  .map((song, i) => RAP_TRACK_TITLES.includes(song.title) ? -1 : i)
+  .filter(i => i !== -1);
 
-// On page load, start on a totally random song (unless we have a saved
-// playback position from a recent reload to resume instead).
-let musicIndex = (savedMusicState && musicPlaylist[savedMusicState.index] != null)
-  ? savedMusicState.index
-  : Math.floor(Math.random() * musicPlaylist.length);
+// On page load, start on a totally random (non-rap) song.
+let musicIndex = nonRapIndices[Math.floor(Math.random() * nonRapIndices.length)];
 let musicWindowReady = false;
 let musicHistory = [];
 
@@ -3401,44 +3404,17 @@ document.getElementById('startBtn').addEventListener('click', () => {
     loadTrack(index);
     player.style.display = "block";
 
-    // If we have a saved position (e.g. from hitting the Start button),
-    // resume there instead of doing the usual quiet-autoplay attempt.
-    if (savedMusicState) {
-      audio.addEventListener("loadedmetadata", function resumeSaved() {
-        if (Number.isFinite(savedMusicState.time)) {
-          audio.currentTime = savedMusicState.time;
-        }
-        if (savedMusicState.playing !== false) {
-          audio.play().catch(() => {});
-        }
-      }, { once: true });
-    } else {
-      // Try to autoplay quietly. Most browsers allow this at low/no volume,
-      // but if it's blocked outright, start on the visitor's first interaction.
-      const tryAutoplay = () => audio.play().catch(() => {});
-      tryAutoplay();
-      audio.addEventListener("canplay", tryAutoplay, { once: true });
-    }
+    // Try to autoplay quietly. Most browsers allow this at low/no volume,
+    // but if it's blocked outright, start on the visitor's first interaction.
+    const tryAutoplay = () => audio.play().catch(() => {});
+    tryAutoplay();
+    audio.addEventListener("canplay", tryAutoplay, { once: true });
 
     const startOnFirstInteraction = () => {
-      if (audio.paused && (!savedMusicState || savedMusicState.playing !== false)) {
-        audio.play().catch(() => {});
-      }
+      if (audio.paused) audio.play().catch(() => {});
     };
     document.addEventListener("click", startOnFirstInteraction, { once: true });
     document.addEventListener("keydown", startOnFirstInteraction, { once: true });
-
-    // Save playback position/state so a reload (e.g. the Start button)
-    // can pick the song back up instead of resetting it.
-    window.addEventListener("pagehide", function () {
-      try {
-        sessionStorage.setItem(MUSIC_STATE_KEY, JSON.stringify({
-          index: index,
-          time: audio.currentTime || 0,
-          playing: !audio.paused
-        }));
-      } catch (e) {}
-    });
   });
 })();
 </script>

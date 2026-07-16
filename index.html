@@ -2169,7 +2169,7 @@ setupBlurbToggle(document.getElementById('longVidBlurbToggle'), document.getElem
 function loadLongVideo(i) {
   longVidIndex = (i + longVideoPlaylist.length) % longVideoPlaylist.length;
   const v = longVideoPlaylist[longVidIndex];
-  longYtFrameEl.src = `https://www.youtube.com/embed/${v.youtubeId}?autoplay=1&rel=0&modestbranding=1`;
+  longYtFrameEl.src = `https://www.youtube.com/embed/${v.youtubeId}?autoplay=0&rel=0&modestbranding=1`;
   longVidCaptionEl.textContent = `${v.caption} — ${longVidIndex + 1} of ${longVideoPlaylist.length}`;
   const longVidBlurbTextEl = document.getElementById('longVidBlurbText');
   if (longVidBlurbTextEl) {
@@ -2380,7 +2380,36 @@ const musicPlaylist = [
   { title: 'BUTTERFLY by Beno', artist: '', src: 'media/butterfly-beno.mp3' },
   { title: 'ALL MY FRIENDS by LCD Soundsystem', artist: '', src: 'media/all-my-friends-lcd-soundsystem.mp3' },
   { title: '1979 by Smashing Pumpkins', artist: '', src: 'media/1979-smashing-pumpkins.mp3' },
-  { title: 'SQUARE WAVE by The Voidz', artist: '', src: 'media/square-wave-the-voidz.mp3' }
+  { title: 'SQUARE WAVE by The Voidz', artist: '', src: 'media/square-wave-the-voidz.mp3' },
+  { title: 'HEY JUDE by The Beatles', artist: '', src: 'media/hey-jude-the-beatles.mp3' },
+  { title: 'QUEEN JANE APPROXIMATELY by Bob Dylan', artist: '', src: 'media/queen-jane-approximately-bob-dylan.mp3' },
+  { title: "I WASN'T THERE by DERBY, Kevin Abstract", artist: '', src: 'media/i-wasnt-there-derby-kevin-abstract.mp3' },
+  { title: 'DELETE by Ninajirachi', artist: '', src: 'media/delete-ninajirachi.mp3' },
+  { title: 'righttttraaack by Truman Sinclair', artist: '', src: 'media/righttttraaack-truman-sinclair.mp3' },
+  { title: 'dust to dust by Truman Sinclair', artist: '', src: 'media/dust-to-dust-truman-sinclair.mp3' },
+  { title: 'SAY IT by Sake by the Water', artist: '', src: 'media/say-it-sake-by-the-water.mp3' },
+  { title: 'LOVE TAKES MILES by Cameron Winter', artist: '', src: 'media/love-takes-miles-cameron-winter.mp3' },
+  { title: 'MR. PRESIDENT by Bassvictim', artist: '', src: 'media/mr-president-bassvictim.mp3' },
+  { title: 'UPPERCUT by Arthur Fabbro', artist: '', src: 'media/uppercut-arthur-fabbro.mp3' },
+  { title: 'BLEED by Dead Calm', artist: '', src: 'media/bleed-dead-calm.mp3' },
+  { title: 'ALESIS by Mk.gee', artist: '', src: 'media/alesis-mk-gee.mp3' },
+  { title: 'MISSING by Louis De Schouwer', artist: '', src: 'media/missing-louis-de-schouwer.mp3' },
+  { title: 'can we just forget by baileyrp', artist: '', src: 'media/can-we-just-forget-baileyrp.mp3' },
+  { title: 'LAPUTA by Panchiko', artist: '', src: 'media/laputa-panchiko.mp3' },
+  { title: 'SIS by Clairo', artist: '', src: 'media/sis-clairo.mp3' },
+  { title: 'FOR THE BOTH OF US by Liim', artist: '', src: 'media/for-the-both-of-us-liim.mp3' },
+  { title: 'ANYTHING AT ALL by Tabano Hollow', artist: '', src: 'media/anything-at-all-tabano-hollow.mp3' },
+  { title: 'FOREVER by Alex G', artist: '', src: 'media/forever-alex-g.mp3' },
+  { title: "4U by Pi'erre Bourne", artist: '', src: 'media/4u-pierre-bourne.mp3' },
+  { title: 'JAMAICA SAY YOU WILL (Remastered) by Jackson Browne', artist: '', src: 'media/jamaica-say-you-will-remastered-jackson-browne.mp3' },
+  { title: 'FOUNTAIN OF SORROW (Remastered) by Jackson Browne', artist: '', src: 'media/fountain-of-sorrow-remastered-jackson-browne.mp3' },
+  { title: 'CAN YOU HEAR THE WHISTLE BLOW by 缺省', artist: '', src: 'media/can-you-hear-the-whistle-blow-quesheng.mp3' },
+  { title: 'BORED by The Obsessives', artist: '', src: 'media/bored-the-obsessives.mp3' },
+  { title: 'LATE FOR THE SKY (Remastered) by Jackson Browne', artist: '', src: 'media/late-for-the-sky-remastered-jackson-browne.mp3' },
+  { title: 'PINK HAIR by Louis De Schouwer', artist: '', src: 'media/pink-hair-louis-de-schouwer.mp3' },
+  { title: 'HOMERUNNER by Slayr', artist: '', src: 'media/homerunner-slayr.mp3' },
+  { title: "I'LL SHOW YOU MINE by Victoryland", artist: '', src: 'media/ill-show-you-mine-victoryland.mp3' },
+  { title: 'SARAH by Alex G', artist: '', src: 'media/sarah-alex-g.mp3' }
 ];
 
 let musicAudio = null;
@@ -2388,13 +2417,46 @@ let musicIndex = Math.floor(Math.random() * musicPlaylist.length);
 let musicWindowReady = false;
 let musicHistory = [];
 
+// Tracks that have played recently (most-recent last). Used to heavily
+// de-weight, but not fully block, songs from being picked again too soon.
+let recentPlays = [];
+const RECENT_PLAYS_WINDOW = 8;   // how many past plays count as "recent"
+const RECENT_PLAYS_WEIGHT = 0.12; // relative chance a recent song still gets picked
+
+function recordPlay(index) {
+  recentPlays.push(index);
+  const cap = Math.max(RECENT_PLAYS_WINDOW, Math.min(20, musicPlaylist.length));
+  if (recentPlays.length > cap) recentPlays.shift();
+}
+
+// Shuffle that avoids immediate repeats and gives recently played tracks a
+// low (but nonzero) chance of coming up again, instead of a hard cooldown.
 function pickRandomTrackIndex(currentIndex, total) {
   if (total <= 1) return currentIndex;
-  let r;
-  do {
-    r = Math.floor(Math.random() * total);
-  } while (r === currentIndex);
-  return r;
+
+  const recentSet = new Set(recentPlays.slice(-RECENT_PLAYS_WINDOW));
+  const weights = new Array(total).fill(1);
+  weights[currentIndex] = 0; // never repeat the song that's currently playing
+
+  for (let i = 0; i < total; i++) {
+    if (i !== currentIndex && recentSet.has(i)) {
+      weights[i] = RECENT_PLAYS_WEIGHT;
+    }
+  }
+
+  const totalWeight = weights.reduce((a, b) => a + b, 0);
+  if (totalWeight <= 0) {
+    let r;
+    do { r = Math.floor(Math.random() * total); } while (r === currentIndex);
+    return r;
+  }
+
+  let r = Math.random() * totalWeight;
+  for (let i = 0; i < total; i++) {
+    r -= weights[i];
+    if (r <= 0) return i;
+  }
+  return total - 1;
 }
 
 function openMusicWindow() {
@@ -2475,6 +2537,7 @@ function setupMusicPlayer(win) {
     const song = musicPlaylist[musicIndex];
     musicAudio.src = song.src;
     musicAudio.load();
+    recordPlay(musicIndex);
     updateMusicUI();
     if (autoplay) {
       musicAudio.play().catch(() => {
@@ -2993,6 +3056,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
       audio.src = tracks[index].src;
       title.textContent = tracks[index].title;
       audio.load();
+      recordPlay(index);
       update();
     }
 

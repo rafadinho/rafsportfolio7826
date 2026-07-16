@@ -346,6 +346,16 @@
   .titlebar button[data-act="max"] {
     background: #c0c0c0;
   }
+  @media (hover: hover) {
+    button:hover {
+      background: #a8a8a8;
+    }
+    .titlebar button[data-act="close"]:hover {
+      background: #8f0e17;
+      color: #fff;
+      box-shadow: inset 0 0 0 2px #8f0e17;
+    }
+  }
   .titlebar button:active {
     box-shadow:
       inset 1px 1px 0 #000,
@@ -2498,7 +2508,17 @@ const musicPlaylist = [
 
 let musicAudio = null;
 
-// On page load, start on a random pick from this small curated set of songs.
+// Remember where playback was (track + position + playing state) across a
+// reload — e.g. hitting the Start button shouldn't reset the song.
+const MUSIC_STATE_KEY = 'rafPortfolioMusicState';
+let savedMusicState = null;
+try {
+  const rawMusicState = sessionStorage.getItem(MUSIC_STATE_KEY);
+  if (rawMusicState) savedMusicState = JSON.parse(rawMusicState);
+} catch (e) {}
+
+// On page load, start on a random pick from this small curated set of songs
+// (unless we have a saved playback position to resume instead).
 const STARTER_TRACK_TITLES = [
   "WHERE'S YOUR LOVE NOW by This is Lorelei",
   'KID by Tabano Hollow',
@@ -2508,9 +2528,11 @@ const STARTER_TRACK_TITLES = [
 const starterIndices = musicPlaylist
   .map((song, i) => STARTER_TRACK_TITLES.includes(song.title) ? i : -1)
   .filter(i => i !== -1);
-let musicIndex = starterIndices.length
-  ? starterIndices[Math.floor(Math.random() * starterIndices.length)]
-  : Math.floor(Math.random() * musicPlaylist.length);
+let musicIndex = (savedMusicState && musicPlaylist[savedMusicState.index] != null)
+  ? savedMusicState.index
+  : (starterIndices.length
+    ? starterIndices[Math.floor(Math.random() * starterIndices.length)]
+    : Math.floor(Math.random() * musicPlaylist.length));
 let musicWindowReady = false;
 let musicHistory = [];
 
@@ -3253,17 +3275,44 @@ document.getElementById('startBtn').addEventListener('click', () => {
     loadTrack(index);
     player.style.display = "block";
 
-    // Try to autoplay quietly. Most browsers allow this at low/no volume,
-    // but if it's blocked outright, start on the visitor's first interaction.
-    const tryAutoplay = () => audio.play().catch(() => {});
-    tryAutoplay();
-    audio.addEventListener("canplay", tryAutoplay, { once: true });
+    // If we have a saved position (e.g. from hitting the Start button),
+    // resume there instead of doing the usual quiet-autoplay attempt.
+    if (savedMusicState) {
+      audio.addEventListener("loadedmetadata", function resumeSaved() {
+        if (Number.isFinite(savedMusicState.time)) {
+          audio.currentTime = savedMusicState.time;
+        }
+        if (savedMusicState.playing !== false) {
+          audio.play().catch(() => {});
+        }
+      }, { once: true });
+    } else {
+      // Try to autoplay quietly. Most browsers allow this at low/no volume,
+      // but if it's blocked outright, start on the visitor's first interaction.
+      const tryAutoplay = () => audio.play().catch(() => {});
+      tryAutoplay();
+      audio.addEventListener("canplay", tryAutoplay, { once: true });
+    }
 
     const startOnFirstInteraction = () => {
-      if (audio.paused) audio.play().catch(() => {});
+      if (audio.paused && (!savedMusicState || savedMusicState.playing !== false)) {
+        audio.play().catch(() => {});
+      }
     };
     document.addEventListener("click", startOnFirstInteraction, { once: true });
     document.addEventListener("keydown", startOnFirstInteraction, { once: true });
+
+    // Save playback position/state so a reload (e.g. the Start button)
+    // can pick the song back up instead of resetting it.
+    window.addEventListener("pagehide", function () {
+      try {
+        sessionStorage.setItem(MUSIC_STATE_KEY, JSON.stringify({
+          index: index,
+          time: audio.currentTime || 0,
+          playing: !audio.paused
+        }));
+      } catch (e) {}
+    });
   });
 })();
 </script>

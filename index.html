@@ -1205,11 +1205,20 @@
     background: #c0c0c0;
     box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #fff;
     padding: 3px 8px;
-    font-size: 13px;
     line-height: 1;
     border: none;
     cursor: pointer;
     font-family: Tahoma, Verdana, Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #weatherBtn svg {
+    width: 15px;
+    height: 15px;
+    display: block;
+    image-rendering: pixelated;
+    shape-rendering: crispEdges;
   }
   #weatherBtn:active {
     box-shadow: inset -1px -1px 0 #808080, inset 1px 1px 0 #fff;
@@ -1629,7 +1638,7 @@
     <div id="startBtn"><span>▣</span><span>Start</span></div>
     <div id="taskbar-sep"></div>
     <div id="taskItems" style="display:flex; gap:4px; flex:1; overflow:hidden;"></div>
-    <button id="weatherBtn" type="button" title="Change weather">❄️</button>
+    <button id="weatherBtn" type="button" title="Change weather"></button>
     <div id="clock">--:--</div>
   </div>
 </div>
@@ -3628,12 +3637,67 @@ document.getElementById('startBtn').addEventListener('click', () => {
   const LEAF_PILE_MAX = 18;
 
   const MODES = ["snow", "rain", "leaves", "fireflies", "off"];
+  // Small hand-drawn pixel-grid icons instead of emoji, to match the
+  // chunky 8-bit look everywhere else rather than the OS's glossy emoji font.
+  function pixelIconSVG(grid, colorMap) {
+    const rows = grid.length;
+    const cols = grid[0].length;
+    let rects = '';
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const ch = grid[y][x];
+        if (ch === '.') continue;
+        const fill = colorMap[ch] || colorMap['#'];
+        rects += `<rect x="${x}" y="${y}" width="1" height="1" fill="${fill}"/>`;
+      }
+    }
+    return `<svg viewBox="0 0 ${cols} ${rows}" xmlns="http://www.w3.org/2000/svg">${rects}</svg>`;
+  }
+
+  const ICONS = {
+    snow: pixelIconSVG([
+      '..#..',
+      '.###.',
+      '#####',
+      '.###.',
+      '..#..'
+    ], { '#': '#dfefff' }),
+    rain: pixelIconSVG([
+      '.###.',
+      '#####',
+      '.....',
+      'a.a.a',
+      '.a.a.'
+    ], { '#': '#c7c7c7', 'a': '#6ea2e0' }),
+    leaves: pixelIconSVG([
+      '..#..',
+      '.###.',
+      '#####',
+      '.###.',
+      '..b..'
+    ], { '#': '#d9772e', 'b': '#5a3d26' }),
+    fireflies: pixelIconSVG([
+      '#...#',
+      '.....',
+      '..#..',
+      '.....',
+      '#...#'
+    ], { '#': '#eaff4d' }),
+    off: pixelIconSVG([
+      '#.#.#',
+      '.###.',
+      '#####',
+      '.###.',
+      '#.#.#'
+    ], { '#': '#ffd23f' })
+  };
+
   const MODE_META = {
-    snow:      { icon: "❄️", label: "Snowy" },
-    rain:      { icon: "🌧️", label: "Rainy" },
-    leaves:    { icon: "🍂", label: "Autumn" },
-    fireflies: { icon: "✨", label: "Fireflies" },
-    off:       { icon: "☀️", label: "Clear" }
+    snow:      { icon: ICONS.snow, label: "Snowy" },
+    rain:      { icon: ICONS.rain, label: "Rainy" },
+    leaves:    { icon: ICONS.leaves, label: "Autumn" },
+    fireflies: { icon: ICONS.fireflies, label: "Fireflies" },
+    off:       { icon: ICONS.off, label: "Clear" }
   };
 
   let mode = "snow";
@@ -3847,7 +3911,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
   function updateButton() {
     if (!weatherBtn) return;
     const meta = MODE_META[mode];
-    weatherBtn.textContent = meta.icon;
+    weatherBtn.innerHTML = meta.icon;
     weatherBtn.title = "Change weather (currently: " + meta.label + ")";
   }
 
@@ -4128,6 +4192,56 @@ document.getElementById('startBtn').addEventListener('click', () => {
   draw();
   setInterval(tick, STEP_MS);
   window.addEventListener("resize", init);
+})();
+</script>
+
+<script>
+/* ---------- SECRET TRACK: type "rafael1021" anywhere on the page ---------- */
+(function () {
+  const SECRET_CODE = "rafael1021";
+  const SECRET_TRACK = {
+    title: "Better By Myself by Lil Uzi Vert (Unreleased)",
+    src: "media/better-by-myself-lil-uzi-vert-unreleased.mp3"
+  };
+  let buffer = "";
+
+  window.addEventListener("keydown", function (e) {
+    const tag = (e.target && e.target.tagName) || "";
+    if (tag === "INPUT" || tag === "TEXTAREA" || (e.target && e.target.isContentEditable)) return;
+    if (e.key.length !== 1) return; // ignore Shift/Enter/arrows/etc., only single characters count
+
+    buffer = (buffer + e.key.toLowerCase()).slice(-SECRET_CODE.length);
+
+    if (buffer === SECRET_CODE) {
+      buffer = "";
+      triggerSecretTrack();
+    }
+  });
+
+  function triggerSecretTrack() {
+    const audio = document.getElementById("desktopMusicAudio");
+    const title = document.getElementById("desktopMusicTitle");
+    const playBtn = document.getElementById("desktopMusicPlay");
+    if (!audio) return;
+
+    audio.pause();
+    audio.src = SECRET_TRACK.src;
+    if (title) title.textContent = SECRET_TRACK.title;
+    audio.load();
+    audio.play().catch(function () {});
+
+    if (playBtn && typeof ICON_PAUSE !== "undefined") {
+      playBtn.innerHTML = ICON_PAUSE;
+    }
+
+    // Clear "active" highlighting in the mini playlist — this secret track
+    // isn't part of the visible list, so nothing there should look selected.
+    document.querySelectorAll(".mini-track").forEach(function (row) {
+      row.classList.remove("active");
+      const btn = row.querySelector("[data-play-idx]");
+      if (btn && typeof ICON_PLAY !== "undefined") btn.innerHTML = ICON_PLAY;
+    });
+  }
 })();
 </script>
 

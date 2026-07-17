@@ -3916,30 +3916,34 @@ document.getElementById('startBtn').addEventListener('click', () => {
   // Dims everything in this layer uniformly, so the gif's own baked-in
   // sky pixels darken in exact lockstep with the flat CSS color — no seam.
   const stops = [
-    { h: 0,  b: 0 },    // midnight — pure black
-    { h: 5,  b: 3 },    // deep night, just before dawn
-    { h: 7,  b: 45 },   // dawn breaking
-    { h: 9,  b: 100 },  // full morning brightness (original look)
-    { h: 12, b: 80 },   // noon, starting to deepen
-    { h: 15, b: 60 },   // afternoon
-    { h: 18, b: 30 },   // evening
-    { h: 21, b: 8 },    // night
-    { h: 24, b: 0 }     // midnight again
+    { h: 0,     b: 15 },   // just after midnight, already lifting
+    { h: 2.75,  b: 20 },   // matches the old dim-exit point
+    { h: 4,     b: 40 },   // dawn breaking earlier/faster
+    { h: 7,     b: 75 },
+    { h: 9,     b: 100 },  // full morning brightness (original look)
+    { h: 12,    b: 85 },   // noon, starting to deepen
+    { h: 15,    b: 70 },   // afternoon
+    { h: 18,    b: 50 },   // evening, still fairly bright
+    { h: 19.5,  b: 20 },   // dusk dropping quickly
+    { h: 20.15, b: 10 },   // entering the truly-dark trough
+    { h: 21.5,  b: 0 },    // deepest point, brief
+    { h: 22.85, b: 10 },   // climbing back out of the trough
+    { h: 24,    b: 15 }    // matches h:0 for a seamless loop
   ];
 
   // Sunset/sunrise glow: two bumps, one around dawn (~6-7) one around dusk (~18-19),
   // zero everywhere else (full day and full night).
   const glowStops = [
-    { h: 0,    g: 0 },
-    { h: 5,    g: 0 },
-    { h: 6,    g: 0.55 },
-    { h: 7.5,  g: 0.15 },
-    { h: 9,    g: 0 },
-    { h: 16.5, g: 0 },
-    { h: 18,   g: 0.6 },
-    { h: 19.5, g: 0.1 },
-    { h: 21,   g: 0 },
-    { h: 24,   g: 0 }
+    { h: 0,   g: 0 },
+    { h: 1.5, g: 0 },
+    { h: 2.5, g: 0.5 },
+    { h: 4,   g: 0.15 },
+    { h: 6,   g: 0 },
+    { h: 16,  g: 0 },
+    { h: 18,  g: 0.55 },
+    { h: 19.5,g: 0.1 },
+    { h: 21,  g: 0 },
+    { h: 24,  g: 0 }
   ];
 
   function lerp(a, b, t) { return a + (b - a) * t; }
@@ -3996,14 +4000,18 @@ document.getElementById('startBtn').addEventListener('click', () => {
 
     if (!celestial || !desktop) return;
 
-    const isDay = hourFloat >= 6 && hourFloat < 18;
+    const isDay = hourFloat >= 4 && hourFloat < 19;
     if (isDay !== currentlySun) {
       currentlySun = isDay;
       if (isDay) drawSun(); else drawMoon();
     }
 
     // Arc progress within the current half of the day (0 at horizon-rise, 1 at horizon-set).
-    const t = isDay ? (hourFloat - 6) / 12 : (hourFloat >= 18 ? (hourFloat - 18) / 12 : (hourFloat + 6) / 12);
+    const dayLen = 19 - 4;   // 15 hours of day
+    const nightLen = 24 - 19 + 4; // 9 hours of night
+    const t = isDay
+      ? (hourFloat - 4) / dayLen
+      : (hourFloat >= 19 ? (hourFloat - 19) / nightLen : (hourFloat + (24 - 19)) / nightLen);
 
     const w = desktop.clientWidth;
     const h = desktop.clientHeight;

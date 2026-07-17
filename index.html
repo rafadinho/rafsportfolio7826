@@ -250,6 +250,61 @@
     image-rendering: crisp-edges;
   }
 
+  #stringLights {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 0 30px;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1.5s linear;
+  }
+  #stringLights::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 4%;
+    width: 92%;
+    height: 2px;
+    background: repeating-linear-gradient(
+      to right,
+      #3a2e22 0px, #3a2e22 6px,
+      transparent 6px, transparent 10px
+    );
+    transform: rotate(-0.6deg);
+  }
+  #stringLights .bulb {
+    position: relative;
+    width: 9px;
+    height: 9px;
+    margin-top: 8px;
+    background: var(--c);
+    image-rendering: pixelated;
+    transform: translateY(var(--dy, 0px)) rotate(var(--rot, 0deg));
+    animation: bulbFlicker 3.2s infinite ease-out;
+  }
+  #stringLights .bulb::before {
+    /* faint dim halo — flat pixel square, no blur, kept subtle */
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px; right: -1px; bottom: -1px;
+    background: var(--c);
+    opacity: 0.15;
+    z-index: -1;
+  }
+  @keyframes bulbFlicker {
+    0% { opacity: 0.3; }
+    2% { opacity: 1; }
+    8% { opacity: 0.95; }
+    40% { opacity: 0.3; }
+    100% { opacity: 0.3; }
+  }
+
   .icon {
     width: 80px;
     padding: 4px 2px;
@@ -1521,6 +1576,19 @@
 
   <canvas id="snowCanvas"></canvas>
 
+  <div id="stringLights">
+    <span class="bulb" style="--c:#c9605a; --dy:2px; --rot:-6deg; animation-delay:0s;"></span>
+    <span class="bulb" style="--c:#cf9f4d; --dy:7px; --rot:9deg; animation-delay:0.24s;"></span>
+    <span class="bulb" style="--c:#5f8f5a; --dy:-2px; --rot:-3deg; animation-delay:0.65s;"></span>
+    <span class="bulb" style="--c:#5a85a3; --dy:5px; --rot:12deg; animation-delay:0.12s;"></span>
+    <span class="bulb" style="--c:#b3789c; --dy:1px; --rot:-11deg; animation-delay:0.9s;"></span>
+    <span class="bulb" style="--c:#c9605a; --dy:8px; --rot:4deg; animation-delay:0.4s;"></span>
+    <span class="bulb" style="--c:#cf9f4d; --dy:-3px; --rot:-8deg; animation-delay:1.3s;"></span>
+    <span class="bulb" style="--c:#5f8f5a; --dy:4px; --rot:7deg; animation-delay:0.05s;"></span>
+    <span class="bulb" style="--c:#5a85a3; --dy:6px; --rot:-5deg; animation-delay:1.05s;"></span>
+    <span class="bulb" style="--c:#b3789c; --dy:-1px; --rot:10deg; animation-delay:0.55s;"></span>
+  </div>
+
   <div id="icons"></div>
 
   <!-- Video player window, open by default -->
@@ -1664,7 +1732,6 @@ const folders = [
   { id: 'videos',   label: 'Short Videos',    glyph: '🎬', type: 'video' },
   { id: 'longvideos', label: 'Long Videos',   glyph: '🎬', type: 'longvideo' },
   { id: 'design',   label: 'Design Work',     glyph: '📁', type: 'gallery' },
-  { id: 'games',    label: 'Games',           glyph: '🎮', type: 'game' },
   { id: 'about',    label: 'About Me',        glyph: '📁', type: 'placeholder' },
   { id: 'resume',   label: 'Resume',           glyph: '📁', type: 'placeholder' },
   { id: 'contact',  label: 'Contact',          glyph: '📁', type: 'placeholder' },
@@ -2178,24 +2245,6 @@ function openFolder(f) {
   }
   if (f.type === 'music') {
     openMusicWindow();
-    return;
-  }
-  if (f.type === 'game') {
-    createWindow({
-      id: f.id,
-      title: 'Cloud Jump',
-      glyph: '🎮',
-      width: 520,
-      height: 420,
-      left: jitterPos(220, 60),
-      top: jitterPos(90, 40),
-      bodyHTML: `
-        <div style="width:100%; height:100%; background:#000; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-          <iframe src="games/cloud-jump.html" title="Cloud Jump" style="width:100%; height:100%; border:none;" allow="autoplay"></iframe>
-        </div>
-      `,
-      statusText: 'Cloud Jump — land on clouds, avoid spikes, don\'t fall behind!'
-    });
     return;
   }
   if (f.type === 'gallery') {
@@ -3626,6 +3675,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
 (function () {
   const canvas = document.getElementById("snowCanvas");
   const weatherBtn = document.getElementById("weatherBtn");
+  const stringLightsEl = document.getElementById("stringLights");
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
   const desktop = document.getElementById("desktop");
@@ -3634,6 +3684,16 @@ document.getElementById('startBtn').addEventListener('click', () => {
   const PIXEL = 4;
   // Retro low frame-rate stepping — particles jump instead of gliding smoothly.
   const STEP_MS = 80;
+
+  // Ground buildup: snow/leaves gradually pile up at the bottom while that
+  // weather is active, and slowly melt/blow away once you switch to something
+  // else — real-time based, since desktop weather has no natural "end point"
+  // the way a game level does.
+  let snowGroundBuildup = 0, leafGroundBuildup = 0; // 0..1
+  const GROUND_BUILDUP_RATE = 1 / 14;   // reaches full after ~14s of that weather
+  const GROUND_RECEDE_RATE = 1 / 10;    // fades over ~10s once switched away
+  const SNOW_PILE_MAX = 22;
+  const LEAF_PILE_MAX = 18;
 
   const MODES = ["snow", "rain", "leaves", "fireflies", "off"];
   const MODE_META = {
@@ -3738,6 +3798,22 @@ document.getElementById('startBtn').addEventListener('click', () => {
     return Math.max(30, Math.min(100, Math.round(area / 12000)));
   }
 
+  const TASKBAR_HEIGHT = 30;
+
+  function drawPile(levelFrac, maxH, w, color, shadeColor, seed) {
+    if (levelFrac <= 0.01) return;
+    const h = maxH * levelFrac;
+    const baseY = (ctx.canvas.height / dpr) - TASKBAR_HEIGHT;
+    ctx.fillStyle = color;
+    ctx.fillRect(0, baseY - h, w, h);
+    const bumpW = 16;
+    ctx.fillStyle = shadeColor;
+    for (let x = 0; x < w; x += bumpW) {
+      const bump = ((Math.sin((x + seed) * 0.7) + 1) / 2) * (maxH * 0.3) * levelFrac;
+      ctx.fillRect(x, baseY - h - bump, bumpW - 2, bump + 3);
+    }
+  }
+
   function init() {
     const { w, h } = sizeCanvas();
     const count = targetCount(mode, w, h);
@@ -3762,6 +3838,9 @@ document.getElementById('startBtn').addEventListener('click', () => {
         ctx.fillRect(Math.round(p.x), Math.round(p.y), p.size, p.size);
       }
     }
+
+    drawPile(snowGroundBuildup, SNOW_PILE_MAX, w, "#f2f7ff", "#dbe8f7", 0);
+    drawPile(leafGroundBuildup, LEAF_PILE_MAX, w, "#b5451f", "#8a3418", 500);
   }
 
   function tick() {
@@ -3805,12 +3884,32 @@ document.getElementById('startBtn').addEventListener('click', () => {
     draw();
   }
 
+  function updateGroundEffects() {
+    // Runs every tick regardless of weather mode (including "off"), so
+    // buildup actually recedes when you turn weather off, not just when
+    // you switch to a *different* weather.
+    const dt = STEP_MS / 1000;
+    const snowTarget = mode === "snow" ? 1 : 0;
+    const leafTarget = mode === "leaves" ? 1 : 0;
+    snowGroundBuildup = snowTarget > snowGroundBuildup
+      ? Math.min(1, snowGroundBuildup + GROUND_BUILDUP_RATE * dt)
+      : Math.max(0, snowGroundBuildup - GROUND_RECEDE_RATE * dt);
+    leafGroundBuildup = leafTarget > leafGroundBuildup
+      ? Math.min(1, leafGroundBuildup + GROUND_BUILDUP_RATE * dt)
+      : Math.max(0, leafGroundBuildup - GROUND_RECEDE_RATE * dt);
+
+    if (stringLightsEl) stringLightsEl.style.opacity = snowGroundBuildup.toFixed(2);
+
+    if (mode === "off") draw(); // tick() (which also calls draw) is skipped in "off" mode
+  }
+
   function step(timestamp) {
     if (!running) return;
     requestAnimationFrame(step);
     if (timestamp - lastTick < STEP_MS) return;
     lastTick = timestamp;
     if (mode !== "off") tick();
+    updateGroundEffects();
   }
 
   const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;

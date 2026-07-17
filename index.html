@@ -3813,7 +3813,8 @@ document.getElementById('startBtn').addEventListener('click', () => {
   // 180 = one full 24-hour cycle every 3 minutes of real time.
   const CYCLE_SECONDS = 180;
   const TICK_MS = 150;
-  const startTime = Date.now();
+  const START_HOUR = 15; // page always loads at 3 PM in-cycle
+  const startTime = Date.now() - (START_HOUR / 24) * CYCLE_SECONDS * 1000;
 
   function currentHourFloat() {
     const elapsedSec = (Date.now() - startTime) / 1000;

@@ -216,6 +216,17 @@
     transition: opacity 0.2s linear;
   }
 
+  #cloudCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+
   #icons {
     position: absolute;
     top: 14px; left: 10px;
@@ -1494,7 +1505,9 @@
 
 <div id="desktop">
 
-  <div id="bgLayer"></div>
+  <div id="bgLayer">
+    <canvas id="cloudCanvas"></canvas>
+  </div>
   <div id="sunsetGlow"></div>
   <canvas id="celestialBody" width="16" height="16"></canvas>
 
@@ -3956,6 +3969,101 @@ document.getElementById('startBtn').addEventListener('click', () => {
   updateSky();
   setInterval(updateSky, TICK_MS);
   window.addEventListener("resize", updateSky);
+})();
+</script>
+
+<script>
+/* ---------- HIGH CLOUDS ---------- */
+(function () {
+  const canvas = document.getElementById("cloudCanvas");
+  const desktop = document.getElementById("desktop");
+  if (!canvas || !desktop) return;
+  const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingEnabled = false;
+
+  const STEP_MS = 150;
+  let dpr = Math.max(1, window.devicePixelRatio || 1);
+  let clouds = [];
+
+  function sizeCanvas() {
+    const w = desktop.clientWidth;
+    const h = desktop.clientHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + "px";
+    canvas.style.height = h + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    return { w, h };
+  }
+
+  // Blocky cloud silhouette, defined as rows of (xOffset, length) in "scale" units.
+  const CLOUD_ROWS = [
+    { dx: 2, len: 5 },
+    { dx: 0, len: 9 },
+    { dx: 1, len: 7 }
+  ];
+
+  function drawCloud(x, y, scale, alpha) {
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = "#f4f7ff";
+    CLOUD_ROWS.forEach((r, i) => {
+      ctx.fillRect(Math.round(x + r.dx * scale), Math.round(y + i * scale), r.len * scale, scale);
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  function cloudWidth(scale) {
+    return Math.max(...CLOUD_ROWS.map(r => r.dx + r.len)) * scale;
+  }
+
+  function initClouds(w, h) {
+    const defs = [
+      { yPct: 0.08, scale: 5, speed: 0.6, alpha: 0.95 },
+      { yPct: 0.15, scale: 4, speed: 0.4, alpha: 0.85 },
+      { yPct: 0.06, scale: 6, speed: 0.3, alpha: 0.9 },
+      { yPct: 0.20, scale: 3.5, speed: 0.55, alpha: 0.75 }
+    ];
+    clouds = defs.map((d, i) => {
+      const cw = cloudWidth(d.scale);
+      return {
+        x: (w / defs.length) * i - cw * 0.3,
+        y: h * d.yPct,
+        scale: d.scale,
+        speed: d.speed,
+        alpha: d.alpha,
+        cw
+      };
+    });
+  }
+
+  function init() {
+    const { w, h } = sizeCanvas();
+    initClouds(w, h);
+  }
+
+  function draw() {
+    const w = canvas.width / dpr;
+    const h = canvas.height / dpr;
+    ctx.clearRect(0, 0, w, h);
+    for (const c of clouds) {
+      drawCloud(c.x, c.y, c.scale, c.alpha);
+    }
+  }
+
+  function tick() {
+    const w = canvas.width / dpr;
+    for (const c of clouds) {
+      c.x += c.speed;
+      if (c.x > w + c.cw) c.x = -c.cw;
+    }
+    draw();
+  }
+
+  init();
+  draw();
+  setInterval(tick, STEP_MS);
+  window.addEventListener("resize", init);
 })();
 </script>
 

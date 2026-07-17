@@ -182,6 +182,7 @@
     position: absolute;
     inset: 0;
     z-index: 0;
+    pointer-events: none;
     background-color: #6b8cff;
     background-image: url('media/mario-background.gif');
     background-repeat: repeat-x;
@@ -398,6 +399,13 @@
         inset 1px 1px 0 #fff,
         inset -2px -2px 0 #808080,
         inset 2px 2px 0 #dfdfdf;
+    }
+    /* Bigger tap target for the close button specifically — this is the
+       one button people actually need to hit reliably on a phone. */
+    .titlebar button[data-act="close"] {
+      width: 34px;
+      height: 28px;
+      font-size: 15px;
     }
   }
   .titlebar button[data-act="close"] {
@@ -1656,6 +1664,7 @@ const folders = [
   { id: 'videos',   label: 'Short Videos',    glyph: '🎬', type: 'video' },
   { id: 'longvideos', label: 'Long Videos',   glyph: '🎬', type: 'longvideo' },
   { id: 'design',   label: 'Design Work',     glyph: '📁', type: 'gallery' },
+  { id: 'games',    label: 'Games',           glyph: '🎮', type: 'game' },
   { id: 'about',    label: 'About Me',        glyph: '📁', type: 'placeholder' },
   { id: 'resume',   label: 'Resume',           glyph: '📁', type: 'placeholder' },
   { id: 'contact',  label: 'Contact',          glyph: '📁', type: 'placeholder' },
@@ -2169,6 +2178,24 @@ function openFolder(f) {
   }
   if (f.type === 'music') {
     openMusicWindow();
+    return;
+  }
+  if (f.type === 'game') {
+    createWindow({
+      id: f.id,
+      title: 'Cloud Jump',
+      glyph: '🎮',
+      width: 520,
+      height: 420,
+      left: jitterPos(220, 60),
+      top: jitterPos(90, 40),
+      bodyHTML: `
+        <div style="width:100%; height:100%; background:#000; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+          <iframe src="games/cloud-jump.html" title="Cloud Jump" style="width:100%; height:100%; border:none;" allow="autoplay"></iframe>
+        </div>
+      `,
+      statusText: 'Cloud Jump — land on clouds, avoid spikes, don\'t fall behind!'
+    });
     return;
   }
   if (f.type === 'gallery') {

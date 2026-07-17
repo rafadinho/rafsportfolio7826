@@ -190,7 +190,7 @@
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
-    transition: filter 30s linear;
+    transition: filter 0.2s linear;
   }
 
   #sunsetGlow {
@@ -200,7 +200,7 @@
     pointer-events: none;
     background: linear-gradient(to top, rgba(255,130,70,0.55) 0%, rgba(255,120,140,0.25) 30%, rgba(255,120,140,0) 65%);
     opacity: 0;
-    transition: opacity 30s linear;
+    transition: opacity 0.2s linear;
   }
 
   #celestialBody {
@@ -213,7 +213,7 @@
     image-rendering: crisp-edges;
     transform: translate(-50%, -50%);
     pointer-events: none;
-    transition: opacity 1.5s linear;
+    transition: opacity 0.2s linear;
   }
 
   #icons {
@@ -3809,6 +3809,18 @@ document.getElementById('startBtn').addEventListener('click', () => {
   const ctx = celestial ? celestial.getContext("2d") : null;
   if (ctx) ctx.imageSmoothingEnabled = false;
 
+  // Fictional accelerated day/night cycle — tune this to change the pace.
+  // 180 = one full 24-hour cycle every 3 minutes of real time.
+  const CYCLE_SECONDS = 180;
+  const TICK_MS = 150;
+  const startTime = Date.now();
+
+  function currentHourFloat() {
+    const elapsedSec = (Date.now() - startTime) / 1000;
+    const progress = (elapsedSec % CYCLE_SECONDS) / CYCLE_SECONDS; // 0..1
+    return progress * 24;
+  }
+
   // Hour-of-day -> brightness % keyframes (wraps from 24 back to 0).
   // 100% = original colors (gif + flat sky both untouched).
   // Dims everything in this layer uniformly, so the gif's own baked-in
@@ -3887,8 +3899,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
   let currentlySun = null; // track which sprite is currently drawn
 
   function updateSky() {
-    const now = new Date();
-    const hourFloat = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+    const hourFloat = currentHourFloat();
 
     bgLayer.style.filter = "brightness(" + sampleCurve(hourFloat, stops, "b").toFixed(1) + "%)";
     if (sunsetGlow) sunsetGlow.style.opacity = sampleCurve(hourFloat, glowStops, "g").toFixed(2);
@@ -3922,7 +3933,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
   }
 
   updateSky();
-  setInterval(updateSky, 30000); // recheck every 30s; the CSS transitions smooth the blend
+  setInterval(updateSky, TICK_MS);
   window.addEventListener("resize", updateSky);
 })();
 </script>

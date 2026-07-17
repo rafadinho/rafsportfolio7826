@@ -175,6 +175,13 @@
   #desktop {
     position: relative;
     width: 100vw; height: 100vh;
+    overflow: hidden;
+  }
+
+  #bgLayer {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
     background-color: #6b8cff;
     background-image: url('media/mario-background.gif');
     background-repeat: repeat-x;
@@ -183,7 +190,30 @@
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
-    overflow: hidden;
+    transition: filter 30s linear;
+  }
+
+  #sunsetGlow {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(to top, rgba(255,130,70,0.55) 0%, rgba(255,120,140,0.25) 30%, rgba(255,120,140,0) 65%);
+    opacity: 0;
+    transition: opacity 30s linear;
+  }
+
+  #celestialBody {
+    position: absolute;
+    z-index: 0;
+    width: 48px;
+    height: 48px;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    transition: opacity 1.5s linear;
   }
 
   #icons {
@@ -1457,6 +1487,10 @@
 </div>
 
 <div id="desktop">
+
+  <div id="bgLayer"></div>
+  <div id="sunsetGlow"></div>
+  <canvas id="celestialBody" width="16" height="16"></canvas>
 
   <canvas id="snowCanvas"></canvas>
 
@@ -3761,6 +3795,135 @@ document.getElementById('startBtn').addEventListener('click', () => {
       setMode(MODES[(idx + 1) % MODES.length]);
     });
   }
+})();
+</script>
+
+<script>
+/* ---------- 24-HOUR SKY CYCLE ---------- */
+(function () {
+  const bgLayer = document.getElementById("bgLayer");
+  const sunsetGlow = document.getElementById("sunsetGlow");
+  const celestial = document.getElementById("celestialBody");
+  const desktop = document.getElementById("desktop");
+  if (!bgLayer) return;
+  const ctx = celestial ? celestial.getContext("2d") : null;
+  if (ctx) ctx.imageSmoothingEnabled = false;
+
+  // Hour-of-day -> brightness % keyframes (wraps from 24 back to 0).
+  // 100% = original colors (gif + flat sky both untouched).
+  // Dims everything in this layer uniformly, so the gif's own baked-in
+  // sky pixels darken in exact lockstep with the flat CSS color — no seam.
+  const stops = [
+    { h: 0,  b: 0 },    // midnight — pure black
+    { h: 5,  b: 3 },    // deep night, just before dawn
+    { h: 7,  b: 45 },   // dawn breaking
+    { h: 9,  b: 100 },  // full morning brightness (original look)
+    { h: 12, b: 80 },   // noon, starting to deepen
+    { h: 15, b: 60 },   // afternoon
+    { h: 18, b: 30 },   // evening
+    { h: 21, b: 8 },    // night
+    { h: 24, b: 0 }     // midnight again
+  ];
+
+  // Sunset/sunrise glow: two bumps, one around dawn (~6-7) one around dusk (~18-19),
+  // zero everywhere else (full day and full night).
+  const glowStops = [
+    { h: 0,    g: 0 },
+    { h: 5,    g: 0 },
+    { h: 6,    g: 0.55 },
+    { h: 7.5,  g: 0.15 },
+    { h: 9,    g: 0 },
+    { h: 16.5, g: 0 },
+    { h: 18,   g: 0.6 },
+    { h: 19.5, g: 0.1 },
+    { h: 21,   g: 0 },
+    { h: 24,   g: 0 }
+  ];
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function sampleCurve(hourFloat, table, key) {
+    for (let i = 0; i < table.length - 1; i++) {
+      const a = table[i], b = table[i + 1];
+      if (hourFloat >= a.h && hourFloat <= b.h) {
+        const t = (hourFloat - a.h) / (b.h - a.h);
+        return lerp(a[key], b[key], t);
+      }
+    }
+    return table[0][key];
+  }
+
+  /* ---- pixel-art sun / moon, drawn on a 16x16 grid then scaled up via CSS ---- */
+  function drawSun() {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, 16, 16);
+    ctx.fillStyle = "#ffd23f";
+    // simple rounded blob using a few rows of rects (chunky pixel circle)
+    const rows = [
+      [6, 4], [5, 6], [4, 8], [4, 8], [4, 8], [4, 8], [5, 6], [6, 4]
+    ];
+    rows.forEach((r, i) => ctx.fillRect(r[0], 4 + i, r[1], 1));
+    ctx.fillStyle = "#ffe9a8";
+    ctx.fillRect(6, 6, 4, 4);
+  }
+
+  function drawMoon() {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, 16, 16);
+    ctx.fillStyle = "#e8ecf5";
+    const rows = [
+      [6, 4], [5, 6], [4, 8], [4, 8], [4, 8], [4, 8], [5, 6], [6, 4]
+    ];
+    rows.forEach((r, i) => ctx.fillRect(r[0], 4 + i, r[1], 1));
+    // crescent shadow bite
+    ctx.fillStyle = "#6b8cff";
+    ctx.globalAlpha = 0.9;
+    rows.forEach((r, i) => ctx.fillRect(r[0] + 3, 4 + i, r[1], 1));
+    ctx.globalAlpha = 1;
+  }
+
+  drawSun();
+  drawMoon();
+  let currentlySun = null; // track which sprite is currently drawn
+
+  function updateSky() {
+    const now = new Date();
+    const hourFloat = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+
+    bgLayer.style.filter = "brightness(" + sampleCurve(hourFloat, stops, "b").toFixed(1) + "%)";
+    if (sunsetGlow) sunsetGlow.style.opacity = sampleCurve(hourFloat, glowStops, "g").toFixed(2);
+
+    if (!celestial || !desktop) return;
+
+    const isDay = hourFloat >= 6 && hourFloat < 18;
+    if (isDay !== currentlySun) {
+      currentlySun = isDay;
+      if (isDay) drawSun(); else drawMoon();
+    }
+
+    // Arc progress within the current half of the day (0 at horizon-rise, 1 at horizon-set).
+    const t = isDay ? (hourFloat - 6) / 12 : (hourFloat >= 18 ? (hourFloat - 18) / 12 : (hourFloat + 6) / 12);
+
+    const w = desktop.clientWidth;
+    const h = desktop.clientHeight;
+    const margin = w * 0.08;
+    const arcTop = h * 0.10;
+    const arcBottom = h * 0.62; // stays above the ground gif
+
+    const x = margin + t * (w - margin * 2);
+    const y = arcBottom - Math.sin(Math.max(0, Math.min(1, t)) * Math.PI) * (arcBottom - arcTop);
+
+    celestial.style.left = x + "px";
+    celestial.style.top = y + "px";
+
+    // Fade out near the very edges of its arc (just before/after the horizon swap).
+    const edgeFade = Math.min(1, Math.min(t, 1 - t) / 0.06);
+    celestial.style.opacity = Math.max(0, edgeFade).toFixed(2);
+  }
+
+  updateSky();
+  setInterval(updateSky, 30000); // recheck every 30s; the CSS transitions smooth the blend
+  window.addEventListener("resize", updateSky);
 })();
 </script>
 

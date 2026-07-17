@@ -369,6 +369,12 @@
     text-shadow: none;
   }
   @media (pointer: coarse) {
+    .titlebar {
+      padding: 9px 6px 9px 8px;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
     .titlebar button[data-act="min"],
     .titlebar button[data-act="max"] {
       opacity: 0.45;
@@ -1750,6 +1756,14 @@ function getClientXY(e) {
 
 function makeDraggable(win, handle) {
   let ox = 0, oy = 0, dragging = false;
+  let pendingX = null, pendingY = null, rafScheduled = false;
+
+  function applyPosition() {
+    rafScheduled = false;
+    if (pendingX === null) return;
+    win.style.left = pendingX + 'px';
+    win.style.top = pendingY + 'px';
+  }
 
   function startDrag(e) {
     if (e.target.tagName === 'BUTTON') return;
@@ -1768,13 +1782,19 @@ function makeDraggable(win, handle) {
     let ny = p.y - oy;
     nx = Math.max(0, Math.min(nx, window.innerWidth - 60));
     ny = Math.max(0, Math.min(ny, window.innerHeight - 40));
-    win.style.left = nx + 'px';
-    win.style.top = ny + 'px';
+    pendingX = nx;
+    pendingY = ny;
+    if (!rafScheduled) {
+      rafScheduled = true;
+      requestAnimationFrame(applyPosition);
+    }
     if (e.cancelable) e.preventDefault();
   }
 
   function endDrag() {
     dragging = false;
+    pendingX = null;
+    pendingY = null;
   }
 
   handle.addEventListener('mousedown', startDrag);

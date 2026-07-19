@@ -890,10 +890,13 @@
   .titlebar .title {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 0;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+  .titlebar .title > span:first-child {
+    display: none;
   }
   .titlebar .btns {
     display: flex;

@@ -890,13 +890,24 @@
   .titlebar .title {
     display: flex;
     align-items: center;
-    gap: 0;
+    gap: 4px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-  .titlebar .title > span:first-child {
-    display: none;
+  .titlebar .title-icon {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .titlebar .title-icon svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+    shape-rendering: crispEdges;
   }
   .titlebar .btns {
     display: flex;
@@ -2155,7 +2166,7 @@
 
   <div class="win" id="videoWin" style="left: 780px; top: 145px;">
     <div class="titlebar">
-      <div class="title"><span>🎬</span><span>Now Playing.raf</span></div>
+      <div class="title"><span class="title-icon"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="5" width="12" height="9" fill="#d4d0c8" stroke="#000"/><rect x="2" y="2" width="12" height="4" fill="#202020" stroke="#000"/><polygon points="3,2 6,2 4,6 2,6" fill="#fff"/><polygon points="8,2 11,2 9,6 6,6" fill="#fff"/><polygon points="13,2 14,2 14,6 11,6" fill="#fff"/><rect x="4" y="8" width="8" height="1" fill="#808080"/><rect x="4" y="11" width="5" height="1" fill="#808080"/></svg></span><span>Now Playing.raf</span></div>
       <div class="btns">
         <button data-act="min" title="Minimize">_</button>
         <button data-act="max" title="Expand">□</button>
@@ -2196,7 +2207,7 @@
 
   <div class="win hidden" id="longVideoWin" style="left: 160px; top: 60px; width: 640px; height: 460px;">
     <div class="titlebar">
-      <div class="title"><span>🎬</span><span>Long Videos</span></div>
+      <div class="title"><span class="title-icon"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="5" width="12" height="9" fill="#d4d0c8" stroke="#000"/><rect x="2" y="2" width="12" height="4" fill="#202020" stroke="#000"/><polygon points="3,2 6,2 4,6 2,6" fill="#fff"/><polygon points="8,2 11,2 9,6 6,6" fill="#fff"/><polygon points="13,2 14,2 14,6 11,6" fill="#fff"/><rect x="4" y="8" width="8" height="1" fill="#808080"/><rect x="4" y="11" width="5" height="1" fill="#808080"/></svg></span><span>Long Videos</span></div>
       <div class="btns">
         <button data-act="min" title="Minimize">_</button>
         <button data-act="max" title="Expand">□</button>
@@ -2668,6 +2679,56 @@ function toggleMaximize(win) {
   bringToFront(win);
 }
 
+function getTitleIconSVG(glyph, title = '') {
+  const key = (title + ' ' + glyph).toLowerCase();
+
+  if (key.includes('video') || key.includes('playing') || glyph === '🎬') {
+    return `<svg viewBox="0 0 16 16" aria-hidden="true">
+      <rect x="2" y="5" width="12" height="9" fill="#d4d0c8" stroke="#000"/>
+      <rect x="2" y="2" width="12" height="4" fill="#202020" stroke="#000"/>
+      <polygon points="3,2 6,2 4,6 2,6" fill="#fff"/>
+      <polygon points="8,2 11,2 9,6 6,6" fill="#fff"/>
+      <polygon points="13,2 14,2 14,6 11,6" fill="#fff"/>
+      <rect x="4" y="8" width="8" height="1" fill="#808080"/>
+      <rect x="4" y="11" width="5" height="1" fill="#808080"/>
+    </svg>`;
+  }
+
+  if (key.includes('display') || glyph === '🖥️') {
+    return `<svg viewBox="0 0 16 16" aria-hidden="true">
+      <rect x="1" y="1" width="14" height="11" fill="#c0c0c0" stroke="#000"/>
+      <rect x="3" y="3" width="10" height="7" fill="#000080"/>
+      <rect x="6" y="12" width="4" height="2" fill="#808080" stroke="#000"/>
+      <rect x="4" y="14" width="8" height="1" fill="#000"/>
+    </svg>`;
+  }
+
+  if (key.includes('music') || glyph === '💿') {
+    return `<svg viewBox="0 0 16 16" aria-hidden="true">
+      <circle cx="8" cy="8" r="6.5" fill="#d4d0c8" stroke="#000"/>
+      <path d="M8 1.5A6.5 6.5 0 0 1 14.5 8H8Z" fill="#80ffff"/>
+      <path d="M8 14.5A6.5 6.5 0 0 1 1.5 8H8Z" fill="#ff80ff"/>
+      <circle cx="8" cy="8" r="2" fill="#fff" stroke="#000"/>
+      <circle cx="8" cy="8" r="0.7" fill="#000"/>
+    </svg>`;
+  }
+
+  if (key.includes('image') || glyph === '🖼️') {
+    return `<svg viewBox="0 0 16 16" aria-hidden="true">
+      <rect x="1" y="1" width="14" height="14" fill="#fff" stroke="#000"/>
+      <rect x="3" y="3" width="10" height="9" fill="#80c0ff"/>
+      <circle cx="10.5" cy="5.5" r="1.5" fill="#ffff00"/>
+      <polygon points="3,12 6,8 8,10 10,7 13,12" fill="#008000"/>
+    </svg>`;
+  }
+
+  return `<svg viewBox="0 0 16 16" aria-hidden="true">
+    <path d="M1 4h6l1-2h7v12H1z" fill="#f3c84f" stroke="#000"/>
+    <path d="M1 5h14v9H1z" fill="#f7d96f" stroke="#000"/>
+    <path d="M2 6h12" stroke="#fff4b3"/>
+  </svg>`;
+}
+
 function createWindow({ id, title, glyph, width, height, left, top, bodyHTML, statusText, blurbText }) {
   if (openWindows[id]) {
     openWindows[id].classList.remove('hidden');
@@ -2707,7 +2768,7 @@ function createWindow({ id, title, glyph, width, height, left, top, bodyHTML, st
   ` : '';
   win.innerHTML = `
     <div class="titlebar">
-      <div class="title"><span>${glyph}</span><span>${title}</span></div>
+      <div class="title"><span class="title-icon">${getTitleIconSVG(glyph, title)}</span><span>${title}</span></div>
       <div class="btns">
         <button data-act="min" title="Minimize">_</button>
         <button data-act="max" title="Expand">□</button>

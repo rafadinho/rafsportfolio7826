@@ -357,11 +357,11 @@
   html.theme-win31 .vid-caption, html.theme-win31 .gallery-item .cap, html.theme-win31 .win-body,
   html.theme-win31 .titlebar button, html.theme-win31 .vid-controls button,
   html.theme-win31 #dateDisplay, html.theme-win31 #startMenu {
-    font-family: 'Silkscreen', 'Courier New', monospace;
-    font-weight: bold;
-    text-rendering: optimizeSpeed;
-    -webkit-font-smoothing: none;
-    letter-spacing: 0.5px;
+    font-family: 'MS Sans Serif', Tahoma, Arial, sans-serif;
+    font-weight: normal;
+    text-rendering: auto;
+    -webkit-font-smoothing: auto;
+    letter-spacing: 0;
   }
   html.theme-win31 .titlebar,
   html.theme-win31 .icon .label,
@@ -371,16 +371,16 @@
   html.theme-win31 #dateDisplay,
   html.theme-win31 .win-status,
   html.theme-win31 .gallery-item .cap {
-    font-size: 15px;
+    font-size: 11px;
   }
   html.theme-win31 .win-body {
-    font-size: 16px;
-    line-height: 1.5;
+    font-size: 12px;
+    line-height: 1.35;
   }
   html.theme-win31 .titlebar {
     background: #000080;
     color: #fff;
-    font-size: 15px;
+    font-size: 11px;
   }
   html.theme-win31 .win.inactive .titlebar {
     background: #808080;
@@ -446,8 +446,8 @@
     text-shadow: 1px 1px 0 #000;
   }
   html.theme-win31 .icon.selected {
-    background: rgba(0, 0, 128, 0.4);
-    border-color: #000;
+    background: rgba(0, 0, 128, 0.24);
+    border-color: #fff;
   }
   html.theme-win31 .icon.selected .label {
     background: #000080;
@@ -471,23 +471,23 @@
   html.theme-luna .vid-caption, html.theme-luna .gallery-item .cap, html.theme-luna .win-body,
   html.theme-luna .titlebar button, html.theme-luna .vid-controls button,
   html.theme-luna #dateDisplay, html.theme-luna #startMenu {
-    font-family: 'Baloo 2', Tahoma, sans-serif;
-    font-weight: 700;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+    font-weight: normal;
   }
   html.theme-luna .titlebar {
-    background: linear-gradient(180deg, #4d94e8 0%, #1c5fc7 40%, #0d47a1 100%);
+    background: linear-gradient(180deg, #3f86d9 0%, #1f5fae 100%);
     color: #fff;
-    border-radius: 8px 8px 0 0;
-    font-size: 13px;
+    border-radius: 5px 5px 0 0;
+    font-size: 11px;
   }
   html.theme-luna .win.inactive .titlebar {
     background: linear-gradient(180deg, #b7cbe6 0%, #93aed1 100%);
     color: #eef2f8;
   }
   html.theme-luna .win {
-    border-radius: 8px 8px 0 0;
+    border-radius: 5px 5px 0 0;
     overflow: hidden;
-    box-shadow: 2px 2px 8px rgba(0,0,0,0.35);
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.28);
   }
   html.theme-luna .win-body {
     background: #ece9d8;
@@ -498,7 +498,7 @@
   html.theme-luna .titlebar button {
     background: linear-gradient(180deg, #ffffff 0%, #bcd6f5 100%);
     color: #000;
-    border-radius: 4px;
+    border-radius: 3px;
     box-shadow: none;
   }
   html.theme-luna .titlebar button[data-act="close"] {
@@ -506,36 +506,36 @@
     color: #fff;
   }
   html.theme-luna #taskbar {
-    background: linear-gradient(180deg, #4d94e8 0%, #0d47a1 100%);
+    background: linear-gradient(180deg, #3f86d9 0%, #1f5fae 100%);
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
   }
   html.theme-luna #startBtn {
     background: linear-gradient(180deg, #8be28b 0%, #2e7d32 100%);
     color: #fff;
-    border-radius: 999px;
-    font-style: italic;
+    border-radius: 5px;
+    font-style: normal;
     font-weight: bold;
     box-shadow: none;
   }
   html.theme-luna .task-item {
-    background: linear-gradient(180deg, #6ba6ec 0%, #2a6fdb 100%);
+    background: linear-gradient(180deg, #5f98dc 0%, #2f6ebd 100%);
     color: #fff;
-    border-radius: 4px;
+    border-radius: 3px;
     box-shadow: none;
   }
   html.theme-luna .task-item.active {
-    background: linear-gradient(180deg, #163f80 0%, #0a2a5c 100%);
+    background: #245a9c;
   }
   html.theme-luna #clock,
   html.theme-luna #dateDisplay,
   html.theme-luna #weatherBtn {
-    background: linear-gradient(180deg, #4d94e8 0%, #0d47a1 100%);
+    background: #2f6ebd;
     color: #fff;
     box-shadow: none;
-    border-radius: 4px;
+    border-radius: 3px;
   }
   html.theme-luna .icon.selected {
-    background: rgba(42, 111, 219, 0.4);
+    background: rgba(42, 111, 219, 0.24);
     border-color: #2a6fdb;
   }
   html.theme-luna .icon.selected .label {
@@ -565,11 +565,11 @@
     box-shadow: none;
   }
   html.theme-luna .blurb-bar {
-    background: linear-gradient(180deg, #eaf2fc 0%, #cfe0f5 100%);
+    background: #dbe8f6;
     box-shadow: none;
   }
   html.theme-luna .blurb-panel {
-    background: #fffdf0;
+    background: #fff;
     box-shadow: none;
   }
 
@@ -702,7 +702,12 @@
     box-shadow: inset 0 1px 0 rgba(123,47,250,0.5);
   }
   html.theme-synth #bgLayer {
-    filter: saturate(1.4) hue-rotate(275deg) brightness(0.55) contrast(1.15);
+    background-color: #120820;
+    background-image: url('media/synthwave-background.gif');
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-size: cover;
+    filter: saturate(1.15) brightness(0.75) contrast(1.05);
   }
 
   /* ---------- DESKTOP ---------- */

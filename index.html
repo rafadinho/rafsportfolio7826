@@ -4441,41 +4441,53 @@ function playObnoxiousClick() {
     const ctx = obnoxiousClickCtx;
     const now = ctx.currentTime;
 
-    // Loud, cartoonish "CLACK" — a sharp square-wave tone with a comedic
-    // downward pitch bend, layered over a punchy noise transient.
-    const osc = ctx.createOscillator();
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(2600, now);
-    osc.frequency.exponentialRampToValueAtTime(220, now + 0.09);
-
-    const oscGain = ctx.createGain();
-    oscGain.gain.setValueAtTime(0.5, now);
-    oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-
-    osc.connect(oscGain);
-    oscGain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.1);
-
-    const dur = 0.035;
-    const bufferSize = Math.max(1, Math.floor(ctx.sampleRate * dur));
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      const decay = Math.pow(1 - i / bufferSize, 1.4);
-      data[i] = (Math.random() * 2 - 1) * decay;
+    // Stage 1: a very short, sharp broadband "snap" — the mechanical
+    // switch contact itself. Almost no filtering, near-instant decay.
+    const snapDur = 0.008;
+    const snapSize = Math.max(1, Math.floor(ctx.sampleRate * snapDur));
+    const snapBuffer = ctx.createBuffer(1, snapSize, ctx.sampleRate);
+    const snapData = snapBuffer.getChannelData(0);
+    for (let i = 0; i < snapSize; i++) {
+      const decay = Math.pow(1 - i / snapSize, 0.6);
+      snapData[i] = (Math.random() * 2 - 1) * decay;
     }
-    const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
+    const snap = ctx.createBufferSource();
+    snap.buffer = snapBuffer;
+    const snapGain = ctx.createGain();
+    snapGain.gain.setValueAtTime(1.0, now);
+    snapGain.gain.exponentialRampToValueAtTime(0.001, now + snapDur);
+    snap.connect(snapGain);
+    snapGain.connect(ctx.destination);
+    snap.start(now);
+    snap.stop(now + snapDur);
 
-    const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.7, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    // Stage 2: a resonant "thock" — the plastic mouse-body/switch-housing
+    // resonance that follows a split second after the initial snap.
+    const bodyDur = 0.05;
+    const bodySize = Math.max(1, Math.floor(ctx.sampleRate * bodyDur));
+    const bodyBuffer = ctx.createBuffer(1, bodySize, ctx.sampleRate);
+    const bodyData = bodyBuffer.getChannelData(0);
+    for (let i = 0; i < bodySize; i++) {
+      const decay = Math.pow(1 - i / bodySize, 2.5);
+      bodyData[i] = (Math.random() * 2 - 1) * decay;
+    }
+    const body = ctx.createBufferSource();
+    body.buffer = bodyBuffer;
 
-    noise.connect(noiseGain);
-    noiseGain.connect(ctx.destination);
-    noise.start(now);
-    noise.stop(now + dur);
+    const bandpass = ctx.createBiquadFilter();
+    bandpass.type = 'bandpass';
+    bandpass.frequency.value = 1100;
+    bandpass.Q.value = 3.5;
+
+    const bodyGain = ctx.createGain();
+    bodyGain.gain.setValueAtTime(0.9, now);
+    bodyGain.gain.exponentialRampToValueAtTime(0.001, now + bodyDur);
+
+    body.connect(bandpass);
+    bandpass.connect(bodyGain);
+    bodyGain.connect(ctx.destination);
+    body.start(now + 0.002);
+    body.stop(now + 0.002 + bodyDur);
   } catch (err) {
     /* ignore — Web Audio unavailable/blocked */
   }

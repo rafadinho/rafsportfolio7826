@@ -2060,10 +2060,24 @@ function createWindow({ id, title, glyph, width, height, left, top, bodyHTML, st
   const win = document.createElement('div');
   win.className = 'win';
   win.dataset.winid = id;
-  win.style.width = (width || 380) + 'px';
-  win.style.height = (height || 280) + 'px';
-  win.style.left = (left != null ? left : 120) + 'px';
-  win.style.top = (top != null ? top : 80) + 'px';
+
+  // Requested size/position is designed for a roomy desktop viewport, so
+  // clamp both to whatever screen is actually available — this keeps
+  // windows (like Design Work's fixed left:900px default) from opening
+  // partially or fully off-screen on narrow/portrait mobile viewports.
+  const viewportW = window.innerWidth;
+  const viewportH = window.innerHeight;
+  const winWidth = Math.min(width || 380, viewportW - 8);
+  const winHeight = Math.min(height || 280, viewportH - 38);
+  const maxLeft = Math.max(4, viewportW - winWidth - 4);
+  const maxTop = Math.max(4, viewportH - winHeight - 34);
+  const winLeft = Math.min(Math.max(4, left != null ? left : 120), maxLeft);
+  const winTop = Math.min(Math.max(4, top != null ? top : 80), maxTop);
+
+  win.style.width = winWidth + 'px';
+  win.style.height = winHeight + 'px';
+  win.style.left = winLeft + 'px';
+  win.style.top = winTop + 'px';
   const blurbBarHTML = blurbText != null ? `
     <div class="blurb-bar">
       <button class="blurb-toggle" type="button">Open Blurb</button>
@@ -2590,10 +2604,39 @@ vidEl.addEventListener('pause', syncVideoControls);
 function jitterPos(base, range) {
   return Math.round(base + (Math.random() * 2 - 1) * range);
 }
+
+// Keeps a window fully on-screen given its current width/height — needed
+// here because these two windows use hardcoded desktop-style coordinates
+// (outside createWindow's own clamping) that can push them off a narrow
+// mobile/portrait viewport.
+function clampWindowToViewport(win) {
+  const viewportW = window.innerWidth;
+  const viewportH = window.innerHeight;
+  const w = Math.min(win.offsetWidth || parseInt(win.style.width) || 380, viewportW - 8);
+  const h = Math.min(win.offsetHeight || parseInt(win.style.height) || 280, viewportH - 38);
+  const maxLeft = Math.max(4, viewportW - w - 4);
+  const maxTop = Math.max(4, viewportH - h - 34);
+  win.style.width = w + 'px';
+  win.style.height = h + 'px';
+  win.style.left = Math.min(Math.max(4, parseInt(win.style.left) || 0), maxLeft) + 'px';
+  win.style.top = Math.min(Math.max(4, parseInt(win.style.top) || 0), maxTop) + 'px';
+}
+
 videoWinEl.style.left = jitterPos(780, 30) + 'px';
 videoWinEl.style.top = jitterPos(145, 20) + 'px';
 longVideoWinEl.style.left = jitterPos(160, 35) + 'px';
 longVideoWinEl.style.top = jitterPos(60, 25) + 'px';
+clampWindowToViewport(videoWinEl);
+clampWindowToViewport(longVideoWinEl);
+
+// Re-clamp every open window on resize/orientation change, so rotating the
+// phone (or resizing a desktop browser) doesn't leave a window stranded
+// off-screen.
+window.addEventListener('resize', () => {
+  Object.values(openWindows).forEach(w => {
+    if (!w.classList.contains('maximized')) clampWindowToViewport(w);
+  });
+});
 
 /* Open Long Videos by default, behind the main video window */
 openLongVideosWindow();

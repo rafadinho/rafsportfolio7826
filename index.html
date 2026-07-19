@@ -382,30 +382,38 @@
   }
   @media (pointer: coarse) {
     .titlebar {
-      padding: 9px 6px 9px 8px;
       -webkit-user-select: none;
       user-select: none;
       -webkit-touch-callout: none;
     }
-    .titlebar button[data-act="min"],
-    .titlebar button[data-act="max"] {
-      opacity: 0.45;
-      cursor: default;
+    /* Buttons keep their exact desktop size/appearance on touch. Instead of
+       resizing anything visible, each button gets an invisible expanded hit
+       area via ::after, so it's easier to tap without looking any different
+       than the desktop version. */
+    .titlebar button {
+      position: relative;
     }
-    .titlebar button[data-act="min"]:active,
-    .titlebar button[data-act="max"]:active {
-      box-shadow:
-        inset -1px -1px 0 #000,
-        inset 1px 1px 0 #fff,
-        inset -2px -2px 0 #808080,
-        inset 2px 2px 0 #dfdfdf;
+    .titlebar button::after {
+      content: "";
+      position: absolute;
+      top: -10px;
+      bottom: -10px;
+      left: -6px;
+      right: -6px;
     }
-    /* Bigger tap target for the close button specifically — this is the
-       one button people actually need to hit reliably on a phone. */
-    .titlebar button[data-act="close"] {
-      width: 34px;
-      height: 28px;
-      font-size: 15px;
+    /* The close button has no neighbor to its right, so its hit area can
+       extend further that direction without risking a mis-tap on another
+       button. */
+    .titlebar button[data-act="close"]::after {
+      right: -14px;
+    }
+    /* Min/max sit between two other buttons, so keep their horizontal
+       expansion tighter to avoid overlapping neighboring hit areas, while
+       still getting the full vertical bump. */
+    .titlebar button[data-act="min"]::after,
+    .titlebar button[data-act="max"]::after {
+      left: -4px;
+      right: -4px;
     }
   }
   .titlebar button[data-act="close"] {
@@ -1611,7 +1619,7 @@
       <button class="blurb-toggle" id="musicPlaylistToggle" type="button" data-label="Playlist">Open Playlist</button>
     </div>
     <div class="blurb-panel" id="musicBlurbPanel">
-      <p id="musicBlurbText">A collection of my favorite songs!</p>
+      <p id="musicBlurbText">Incredibly random assortment of my favorite songs!</p>
     </div>
     <div class="blurb-panel mini-playlist-panel" id="musicPlaylistPanel">
       <div class="mini-playlist" id="miniPlaylist"></div>
@@ -1652,18 +1660,18 @@ const ICON_UNMUTED = '<svg width="12" height="10" viewBox="0 0 15 12" style="dis
 const ICON_MUTED = '<svg width="12" height="10" viewBox="0 0 15 12" style="display:block;"><polygon points="0,4 3,4 3,8 0,8" fill="currentColor"/><polygon points="3,4 6,1 6,11 3,8" fill="currentColor"/><line x1="0" y1="0" x2="9" y2="12" stroke="#e03030" stroke-width="1.6"/></svg>';
 
 const designWorkImages = [
-  { src: 'media/design-piece-1.jpg', cap: 'Cactus 1', blurb: 'Vibe I went for: driving around late at night in the middle of a desert. Song that fits: YUKON by Justin Bieber.' },
-  { src: 'media/design-piece-2.jpg', cap: 'Cactus 2', blurb: 'Vibe I went for: driving around late at night in the middle of a desert. Song that fits: YUKON by Justin Bieber.' },
-  { src: 'media/design-piece-3.jpg', cap: 'Cactus 3', blurb: 'Vibe I went for: driving around late at night in the middle of a desert. Song that fits: YUKON by Justin Bieber.' },
-  { src: 'media/design-piece-4.jpg', cap: 'Cactus 4', blurb: 'Vibe I went for: driving around late at night in the middle of a desert. Song that fits: YUKON by Justin Bieber.' },
-  { src: 'media/design-piece-5.jpg', cap: 'Cactus 5', blurb: 'Vibe I went for: driving around late at night in the middle of a desert. Song that fits: YUKON by Justin Bieber.' },
-  { src: 'media/design-piece-6.jpg', cap: 'Cactus 6', blurb: 'Vibe I went for: driving around late at night in the middle of a desert. Song that fits: YUKON by Justin Bieber.' },
-  { src: 'media/design-piece-7.jpg', cap: 'Cactus 7', blurb: 'Vibe I went for: driving around late at night in the middle of a desert. Song that fits: YUKON by Justin Bieber.' },
-  { src: 'media/design-piece-8.jpg', cap: 'Cactus 8', blurb: 'Vibe I went for: driving around late at night in the middle of a desert. Song that fits: YUKON by Justin Bieber.' },
-  { src: 'media/design-piece-9.jpg', cap: 'Cactus 9', blurb: 'Vibe I went for: driving around late at night in the middle of a desert. Song that fits: YUKON by Justin Bieber.' },
-  { src: 'media/design-piece-10.jpg', cap: 'Cactus 10', blurb: 'Vibe I went for: driving around late at night in the middle of a desert. Song that fits: YUKON by Justin Bieber.' },
-  { src: 'media/design-piece-11.jpg', cap: 'Cactus 11', blurb: 'Vibe I went for: driving around late at night in the middle of a desert. Song that fits: YUKON by Justin Bieber.' },
-  { src: 'media/design-piece-12.jpg', cap: 'Cactus 12', blurb: 'Vibe I went for: driving around late at night in the middle of a desert. Song that fits: YUKON by Justin Bieber.' },
+  { src: 'media/design-piece-1.jpg', cap: 'Cactus 1', blurb: 'Part of my cactus collection.<br>&nbsp;&nbsp;&nbsp;&nbsp;Little down/up gradient in there.' },
+  { src: 'media/design-piece-2.jpg', cap: 'Cactus 2', blurb: 'Part of my cactus collection.<br>&nbsp;&nbsp;&nbsp;&nbsp;This one left me without words!' },
+  { src: 'media/design-piece-3.jpg', cap: 'Cactus 3', blurb: 'Part of my cactus collection.<br>&nbsp;&nbsp;&nbsp;&nbsp;Went for a more silver/purplish color on this one!' },
+  { src: 'media/design-piece-4.jpg', cap: 'Cactus 4', blurb: 'Part of my cactus collection.<br>&nbsp;&nbsp;&nbsp;&nbsp;Gradient and no words!' },
+  { src: 'media/design-piece-5.jpg', cap: 'Cactus 5', blurb: "Part of my cactus collection.<br>&nbsp;&nbsp;&nbsp;&nbsp;Different shading on 'Cactus' then the others" },
+  { src: 'media/design-piece-6.jpg', cap: 'Cactus 6', blurb: "Part of my cactus collection.<br>&nbsp;&nbsp;&nbsp;&nbsp;Took some inspiration from Travis Scott's 'Cactus Jack' moniker." },
+  { src: 'media/design-piece-7.jpg', cap: 'Cactus 7', blurb: 'Part of my cactus collection.<br>&nbsp;&nbsp;&nbsp;&nbsp;Some darker spots on the first 3 letters.' },
+  { src: 'media/design-piece-8.jpg', cap: 'Cactus 8', blurb: 'Part of my cactus collection.' },
+  { src: 'media/design-piece-9.jpg', cap: 'Cactus 9', blurb: 'Part of my cactus collection.' },
+  { src: 'media/design-piece-10.jpg', cap: 'Cactus 10', blurb: "Part of my cactus collection.<br>&nbsp;&nbsp;&nbsp;&nbsp;Made 'Cactus' darkened and 'Jahq' hollow." },
+  { src: 'media/design-piece-11.jpg', cap: 'Cactus 11', blurb: 'Part of my cactus collection.<br>&nbsp;&nbsp;&nbsp;&nbsp;Cactus Jahq but icepop edition' },
+  { src: 'media/design-piece-12.jpg', cap: 'Cactus 12', blurb: 'Part of my cactus collection.<br>&nbsp;&nbsp;&nbsp;&nbsp;Cactus Jahq but icepop edition 2' },
 ];
 
 const folderIconDataUri = 'media/windows-folder-icon.gif';
@@ -1686,7 +1694,7 @@ designWorkImages.push({ src: 'media/06-24-26-angel-cover.jpg', cap: 'Shaded Blue
 designWorkImages.push({ src: 'media/first-album-cover.jpg', cap: 'Blue Angel', blurb: 'Vibe I went for: darkish, distorted, dystopian. Song that fits: Wingspan by The Hellp.' });
 
 // ---- Horsing Around series ----
-designWorkImages.push({ src: 'media/horsing-around-cover.jpg', cap: 'Horsing Around', blurb: 'Vibe I went for: bold, raw, one motif run through a whole series.' });
+designWorkImages.push({ src: 'media/horsing-around-cover.jpg', cap: 'Horsing Around', blurb: 'Horsing around.' });
 designWorkImages.push({ src: 'media/sepia-horse.jpg', cap: 'Brown Horse', blurb: 'Vibe I went for: dusty, halftone, riding into memory.' });
 designWorkImages.push({ src: 'media/teal-horse.jpg', cap: 'Teal Horse', blurb: 'Vibe I went for: cold, electric, midnight run.' });
 designWorkImages.push({ src: 'media/amber-haze.jpg', cap: 'Amber Haze', blurb: 'Vibe I went for: sunburnt, gritty, fading light.' });
@@ -1709,15 +1717,15 @@ designWorkImages.push({ src: 'media/orchid-horse.jpg', cap: 'Orchid Horse', blur
 
 const videoPlaylist = [
   { src: 'media/key-found-concert-1.mp4', caption: "Key Found 'Helpit' Edit", blurb: 'Premiere Pro edit for band Key Found.' },
-  { src: 'media/final-draft.mp4', caption: "Key Found 'Radium Girl' Promo Video", blurb: "After Effects edit for band Key Found to promote new release of their song 'Radium Girl'." },
+  { src: 'media/final-draft.mp4', caption: "Key Found 'Radium Girl' Promo Video", blurb: "1st video I made on After Effects. I had this itch to make something in comic book style, and thought this came out alright!" },
   { src: 'media/emerald-session-1.mp4', caption: 'Key Found Emerald Session Promo Video', blurb: 'Premiere Pro edit for band Key Found to promote their live session YouTube video.' },
 ];
-videoPlaylist.unshift({ src: 'media/mk-final-video.mp4', caption: "Michael Kameron 'The Mask' Edit", blurb: "After Effects motion graphic edit for artist Michael Kameron to promote his song 'The Mask'." });
+videoPlaylist.unshift({ src: 'media/mk-final-video.mp4', caption: "Michael Kameron 'The Mask' Edit", blurb: "2nd After Effects video I made. I felt like I learned a lot making this + was a ton of fun!" });
 
 const longVideoPlaylist = [
-  { youtubeId: 'fK2nvMEHlxU', caption: 'Enrico Emerald Session', blurb: 'Edited live session for artist Enrico.' },
-  { youtubeId: 'VbK4aqu4Wtw', caption: 'Zen Studios Emerald Session', blurb: 'Filmed and edited live session for rap group Zen Studios.' },
-  { youtubeId: 'vJ72k9aYju4', caption: 'Key Found Emerald Session', blurb: 'Filmed and edited live session for band Key Found.' },
+  { youtubeId: 'fK2nvMEHlxU', caption: 'Enrico Emerald Session', blurb: 'Live session for Enrico directly from his bedroom.' },
+  { youtubeId: 'VbK4aqu4Wtw', caption: 'Zen Studios Emerald Session', blurb: 'Live session for rap group Zen Studios!' },
+  { youtubeId: 'vJ72k9aYju4', caption: 'Key Found Emerald Session', blurb: 'First live session I ever did for Green Line Records!' },
 ];
 let longVidIndex = 0;
 
@@ -3655,41 +3663,49 @@ document.getElementById('startBtn').addEventListener('click', () => {
   }
 
   const ICONS = {
+    // Scattered falling flakes, matching the actual SNOW_COLORS palette
+    // used by the canvas particles, instead of one big snowflake glyph.
     snow: pixelIconSVG([
-      '..#..',
-      '.###.',
-      '#####',
-      '.###.',
-      '..#..'
-    ], { '#': '#dfefff' }),
+      'a.b.a',
+      '.....',
+      '.b.a.',
+      '.....',
+      'a.b.a'
+    ], { a: '#ffffff', b: '#cfe8ff' }),
+    // Diagonal streaks with the same windward slant as the real rain particles.
     rain: pixelIconSVG([
-      '.###.',
-      '#####',
-      '.....',
-      'a.a.a',
-      '.a.a.'
-    ], { '#': '#c7c7c7', 'a': '#6ea2e0' }),
+      '..a..',
+      '.b...',
+      'a....',
+      '....b',
+      '...a.'
+    ], { a: '#8fb8ee', b: '#6ea2e0' }),
+    // Tumbling colored squares matching the actual LEAF_COLORS variety,
+    // rather than a static tree/leaf glyph.
     leaves: pixelIconSVG([
-      '..#..',
-      '.###.',
-      '#####',
-      '.###.',
-      '..b..'
-    ], { '#': '#d9772e', 'b': '#5a3d26' }),
+      '.a...',
+      '..b..',
+      '...a.',
+      '.b...',
+      '..a..'
+    ], { a: '#d9772e', b: '#c1481f' }),
+    // Blinking sparkle dots matching the actual FIREFLY_COLORS.
     fireflies: pixelIconSVG([
-      '#...#',
       '.....',
-      '..#..',
-      '.....',
-      '#...#'
-    ], { '#': '#eaff4d' }),
+      '.a...',
+      '....b',
+      '..a..',
+      '.....'
+    ], { a: '#eaff4d', b: '#d8ff6e' }),
+    // Sun with a bright pixel highlight at center, matching the celestial
+    // sun sprite used in the day/night cycle.
     off: pixelIconSVG([
-      '#.#.#',
-      '.###.',
-      '#####',
-      '.###.',
-      '#.#.#'
-    ], { '#': '#ffd23f' })
+      'a.a.a',
+      '.aaa.',
+      'aabaa',
+      '.aaa.',
+      'a.a.a'
+    ], { a: '#ffd23f', b: '#ffe9a8' })
   };
 
   const MODE_META = {

@@ -349,6 +349,106 @@
     box-shadow: inset 0 1px 0 var(--retro-lo2);
   }
 
+  /* ---------- ALT THEME: "WINDOWS 3.1" ---------- */
+  html.theme-win31 body, html.theme-win31 button, html.theme-win31 input,
+  html.theme-win31 textarea, html.theme-win31 select, html.theme-win31 .win,
+  html.theme-win31 .task-item, html.theme-win31 #startBtn, html.theme-win31 #clock,
+  html.theme-win31 .titlebar, html.theme-win31 .icon .label, html.theme-win31 .win-status,
+  html.theme-win31 .vid-caption, html.theme-win31 .gallery-item .cap, html.theme-win31 .win-body,
+  html.theme-win31 .titlebar button, html.theme-win31 .vid-controls button,
+  html.theme-win31 #dateDisplay, html.theme-win31 #startMenu {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    text-rendering: optimizeSpeed;
+    -webkit-font-smoothing: none;
+    letter-spacing: 0.5px;
+  }
+  html.theme-win31 .titlebar {
+    background: #000080;
+    color: #fff;
+    font-size: 12px;
+  }
+  html.theme-win31 .win.inactive .titlebar {
+    background: #808080;
+    color: #d4d0c8;
+  }
+  html.theme-win31 .win {
+    border-radius: 0;
+    box-shadow:
+      inset -1px -1px 0 #000,
+      inset 1px 1px 0 #fff;
+  }
+  html.theme-win31 .win-body.white {
+    background: #ffffff;
+    color: #000000;
+  }
+  html.theme-win31 .win-status {
+    border-top: 1px solid #000;
+    box-shadow: none;
+  }
+  html.theme-win31 .titlebar button {
+    border-radius: 0;
+    box-shadow:
+      inset -1px -1px 0 #000,
+      inset 1px 1px 0 #fff;
+  }
+  html.theme-win31 .titlebar button:active {
+    box-shadow:
+      inset 1px 1px 0 #000,
+      inset -1px -1px 0 #fff;
+  }
+  html.theme-win31 #taskbar {
+    box-shadow: inset 0 1px 0 #000;
+  }
+  html.theme-win31 #startBtn,
+  html.theme-win31 .task-item,
+  html.theme-win31 #clock,
+  html.theme-win31 #dateDisplay,
+  html.theme-win31 #weatherBtn,
+  html.theme-win31 .vid-arrow,
+  html.theme-win31 .vid-controls button,
+  html.theme-win31 #desktopMusicPlayer,
+  html.theme-win31 .music-player,
+  html.theme-win31 #desktopMusicControls button,
+  html.theme-win31 .music-controls button,
+  html.theme-win31 .music-playlist button,
+  html.theme-win31 #desktopMusicMute,
+  html.theme-win31 #desktopMusicVolDown,
+  html.theme-win31 #desktopMusicVolUp,
+  html.theme-win31 #musicVolDown,
+  html.theme-win31 #musicVolUp,
+  html.theme-win31 .blurb-toggle {
+    border-radius: 0;
+    box-shadow:
+      inset -1px -1px 0 #000,
+      inset 1px 1px 0 #fff;
+  }
+  html.theme-win31 .task-item.active {
+    box-shadow:
+      inset 1px 1px 0 #000,
+      inset -1px -1px 0 #fff;
+  }
+  html.theme-win31 .icon .label {
+    text-shadow: 1px 1px 0 #000;
+  }
+  html.theme-win31 .icon.selected {
+    background: rgba(0, 0, 128, 0.4);
+    border-color: #000;
+  }
+  html.theme-win31 .icon.selected .label {
+    background: #000080;
+  }
+  html.theme-win31 .resize-handle::after {
+    background:
+      linear-gradient(135deg, transparent 0 48%, #000 48% 58%, transparent 58% 100%);
+  }
+  html.theme-win31 .blurb-bar {
+    box-shadow: inset 0 1px 0 #000;
+  }
+  html.theme-win31 .blurb-panel {
+    box-shadow: inset 0 1px 0 #808080;
+  }
+
   /* ---------- DESKTOP ---------- */
   #desktop {
     position: relative;
@@ -3489,7 +3589,7 @@ function openDisplayPropertiesWindow() {
     id: 'display-properties',
     title: 'Display Properties',
     glyph: '🖥️',
-    width: 360,
+    width: 420,
     height: 200,
     left: jitterPos(220, 40),
     top: jitterPos(120, 30),
@@ -3499,6 +3599,7 @@ function openDisplayPropertiesWindow() {
         <div style="display:flex; gap:8px;">
           <button type="button" id="dpThemeClassic" style="flex:1; padding:8px; cursor:pointer;">Classic</button>
           <button type="button" id="dpThemeRetro" style="flex:1; padding:8px; cursor:pointer;">Windows 96</button>
+          <button type="button" id="dpThemeWin31" style="flex:1; padding:8px; cursor:pointer;">Windows 3.1</button>
         </div>
       </div>
     `,
@@ -3507,22 +3608,33 @@ function openDisplayPropertiesWindow() {
 
   const classicBtn = win.querySelector('#dpThemeClassic');
   const retroBtn = win.querySelector('#dpThemeRetro');
+  const win31Btn = win.querySelector('#dpThemeWin31');
 
   function refreshActiveButtons() {
-    const active = document.documentElement.classList.contains('theme-retro');
-    classicBtn.style.fontWeight = active ? 'normal' : 'bold';
-    retroBtn.style.fontWeight = active ? 'bold' : 'normal';
+    const html = document.documentElement;
+    const isRetro = html.classList.contains('theme-retro');
+    const isWin31 = html.classList.contains('theme-win31');
+    classicBtn.style.fontWeight = (!isRetro && !isWin31) ? 'bold' : 'normal';
+    retroBtn.style.fontWeight = isRetro ? 'bold' : 'normal';
+    win31Btn.style.fontWeight = isWin31 ? 'bold' : 'normal';
   }
   refreshActiveButtons();
 
   classicBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    document.documentElement.classList.remove('theme-retro');
+    document.documentElement.classList.remove('theme-retro', 'theme-win31');
     refreshActiveButtons();
   });
   retroBtn.addEventListener('click', (e) => {
     e.stopPropagation();
+    document.documentElement.classList.remove('theme-win31');
     document.documentElement.classList.add('theme-retro');
+    refreshActiveButtons();
+  });
+  win31Btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.documentElement.classList.remove('theme-retro');
+    document.documentElement.classList.add('theme-win31');
     refreshActiveButtons();
   });
 }

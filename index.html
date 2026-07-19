@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Raf's Portfolio</title>
 <link rel="icon" type="image/png" href="media/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -177,27 +176,6 @@
     position: relative;
     width: 100vw; height: 100vh;
     overflow: hidden;
-  }
-
-  /* On touch devices, inset the desktop from the true screen edges so
-     rounded corners / notches / home-indicator areas never clip content.
-     The body shows through as a plain gray border in that gap — desktop
-     is untouched since env(safe-area-inset-*) is 0 there anyway, but we
-     scope this to touch devices to be explicit and avoid any layout
-     surprises on desktop browsers. */
-  @media (pointer: coarse) {
-    html, body {
-      background: #c0c0c0;
-    }
-    #desktop {
-      position: absolute;
-      width: auto;
-      height: auto;
-      top: max(env(safe-area-inset-top, 0px), 8px);
-      right: max(env(safe-area-inset-right, 0px), 8px);
-      bottom: max(env(safe-area-inset-bottom, 0px), 8px);
-      left: max(env(safe-area-inset-left, 0px), 8px);
-    }
   }
 
   #bgLayer {
@@ -3706,8 +3684,8 @@ document.getElementById('startBtn').addEventListener('click', () => {
   let snowGroundBuildup = 0, leafGroundBuildup = 0; // 0..1
   const GROUND_BUILDUP_RATE = 1 / 14;   // reaches full after ~14s of that weather
   const GROUND_RECEDE_RATE = 1 / 10;    // fades over ~10s once switched away
-  const SNOW_PILE_MAX = isTouchDevice ? 10 : 22;
-  const LEAF_PILE_MAX = isTouchDevice ? 8 : 18;
+  const SNOW_PILE_MAX = 22;
+  const LEAF_PILE_MAX = 18;
 
   const MODES = ["snow", "rain", "leaves", "fireflies", "off"];
   // Small hand-drawn pixel-grid icons instead of emoji, to match the

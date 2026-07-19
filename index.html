@@ -171,6 +171,41 @@
     font-family: Tahoma, Verdana, Arial, sans-serif;
   }
 
+  /* ---------- ALT THEME: "WINDOWS 96" (toggled via Start button) ---------- */
+  html.theme-retro body, html.theme-retro button, html.theme-retro input,
+  html.theme-retro textarea, html.theme-retro select, html.theme-retro .win,
+  html.theme-retro .task-item, html.theme-retro #startBtn, html.theme-retro #clock,
+  html.theme-retro .titlebar, html.theme-retro .icon .label, html.theme-retro .win-status,
+  html.theme-retro .vid-caption, html.theme-retro .gallery-item .cap, html.theme-retro .win-body,
+  html.theme-retro .titlebar button, html.theme-retro .vid-controls button,
+  html.theme-retro #dateDisplay {
+    font-family: 'VT323', 'Courier New', monospace;
+    text-rendering: auto;
+    -webkit-font-smoothing: auto;
+  }
+  html.theme-retro .titlebar {
+    font-size: 15px;
+  }
+  html.theme-retro .icon .label, html.theme-retro .task-item, html.theme-retro #startBtn,
+  html.theme-retro #clock, html.theme-retro .win-status, html.theme-retro .gallery-item .cap,
+  html.theme-retro .vid-caption, html.theme-retro .vid-controls button,
+  html.theme-retro .titlebar button, html.theme-retro #dateDisplay {
+    font-size: 14px;
+  }
+  html.theme-retro .win-body, html.theme-retro .win-status, html.theme-retro .gallery-item .cap {
+    font-size: 15px;
+    letter-spacing: 0;
+  }
+  html.theme-retro .titlebar {
+    background: #000080; /* flat navy, no gradient — classic Win95/98 look */
+  }
+  html.theme-retro .win.inactive .titlebar {
+    background: #808080;
+  }
+  html.theme-retro #bgLayer {
+    filter: saturate(1.3) hue-rotate(-8deg);
+  }
+
   /* ---------- DESKTOP ---------- */
   #desktop {
     position: relative;
@@ -1211,26 +1246,12 @@
   #dateDisplay {
     display: flex;
     align-items: center;
-    gap: 6px;
     background: #c0c0c0;
     box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #fff;
-    padding: 3px 8px;
-    font-size: 10px;
-    letter-spacing: 0.5px;
-    flex-shrink: 0;
-  }
-  #dateDisplay .dd-label {
+    padding: 3px 10px;
+    font-size: 11px;
     color: #000;
-    font-weight: bold;
-  }
-  #dateDisplay .dd-value {
-    font-family: 'VT323', monospace;
-    font-size: 14px;
-    color: #00ff66;
-    text-shadow: 0 0 3px rgba(0,255,102,0.7);
-    background: #000;
-    padding: 2px 6px;
-    box-shadow: inset -1px -1px 0 rgba(255,255,255,0.12), inset 1px 1px 0 rgba(0,0,0,0.7);
+    flex-shrink: 0;
     white-space: nowrap;
   }
   #weatherBtn {
@@ -1687,8 +1708,7 @@
     <div id="taskbar-sep"></div>
     <div id="taskItems" style="display:flex; gap:4px; flex:1; overflow:hidden;"></div>
     <div id="dateDisplay" title="Today's date">
-      <span class="dd-label">DATE</span>
-      <div class="dd-value" id="dateValue"></div>
+      <span id="dateValue"></span>
     </div>
     <button id="weatherBtn" type="button" title="Change weather"></button>
     <div id="clock">--:--</div>
@@ -3132,8 +3152,7 @@ function updateDateDisplay() {
   const el = document.getElementById('dateValue');
   if (!el) return;
   const now = new Date();
-  const text = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit' });
-  el.textContent = text.toUpperCase();
+  el.textContent = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit' });
 }
 updateDateDisplay();
 setInterval(updateDateDisplay, 60 * 1000);
@@ -3213,6 +3232,10 @@ if (bootStartBtnEl && bootScreenEl) {
         clearInterval(fillInterval);
         setTimeout(() => {
           bootScreenEl.classList.add('hidden');
+          // Alternate visual themes each time you "reboot" via the Start
+          // button — current design by default, "Windows 96" on the next
+          // boot, then back again.
+          document.documentElement.classList.toggle('theme-retro');
           // "Booting into the computer" — reset the desktop back to its
           // default view; goHome() also pops each window open as it goes.
           goHome();

@@ -173,17 +173,17 @@
 
   /* ---------- ALT THEME: "WINDOWS 96" (toggled via Start Menu > Settings) ---------- */
   html.theme-retro {
-    --retro-bg: #14231a;
-    --retro-bg-alt: #0d1810;
-    --retro-text: #00ff66;
-    --retro-text-soft: #baffd9;
-    --retro-hi: #39ff85;
-    --retro-hi2: #1f8a4d;
-    --retro-lo: #061109;
-    --retro-lo2: #0a2614;
-    --retro-titlebar: #003d1a;
-    --retro-titlebar-inactive-bg: #1c2b22;
-    --retro-titlebar-inactive-text: #6fae87;
+    --retro-bg: #c0c0c0;
+    --retro-bg-alt: #d4d0c8;
+    --retro-text: #000000;
+    --retro-text-soft: #ffffff;
+    --retro-hi: #ffffff;
+    --retro-hi2: #dfdfdf;
+    --retro-lo: #000000;
+    --retro-lo2: #808080;
+    --retro-titlebar: #000080;
+    --retro-titlebar-inactive-bg: #808080;
+    --retro-titlebar-inactive-text: #dfdfdf;
   }
   html.theme-retro body, html.theme-retro button, html.theme-retro input,
   html.theme-retro textarea, html.theme-retro select, html.theme-retro .win,
@@ -230,8 +230,8 @@
     color: var(--retro-text);
   }
   html.theme-retro .win-body.white {
-    background: color-mix(in srgb, var(--retro-text) 8%, #fff);
-    color: var(--retro-lo2);
+    background: #ffffff;
+    color: #000000;
   }
   html.theme-retro .win-status {
     color: var(--retro-text);
@@ -347,9 +347,6 @@
     background: var(--retro-bg-alt);
     color: var(--retro-text);
     box-shadow: inset 0 1px 0 var(--retro-lo2);
-  }
-  html.theme-retro #bgLayer {
-    filter: saturate(1.1) hue-rotate(70deg) brightness(0.75);
   }
 
   /* ---------- DESKTOP ---------- */
@@ -1370,38 +1367,6 @@
   }
   .sm-label {
     flex: 1;
-  }
-
-  /* Display Properties accent swatches — explicit colors here (with
-     !important + higher specificity than the generic hover rule) so they
-     keep their real color when hovered instead of graying out. */
-  .dp-swatch {
-    width: 28px;
-    height: 28px;
-    border: 2px solid #000;
-    cursor: pointer;
-    padding: 0;
-    box-shadow: 1px 1px 3px rgba(0,0,0,0.4);
-  }
-  .dp-swatch[data-preset="green"] { background: #00ff66 !important; }
-  .dp-swatch[data-preset="amber"] { background: #ffb000 !important; }
-  .dp-swatch[data-preset="purple"] { background: #e066ff !important; }
-  .dp-swatch[data-preset="blue"] { background: #4dd2ff !important; }
-  .dp-swatch-reset {
-    background: #a8a8a8 !important;
-    color: #000;
-    font-size: 15px;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .dp-swatch:hover {
-    outline: 2px solid #000;
-    outline-offset: 2px;
-  }
-  .dp-swatch.selected {
-    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
   }
 
   #taskbar {
@@ -3507,33 +3472,6 @@ function showBootScreen() {
   // the desktop or the music underneath, so playback stays uninterrupted.
 }
 
-/* ---------------- RETRO ACCENT COLOR PRESETS ---------------- */
-// Lets Display Properties swap the "Windows 96" theme's accent color
-// live, by just changing CSS custom properties — no reboot required.
-const RETRO_PRESETS = {
-  green:  { bg: '#14231a', bgAlt: '#0d1810', text: '#00ff66', textSoft: '#baffd9', hi: '#39ff85', hi2: '#1f8a4d', lo: '#061109', lo2: '#0a2614', titlebar: '#003d1a', titlebarInactiveBg: '#1c2b22', titlebarInactiveText: '#6fae87' },
-  amber:  { bg: '#231a0f', bgAlt: '#180f08', text: '#ffb000', textSoft: '#ffe0a3', hi: '#ffcf4d', hi2: '#b3790a', lo: '#0d0800', lo2: '#241705', titlebar: '#4a2d00', titlebarInactiveBg: '#2b2015', titlebarInactiveText: '#c99a52' },
-  purple: { bg: '#1f1424', bgAlt: '#140d18', text: '#e066ff', textSoft: '#f0c2ff', hi: '#c266ff', hi2: '#7a1f99', lo: '#0a0510', lo2: '#210a29', titlebar: '#3d0057', titlebarInactiveBg: '#251829', titlebarInactiveText: '#a374ad' },
-  blue:   { bg: '#0f1a23', bgAlt: '#0a1218', text: '#4dd2ff', textSoft: '#bdeeff', hi: '#4dd2ff', hi2: '#1a6f99', lo: '#020a0d', lo2: '#0a1e26', titlebar: '#003d57', titlebarInactiveBg: '#152029', titlebarInactiveText: '#5c9bb3' },
-  gray:   { bg: '#2b2b2b', bgAlt: '#1e1e1e', text: '#e0e0e0', textSoft: '#f2f2f2', hi: '#a8a8a8', hi2: '#6e6e6e', lo: '#0a0a0a', lo2: '#3a3a3a', titlebar: '#4a4a4a', titlebarInactiveBg: '#2b2b2b', titlebarInactiveText: '#8a8a8a' }
-};
-
-function applyRetroPreset(name) {
-  const p = RETRO_PRESETS[name] || RETRO_PRESETS.green;
-  const root = document.documentElement.style;
-  root.setProperty('--retro-bg', p.bg);
-  root.setProperty('--retro-bg-alt', p.bgAlt);
-  root.setProperty('--retro-text', p.text);
-  root.setProperty('--retro-text-soft', p.textSoft);
-  root.setProperty('--retro-hi', p.hi);
-  root.setProperty('--retro-hi2', p.hi2);
-  root.setProperty('--retro-lo', p.lo);
-  root.setProperty('--retro-lo2', p.lo2);
-  root.setProperty('--retro-titlebar', p.titlebar);
-  root.setProperty('--retro-titlebar-inactive-bg', p.titlebarInactiveBg);
-  root.setProperty('--retro-titlebar-inactive-text', p.titlebarInactiveText);
-}
-
 /* ---------------- START MENU ---------------- */
 const startMenuEl = document.getElementById('startMenu');
 const startBtnEl = document.getElementById('startBtn');
@@ -3546,31 +3484,21 @@ function closeStartMenu() {
   startMenuEl.querySelectorAll('.sm-item.open').forEach(el => el.classList.remove('open'));
 }
 
-let currentRetroPreset = 'green'; // tracks the active accent color choice
-
 function openDisplayPropertiesWindow() {
   const win = createWindow({
     id: 'display-properties',
     title: 'Display Properties',
     glyph: '🖥️',
     width: 360,
-    height: 320,
+    height: 200,
     left: jitterPos(220, 40),
     top: jitterPos(120, 30),
     bodyHTML: `
       <div style="padding:10px; font-size:12px;">
         <div style="font-weight:bold; margin-bottom:6px;">System</div>
-        <div style="display:flex; gap:8px; margin-bottom:18px;">
+        <div style="display:flex; gap:8px;">
           <button type="button" id="dpThemeClassic" style="flex:1; padding:8px; cursor:pointer;">Classic</button>
           <button type="button" id="dpThemeRetro" style="flex:1; padding:8px; cursor:pointer;">Windows 96</button>
-        </div>
-        <div style="font-weight:bold; margin-bottom:6px;">Accent Color (Windows 96)</div>
-        <div style="display:flex; gap:12px; align-items:center;" id="dpSwatches">
-          <button type="button" class="dp-swatch" data-preset="green" title="Green"></button>
-          <button type="button" class="dp-swatch" data-preset="amber" title="Amber"></button>
-          <button type="button" class="dp-swatch" data-preset="purple" title="Purple"></button>
-          <button type="button" class="dp-swatch" data-preset="blue" title="Blue"></button>
-          <button type="button" class="dp-swatch dp-swatch-reset" title="Reset to Default"></button>
         </div>
       </div>
     `,
@@ -3579,20 +3507,13 @@ function openDisplayPropertiesWindow() {
 
   const classicBtn = win.querySelector('#dpThemeClassic');
   const retroBtn = win.querySelector('#dpThemeRetro');
-  const resetSwatch = win.querySelector('.dp-swatch-reset');
 
   function refreshActiveButtons() {
     const active = document.documentElement.classList.contains('theme-retro');
     classicBtn.style.fontWeight = active ? 'normal' : 'bold';
     retroBtn.style.fontWeight = active ? 'bold' : 'normal';
   }
-  function refreshSwatchSelection() {
-    win.querySelectorAll('.dp-swatch[data-preset]').forEach(b => {
-      b.classList.toggle('selected', b.dataset.preset === currentRetroPreset);
-    });
-  }
   refreshActiveButtons();
-  refreshSwatchSelection();
 
   classicBtn.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -3603,22 +3524,6 @@ function openDisplayPropertiesWindow() {
     e.stopPropagation();
     document.documentElement.classList.add('theme-retro');
     refreshActiveButtons();
-  });
-  win.querySelectorAll('.dp-swatch[data-preset]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      currentRetroPreset = btn.dataset.preset;
-      applyRetroPreset(currentRetroPreset);
-      document.documentElement.classList.add('theme-retro');
-      refreshActiveButtons();
-      refreshSwatchSelection();
-    });
-  });
-  resetSwatch.addEventListener('click', (e) => {
-    e.stopPropagation();
-    currentRetroPreset = 'gray';
-    applyRetroPreset('gray');
-    refreshSwatchSelection();
   });
 }
 

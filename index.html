@@ -5,7 +5,7 @@
 <title>Raf's Portfolio</title>
 <link rel="icon" type="image/png" href="media/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Baloo+2:wght@500;700&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Baloo+2:wght@500;700&family=VT323&family=Silkscreen:wght@400;700&family=Audiowide&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; user-select: none; }
 
@@ -357,16 +357,30 @@
   html.theme-win31 .vid-caption, html.theme-win31 .gallery-item .cap, html.theme-win31 .win-body,
   html.theme-win31 .titlebar button, html.theme-win31 .vid-controls button,
   html.theme-win31 #dateDisplay, html.theme-win31 #startMenu {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Silkscreen', 'Courier New', monospace;
     font-weight: bold;
     text-rendering: optimizeSpeed;
     -webkit-font-smoothing: none;
     letter-spacing: 0.5px;
   }
+  html.theme-win31 .titlebar,
+  html.theme-win31 .icon .label,
+  html.theme-win31 .task-item,
+  html.theme-win31 #startBtn,
+  html.theme-win31 #clock,
+  html.theme-win31 #dateDisplay,
+  html.theme-win31 .win-status,
+  html.theme-win31 .gallery-item .cap {
+    font-size: 15px;
+  }
+  html.theme-win31 .win-body {
+    font-size: 16px;
+    line-height: 1.5;
+  }
   html.theme-win31 .titlebar {
     background: #000080;
     color: #fff;
-    font-size: 12px;
+    font-size: 15px;
   }
   html.theme-win31 .win.inactive .titlebar {
     background: #808080;
@@ -450,10 +464,21 @@
   }
 
   /* ---------- ALT THEME: "WINDOWS XP LUNA" ---------- */
+  html.theme-luna body, html.theme-luna button, html.theme-luna input,
+  html.theme-luna textarea, html.theme-luna select, html.theme-luna .win,
+  html.theme-luna .task-item, html.theme-luna #startBtn, html.theme-luna #clock,
+  html.theme-luna .titlebar, html.theme-luna .icon .label, html.theme-luna .win-status,
+  html.theme-luna .vid-caption, html.theme-luna .gallery-item .cap, html.theme-luna .win-body,
+  html.theme-luna .titlebar button, html.theme-luna .vid-controls button,
+  html.theme-luna #dateDisplay, html.theme-luna #startMenu {
+    font-family: 'Baloo 2', Tahoma, sans-serif;
+    font-weight: 700;
+  }
   html.theme-luna .titlebar {
     background: linear-gradient(180deg, #4d94e8 0%, #1c5fc7 40%, #0d47a1 100%);
     color: #fff;
     border-radius: 8px 8px 0 0;
+    font-size: 13px;
   }
   html.theme-luna .win.inactive .titlebar {
     background: linear-gradient(180deg, #b7cbe6 0%, #93aed1 100%);
@@ -548,156 +573,136 @@
     box-shadow: none;
   }
 
-  /* ---------- ALT THEME: "MAC OS" (classic System 7 / Platinum) ---------- */
-  #macMenuBar {
-    display: none;
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 20px;
-    background: #fff;
-    border-bottom: 1px solid #000;
-    align-items: center;
-    padding: 0 10px;
-    gap: 18px;
-    font-family: Geneva, Verdana, Arial, sans-serif;
-    font-size: 12px;
-    color: #000;
-    z-index: 9999;
+  /* ---------- ALT THEME: "SYNTHWAVE" ---------- */
+  html.theme-synth body, html.theme-synth button, html.theme-synth input,
+  html.theme-synth textarea, html.theme-synth select, html.theme-synth .win,
+  html.theme-synth .task-item, html.theme-synth #startBtn, html.theme-synth #clock,
+  html.theme-synth .icon .label, html.theme-synth .win-status,
+  html.theme-synth .vid-caption, html.theme-synth .gallery-item .cap, html.theme-synth .win-body,
+  html.theme-synth .titlebar button, html.theme-synth .vid-controls button,
+  html.theme-synth #dateDisplay, html.theme-synth #startMenu {
+    font-family: 'Audiowide', 'Arial Narrow', sans-serif;
+    letter-spacing: 0.5px;
   }
-  html.theme-macos #macMenuBar {
-    display: flex;
-  }
-  html.theme-macos #icons {
-    top: 34px;
-  }
-  #macMenuBar .mac-menu-apple {
-    font-size: 14px;
-  }
-  #macMenuBar .mac-menu-item {
-    cursor: default;
-  }
-  html.theme-macos body, html.theme-macos button, html.theme-macos input,
-  html.theme-macos textarea, html.theme-macos select, html.theme-macos .win,
-  html.theme-macos .task-item, html.theme-macos #startBtn, html.theme-macos #clock,
-  html.theme-macos .titlebar, html.theme-macos .icon .label, html.theme-macos .win-status,
-  html.theme-macos .vid-caption, html.theme-macos .gallery-item .cap, html.theme-macos .win-body,
-  html.theme-macos .titlebar button, html.theme-macos .vid-controls button,
-  html.theme-macos #dateDisplay, html.theme-macos #startMenu {
-    font-family: Geneva, Verdana, Arial, sans-serif;
-    font-weight: normal;
-  }
-  html.theme-macos .titlebar {
-    position: relative;
-    background: repeating-linear-gradient(to bottom, #000 0px, #000 1px, #fff 1px, #fff 3px);
-    border-bottom: 1px solid #000;
-    color: #000;
-  }
-  html.theme-macos .win.inactive .titlebar {
-    background: repeating-linear-gradient(to bottom, #999 0px, #999 1px, #fff 1px, #fff 3px);
-  }
-  html.theme-macos .titlebar .title {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #fff;
-    padding: 0 8px;
-  }
-  html.theme-macos .titlebar .btns {
-    order: -1;
-  }
-  html.theme-macos .titlebar button {
-    background: #fff;
-    border: 1px solid #000;
-    border-radius: 0;
-    box-shadow: none;
-    color: #000;
-  }
-  html.theme-macos .win {
-    border-radius: 0;
-    border: 1px solid #000;
-    box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
-  }
-  html.theme-macos .win-body,
-  html.theme-macos .win-body.white {
-    background: #ffffff;
-    color: #000000;
-  }
-  html.theme-macos .win-status {
-    border-top: 1px solid #000;
-    box-shadow: none;
-  }
-  html.theme-macos #taskbar {
-    background: #fff;
-    box-shadow: none;
-    border-top: 1px solid #000;
-  }
-  html.theme-macos #startBtn {
-    background: #fff;
-    border: 1px solid #000;
-    color: #000;
-    box-shadow: none;
-  }
-  html.theme-macos .task-item {
-    background: #fff;
-    border: 1px solid #000;
-    color: #000;
-    box-shadow: none;
-  }
-  html.theme-macos .task-item.active {
-    background: #000;
+  html.theme-synth .titlebar {
+    background: linear-gradient(90deg, #ff2e88 0%, #7b2ffa 100%);
     color: #fff;
+    text-shadow: 0 0 6px rgba(255,255,255,0.7), 0 0 10px rgba(255,46,136,0.6);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    letter-spacing: 0.5px;
   }
-  html.theme-macos #clock,
-  html.theme-macos #dateDisplay,
-  html.theme-macos #weatherBtn {
-    background: #fff;
-    border: 1px solid #000;
-    color: #000;
-    box-shadow: none;
-  }
-  html.theme-macos .icon .label {
-    color: #000;
+  html.theme-synth .win.inactive .titlebar {
+    background: linear-gradient(90deg, #6b3f66 0%, #4a3f7b 100%);
+    color: #d8cce8;
     text-shadow: none;
-    background: rgba(255,255,255,0.85);
   }
-  html.theme-macos .icon.selected {
-    background: rgba(0,0,0,0.15);
-    border-color: #000;
+  html.theme-synth .win {
+    background: #1a0e2e;
+    border-radius: 4px;
+    box-shadow:
+      0 0 0 1px #00e5ff,
+      0 0 12px rgba(0,229,255,0.55),
+      0 0 4px rgba(255,46,136,0.5);
   }
-  html.theme-macos .icon.selected .label {
-    background: #000;
+  html.theme-synth .win-body {
+    background: #1a0e2e;
+    color: #f2e9ff;
+  }
+  html.theme-synth .win-body.white {
+    background: #f5eeff;
+    color: #1a0e2e;
+  }
+  html.theme-synth .win-status {
+    color: #00e5ff;
+    border-top: 1px solid #7b2ffa;
+    box-shadow: none;
+  }
+  html.theme-synth .titlebar button {
+    background: #1a0e2e;
+    color: #00e5ff;
+    border: 1px solid #00e5ff;
+    border-radius: 2px;
+    box-shadow: 0 0 4px rgba(0,229,255,0.6);
+  }
+  html.theme-synth .titlebar button:active {
+    box-shadow: inset 0 0 4px rgba(0,229,255,0.8);
+  }
+  html.theme-synth #taskbar {
+    background: #120820;
+    border-top: 1px solid #00e5ff;
+    box-shadow: inset 0 1px 0 rgba(255,46,136,0.5);
+  }
+  html.theme-synth #startBtn {
+    background: linear-gradient(90deg, #ff2e88, #7b2ffa);
+    color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 0 8px rgba(255,46,136,0.7);
+    font-weight: bold;
+  }
+  html.theme-synth .task-item {
+    background: #1a0e2e;
+    color: #00e5ff;
+    border: 1px solid #7b2ffa;
+    box-shadow: none;
+  }
+  html.theme-synth .task-item.active {
+    background: #7b2ffa;
     color: #fff;
   }
-  html.theme-macos .resize-handle::after {
-    background: linear-gradient(135deg, transparent 0 48%, #000 48% 58%, transparent 58% 100%);
+  html.theme-synth #clock,
+  html.theme-synth #dateDisplay,
+  html.theme-synth #weatherBtn {
+    background: #1a0e2e;
+    color: #00e5ff;
+    border: 1px solid #00e5ff;
+    box-shadow: 0 0 4px rgba(0,229,255,0.4);
   }
-  html.theme-macos .vid-arrow,
-  html.theme-macos .vid-controls button,
-  html.theme-macos #desktopMusicPlayer,
-  html.theme-macos .music-player,
-  html.theme-macos #desktopMusicControls button,
-  html.theme-macos .music-controls button,
-  html.theme-macos .music-playlist button,
-  html.theme-macos #desktopMusicMute,
-  html.theme-macos #desktopMusicVolDown,
-  html.theme-macos #desktopMusicVolUp,
-  html.theme-macos #musicVolDown,
-  html.theme-macos #musicVolUp,
-  html.theme-macos .blurb-toggle {
-    background: #fff;
-    border: 1px solid #000;
-    box-shadow: none;
-    color: #000;
+  html.theme-synth .icon .label {
+    color: #f2e9ff;
+    text-shadow: 0 0 4px #ff2e88, 0 0 6px #00e5ff;
   }
-  html.theme-macos .blurb-bar {
-    background: #fff;
-    box-shadow: none;
-    border-top: 1px solid #000;
+  html.theme-synth .icon.selected {
+    background: rgba(123,47,250,0.4);
+    border-color: #00e5ff;
   }
-  html.theme-macos .blurb-panel {
-    background: #f5f5f5;
+  html.theme-synth .icon.selected .label {
+    background: #7b2ffa;
+  }
+  html.theme-synth .resize-handle::after {
+    background:
+      linear-gradient(135deg, transparent 0 42%, #ff2e88 42% 52%, transparent 52% 100%),
+      linear-gradient(135deg, transparent 0 62%, #00e5ff 62% 72%, transparent 72% 100%);
+  }
+  html.theme-synth .vid-arrow,
+  html.theme-synth .vid-controls button,
+  html.theme-synth #desktopMusicPlayer,
+  html.theme-synth .music-player,
+  html.theme-synth #desktopMusicControls button,
+  html.theme-synth .music-controls button,
+  html.theme-synth .music-playlist button,
+  html.theme-synth #desktopMusicMute,
+  html.theme-synth #desktopMusicVolDown,
+  html.theme-synth #desktopMusicVolUp,
+  html.theme-synth #musicVolDown,
+  html.theme-synth #musicVolUp,
+  html.theme-synth .blurb-toggle {
+    background: #1a0e2e;
+    color: #00e5ff;
+    border: 1px solid #00e5ff;
     box-shadow: none;
-    border-top: 1px solid #000;
+  }
+  html.theme-synth .blurb-bar {
+    background: #120820;
+    box-shadow: inset 0 1px 0 rgba(255,46,136,0.4);
+  }
+  html.theme-synth .blurb-panel {
+    background: #1a0e2e;
+    color: #f2e9ff;
+    box-shadow: inset 0 1px 0 rgba(123,47,250,0.5);
+  }
+  html.theme-synth #bgLayer {
+    filter: saturate(1.4) hue-rotate(275deg) brightness(0.55) contrast(1.15);
   }
 
   /* ---------- DESKTOP ---------- */
@@ -2135,14 +2140,6 @@
 
   <canvas id="snowCanvas"></canvas>
 
-
-  <div id="macMenuBar">
-    <span class="mac-menu-apple">🍎</span>
-    <span class="mac-menu-item">File</span>
-    <span class="mac-menu-item">Edit</span>
-    <span class="mac-menu-item">View</span>
-    <span class="mac-menu-item">Special</span>
-  </div>
 
   <div id="icons"></div>
 
@@ -3849,7 +3846,7 @@ function openDisplayPropertiesWindow() {
     title: 'Display Properties',
     glyph: '🖥️',
     width: 400,
-    height: 260,
+    height: 340,
     left: jitterPos(220, 40),
     top: jitterPos(120, 30),
     bodyHTML: `
@@ -3860,14 +3857,20 @@ function openDisplayPropertiesWindow() {
           <button type="button" class="dp-theme-btn" data-theme="theme-retro" style="flex:1 1 42%; padding:8px; cursor:pointer;">Windows 96</button>
           <button type="button" class="dp-theme-btn" data-theme="theme-win31" style="flex:1 1 42%; padding:8px; cursor:pointer;">Windows 3.1</button>
           <button type="button" class="dp-theme-btn" data-theme="theme-luna" style="flex:1 1 42%; padding:8px; cursor:pointer;">Windows XP Luna</button>
-          <button type="button" class="dp-theme-btn" data-theme="theme-macos" style="flex:1 1 42%; padding:8px; cursor:pointer;">Mac OS</button>
+          <button type="button" class="dp-theme-btn" data-theme="theme-synth" style="flex:1 1 42%; padding:8px; cursor:pointer;">Synthwave</button>
+        </div>
+        <div style="font-weight:bold; margin:16px 0 6px;">Sounds</div>
+        <div style="margin-bottom:6px;">Obnoxious Click Sound</div>
+        <div style="display:flex; gap:8px;">
+          <button type="button" id="dpClickSoundOn" style="flex:1; padding:8px; cursor:pointer;">On</button>
+          <button type="button" id="dpClickSoundOff" style="flex:1; padding:8px; cursor:pointer;">Off</button>
         </div>
       </div>
     `,
     statusText: 'Changes apply instantly — no reboot needed'
   });
 
-  const ALL_THEME_CLASSES = ['theme-retro', 'theme-win31', 'theme-luna', 'theme-macos'];
+  const ALL_THEME_CLASSES = ['theme-retro', 'theme-win31', 'theme-luna', 'theme-synth'];
   const themeButtons = Array.from(win.querySelectorAll('.dp-theme-btn'));
 
   function refreshActiveButtons() {
@@ -3891,6 +3894,29 @@ function openDisplayPropertiesWindow() {
       }
       refreshActiveButtons();
     });
+  });
+
+  const clickSoundOnBtn = win.querySelector('#dpClickSoundOn');
+  const clickSoundOffBtn = win.querySelector('#dpClickSoundOff');
+
+  function refreshClickSoundButtons() {
+    clickSoundOnBtn.style.fontWeight = obnoxiousClickEnabled ? 'bold' : 'normal';
+    clickSoundOffBtn.style.fontWeight = obnoxiousClickEnabled ? 'normal' : 'bold';
+  }
+  refreshClickSoundButtons();
+
+  clickSoundOnBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    obnoxiousClickEnabled = true;
+    try { localStorage.setItem('obnoxiousClickSound', 'on'); } catch (err) { /* ignore */ }
+    refreshClickSoundButtons();
+    playObnoxiousClick(); // instant preview so you know what you just turned on
+  });
+  clickSoundOffBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    obnoxiousClickEnabled = false;
+    try { localStorage.setItem('obnoxiousClickSound', 'off'); } catch (err) { /* ignore */ }
+    refreshClickSoundButtons();
   });
 }
 
@@ -4390,11 +4416,74 @@ startBtnEl.addEventListener('click', (e) => {
     function (e) {
       if (e.target.closest(CHROME_SELECTOR)) {
         playChromeClick();
+        playObnoxiousClickIfEnabled();
       }
     },
     true
   );
 })();
+
+/* ---------- OBNOXIOUS CLICK SOUND (separate, opt-in, toggled from Display Properties) ---------- */
+let obnoxiousClickEnabled = false;
+try {
+  obnoxiousClickEnabled = localStorage.getItem('obnoxiousClickSound') === 'on';
+} catch (e) { /* ignore */ }
+
+let obnoxiousClickCtx = null;
+
+function playObnoxiousClick() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    if (!obnoxiousClickCtx) obnoxiousClickCtx = new Ctx();
+    if (obnoxiousClickCtx.state === 'suspended') obnoxiousClickCtx.resume();
+
+    const ctx = obnoxiousClickCtx;
+    const now = ctx.currentTime;
+
+    // Loud, cartoonish "CLACK" — a sharp square-wave tone with a comedic
+    // downward pitch bend, layered over a punchy noise transient.
+    const osc = ctx.createOscillator();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(2600, now);
+    osc.frequency.exponentialRampToValueAtTime(220, now + 0.09);
+
+    const oscGain = ctx.createGain();
+    oscGain.gain.setValueAtTime(0.5, now);
+    oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+
+    osc.connect(oscGain);
+    oscGain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.1);
+
+    const dur = 0.035;
+    const bufferSize = Math.max(1, Math.floor(ctx.sampleRate * dur));
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      const decay = Math.pow(1 - i / bufferSize, 1.4);
+      data[i] = (Math.random() * 2 - 1) * decay;
+    }
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.7, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+
+    noise.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+    noise.start(now);
+    noise.stop(now + dur);
+  } catch (err) {
+    /* ignore — Web Audio unavailable/blocked */
+  }
+}
+
+function playObnoxiousClickIfEnabled() {
+  if (obnoxiousClickEnabled) playObnoxiousClick();
+}
 </script>
 
 <script>

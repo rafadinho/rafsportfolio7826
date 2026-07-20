@@ -4309,25 +4309,10 @@ function showBootScreen() {
   // the desktop or the music underneath, so playback stays uninterrupted.
 }
 
-/* Restore saved appearance preferences. Windows 3.1 is the default theme. */
-try {
-  const savedTheme = localStorage.getItem('portfolioTheme');
-  const validThemes = ['theme-retro', 'theme-win31', 'theme-luna', 'theme-synth', 'theme-nightvision'];
-  document.documentElement.classList.remove(...validThemes);
-  if (savedTheme === 'classic') {
-    // Classic intentionally uses no theme class.
-  } else if (validThemes.includes(savedTheme)) {
-    document.documentElement.classList.add(savedTheme);
-  } else {
-    document.documentElement.classList.add('theme-win31');
-  }
-
-  if (localStorage.getItem('portfolioDarkMode') === 'on') {
-    document.documentElement.classList.add('theme-dark');
-  }
-} catch (err) {
-  document.documentElement.classList.add('theme-win31');
-}
+/* Start every visit fresh. Windows 3.1 is the default theme. */
+const startupThemeClasses = ['theme-retro', 'theme-win31', 'theme-luna', 'theme-synth', 'theme-nightvision'];
+document.documentElement.classList.remove(...startupThemeClasses, 'theme-dark');
+document.documentElement.classList.add('theme-win31');
 
 (function initNightVisionHudClock() {
   const clockEl = document.getElementById('nvHudClock');
@@ -4413,9 +4398,6 @@ function openDisplayPropertiesWindow() {
       if (btn.dataset.theme) {
         document.documentElement.classList.add(btn.dataset.theme);
       }
-      try {
-        localStorage.setItem('portfolioTheme', btn.dataset.theme || 'classic');
-      } catch (err) { /* ignore */ }
       refreshActiveButtons();
     });
   });
@@ -4433,13 +4415,11 @@ function openDisplayPropertiesWindow() {
   darkModeOnBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     document.documentElement.classList.add('theme-dark');
-    try { localStorage.setItem('portfolioDarkMode', 'on'); } catch (err) { /* ignore */ }
     refreshDarkModeButtons();
   });
   darkModeOffBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     document.documentElement.classList.remove('theme-dark');
-    try { localStorage.setItem('portfolioDarkMode', 'off'); } catch (err) { /* ignore */ }
     refreshDarkModeButtons();
   });
 
@@ -4455,14 +4435,12 @@ function openDisplayPropertiesWindow() {
   clickSoundOnBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     obnoxiousClickEnabled = true;
-    try { localStorage.setItem('obnoxiousClickSound', 'on'); } catch (err) { /* ignore */ }
     refreshClickSoundButtons();
     playObnoxiousClick(); // instant preview so you know what you just turned on
   });
   clickSoundOffBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     obnoxiousClickEnabled = false;
-    try { localStorage.setItem('obnoxiousClickSound', 'off'); } catch (err) { /* ignore */ }
     refreshClickSoundButtons();
   });
 }
@@ -4972,12 +4950,6 @@ startBtnEl.addEventListener('click', (e) => {
 
 /* ---------- OBNOXIOUS CLICK SOUND (separate, opt-in, toggled from Display Properties) ---------- */
 let obnoxiousClickEnabled = true;
-try {
-  // Enabled by default unless the visitor has explicitly turned it off.
-  obnoxiousClickEnabled = localStorage.getItem('obnoxiousClickSound') !== 'off';
-} catch (e) {
-  obnoxiousClickEnabled = true;
-}
 
 let obnoxiousClickCtx = null;
 
@@ -5145,10 +5117,6 @@ function playObnoxiousClickIfEnabled() {
   };
 
   let mode = "snow";
-  try {
-    const saved = localStorage.getItem("desktopWeather");
-    if (saved && MODE_META[saved]) mode = saved;
-  } catch (e) { /* ignore */ }
 
   let particles = [];
   let dpr = Math.max(1, window.devicePixelRatio || 1);
@@ -5362,7 +5330,6 @@ function playObnoxiousClickIfEnabled() {
   function setMode(next) {
     mode = next;
     updateButton();
-    try { localStorage.setItem("desktopWeather", mode); } catch (e) { /* ignore */ }
     init();
     draw();
   }

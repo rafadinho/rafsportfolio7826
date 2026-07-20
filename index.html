@@ -6889,47 +6889,62 @@ function playObnoxiousClickIfEnabled() {
 })();</script>
 
 
+<style>
+/* Block double-tap zoom without changing viewport sizing. Pinch zoom remains enabled. */
+html, body {
+  touch-action: manipulation;
+}
+</style>
 <script>
-/* Prevent mobile double-tap zoom without changing viewport/layout or pinch zoom. */
 (function preventDoubleTapZoomOnly() {
   let lastTapTime = 0;
   let lastTapX = 0;
   let lastTapY = 0;
-  let touchMoved = false;
-  let multiTouch = false;
+  let moved = false;
 
-  const MAX_DELAY = 320;
-  const MAX_DISTANCE = 28;
+  const MAX_DELAY = 400;
+  const MAX_DISTANCE = 40;
 
   document.addEventListener('touchstart', function (event) {
-    multiTouch = event.touches.length > 1;
-    touchMoved = false;
-  }, { passive: true, capture: true });
-
-  document.addEventListener('touchmove', function () {
-    touchMoved = true;
-  }, { passive: true, capture: true });
-
-  document.addEventListener('touchend', function (event) {
-    if (multiTouch || touchMoved || event.changedTouches.length !== 1) {
+    if (event.touches.length !== 1) {
+      moved = true;
       lastTapTime = 0;
       return;
     }
 
-    const touch = event.changedTouches[0];
+    moved = false;
+    const touch = event.touches[0];
     const now = Date.now();
     const elapsed = now - lastTapTime;
     const distance = Math.hypot(touch.clientX - lastTapX, touch.clientY - lastTapY);
 
+    /* Safari decides to zoom before touchend, so cancel the second tap here. */
     if (elapsed > 0 && elapsed <= MAX_DELAY && distance <= MAX_DISTANCE) {
       event.preventDefault();
       lastTapTime = 0;
-      return;
     }
+  }, { passive: false, capture: true });
 
-    lastTapTime = now;
+  document.addEventListener('touchmove', function () {
+    moved = true;
+  }, { passive: true, capture: true });
+
+  document.addEventListener('touchend', function (event) {
+    if (moved || event.changedTouches.length !== 1) return;
+
+    const touch = event.changedTouches[0];
+    lastTapTime = Date.now();
     lastTapX = touch.clientX;
     lastTapY = touch.clientY;
+  }, { passive: true, capture: true });
+
+  document.addEventListener('touchcancel', function () {
+    moved = true;
+    lastTapTime = 0;
+  }, { passive: true, capture: true });
+
+  document.addEventListener('dblclick', function (event) {
+    event.preventDefault();
   }, { passive: false, capture: true });
 })();
 </script>

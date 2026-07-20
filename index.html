@@ -813,6 +813,264 @@
   }
   html.theme-dark .placeholder-box { color: #c6c8ce; }
 
+  /* ---------- NIGHT VISION SYSTEM ---------- */
+  html.theme-nightvision body {
+    background: #031005;
+    color: #d7ffd2;
+  }
+  html.theme-nightvision #desktop {
+    background: radial-gradient(circle at center, rgba(103,255,141,0.10) 0%, rgba(0,0,0,0) 42%), #020a02;
+  }
+  html.theme-nightvision #bgLayer,
+  html.theme-nightvision #sunsetGlow,
+  html.theme-nightvision #celestialBody,
+  html.theme-nightvision #cloudCanvas,
+  html.theme-nightvision #snowCanvas,
+  html.theme-nightvision video,
+  html.theme-nightvision iframe,
+  html.theme-nightvision .gallery-item .thumb,
+  html.theme-nightvision .music-screen {
+    filter: grayscale(1) sepia(1) hue-rotate(42deg) saturate(5) brightness(0.7) contrast(1.22);
+  }
+  html.theme-nightvision .win {
+    background: #0f1d0f;
+    border-color: #0f1d0f;
+    box-shadow:
+      inset -1px -1px 0 #021703,
+      inset 1px 1px 0 #5a8f5d,
+      inset -2px -2px 0 #062108,
+      inset 2px 2px 0 #27472a,
+      0 0 14px rgba(72,255,102,0.13),
+      2px 2px 16px rgba(0,0,0,0.58);
+  }
+  html.theme-nightvision .titlebar {
+    background: linear-gradient(90deg, #0d2b0f 0%, #1c5f1f 55%, #2f8f35 100%);
+    color: #d8ffd8;
+    text-shadow: 0 0 5px rgba(140,255,140,0.28);
+  }
+  html.theme-nightvision .win.inactive .titlebar {
+    background: linear-gradient(90deg, #223022 0%, #455745 100%);
+    color: #c7d9c7;
+  }
+  html.theme-nightvision .win-body,
+  html.theme-nightvision .music-player,
+  html.theme-nightvision #desktopMusicPlayer,
+  html.theme-nightvision #taskbar,
+  html.theme-nightvision #startMenu,
+  html.theme-nightvision .blurb-bar {
+    background: #0d170d;
+    color: #d7ffd2;
+  }
+  html.theme-nightvision .win-body.white,
+  html.theme-nightvision .gallery-item,
+  html.theme-nightvision .music-playlist,
+  html.theme-nightvision .mini-playlist,
+  html.theme-nightvision .blurb-panel {
+    background: #061106;
+    color: #d7ffd2;
+  }
+  html.theme-nightvision .win-status,
+  html.theme-nightvision .gallery-item .cap,
+  html.theme-nightvision .music-note,
+  html.theme-nightvision .contact-table td:first-child,
+  html.theme-nightvision .task-item,
+  html.theme-nightvision #clock,
+  html.theme-nightvision #dateDisplay,
+  html.theme-nightvision .icon .label {
+    color: #d7ffd2;
+  }
+  html.theme-nightvision .contact-table td {
+    border-bottom-color: #2b4c2d;
+  }
+  html.theme-nightvision .contact-table a,
+  html.theme-nightvision .contact-table a:visited {
+    color: #9dff9d;
+  }
+  html.theme-nightvision .sm-item {
+    color: #d7ffd2;
+  }
+  html.theme-nightvision .sm-item:hover,
+  html.theme-nightvision .mini-playlist .mini-track.active,
+  html.theme-nightvision .music-track.active,
+  html.theme-nightvision .task-item.active {
+    background: #19481c;
+    color: #f1fff1;
+  }
+  html.theme-nightvision #startBtn,
+  html.theme-nightvision .task-item,
+  html.theme-nightvision #clock,
+  html.theme-nightvision #dateDisplay,
+  html.theme-nightvision #weatherBtn,
+  html.theme-nightvision .titlebar button,
+  html.theme-nightvision .vid-arrow,
+  html.theme-nightvision .vid-controls button,
+  html.theme-nightvision .music-controls button,
+  html.theme-nightvision .music-playlist button,
+  html.theme-nightvision #desktopMusicControls button,
+  html.theme-nightvision #desktopMusicMute,
+  html.theme-nightvision #desktopMusicVolDown,
+  html.theme-nightvision #desktopMusicVolUp,
+  html.theme-nightvision #musicVolDown,
+  html.theme-nightvision #musicVolUp,
+  html.theme-nightvision .blurb-toggle,
+  html.theme-nightvision .mini-playlist .mini-track button {
+    background: #162816;
+    color: #e7ffe7;
+    box-shadow:
+      inset -1px -1px 0 #031303,
+      inset 1px 1px 0 #618d61,
+      inset -2px -2px 0 #092009,
+      inset 2px 2px 0 #264726;
+  }
+  html.theme-nightvision .titlebar button[data-act="close"]:hover {
+    background: #245b24 !important;
+    color: #fff;
+    box-shadow: inset 0 0 0 2px #245b24 !important;
+  }
+  html.theme-nightvision .icon.selected {
+    background: rgba(69, 189, 74, 0.28);
+    border-color: #a2fba6;
+  }
+  html.theme-nightvision .icon.selected .label {
+    background: #19481c;
+  }
+  html.theme-nightvision .placeholder-box { color: #bfe7bf; }
+  html.theme-nightvision .track-duration,
+  html.theme-nightvision .mini-playlist .track-duration {
+    color: #98b998;
+  }
+  html.theme-nightvision .vid-controls,
+  html.theme-nightvision .vid-caption,
+  html.theme-nightvision .yt-note {
+    background: rgba(2, 12, 2, 0.82);
+    color: #d7ffd2;
+  }
+  #nightVisionOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 180ms ease;
+    overflow: hidden;
+  }
+  html.theme-nightvision #nightVisionOverlay {
+    opacity: 1;
+  }
+  #nightVisionOverlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        rgba(195,255,195,0.05) 0px,
+        rgba(195,255,195,0.05) 1px,
+        rgba(0,0,0,0.05) 1px,
+        rgba(0,0,0,0.05) 3px
+      );
+    mix-blend-mode: screen;
+    opacity: 0.95;
+    animation: nvFlicker 0.16s steps(2) infinite;
+  }
+  #nightVisionOverlay::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at center, rgba(120,255,140,0.08) 0%, rgba(0,0,0,0.20) 56%, rgba(0,0,0,0.58) 100%),
+      linear-gradient(180deg, rgba(100,255,130,0.06) 0%, rgba(0,0,0,0) 35%, rgba(100,255,130,0.05) 100%);
+  }
+  .nv-hud {
+    position: absolute;
+    color: #b8ffb8;
+    font-family: 'VT323', 'Courier New', monospace;
+    font-size: 20px;
+    line-height: 1;
+    letter-spacing: 2px;
+    text-shadow: 0 0 6px rgba(120,255,120,0.7), 0 0 14px rgba(120,255,120,0.28);
+    opacity: 0.92;
+    white-space: nowrap;
+  }
+  .nv-top-left { top: 14px; left: 18px; }
+  .nv-top-right { top: 14px; right: 18px; display: flex; align-items: center; gap: 8px; }
+  .nv-bottom-left { left: 18px; bottom: 44px; }
+  .nv-bottom-right { right: 18px; bottom: 44px; }
+  .nv-rec-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #b8ffb8;
+    box-shadow: 0 0 8px rgba(120,255,120,0.95);
+    animation: nvBlink 0.8s steps(1) infinite;
+  }
+  .nv-reticle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 108px;
+    height: 108px;
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(155,255,155,0.45);
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(120,255,120,0.14);
+  }
+  .nv-reticle::before,
+  .nv-reticle::after {
+    content: "";
+    position: absolute;
+    background: rgba(155,255,155,0.5);
+  }
+  .nv-reticle::before {
+    left: 50%;
+    top: -18px;
+    width: 1px;
+    height: calc(100% + 36px);
+    transform: translateX(-50%);
+  }
+  .nv-reticle::after {
+    top: 50%;
+    left: -18px;
+    width: calc(100% + 36px);
+    height: 1px;
+    transform: translateY(-50%);
+  }
+  .nv-sweep {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 28%;
+    background: linear-gradient(to bottom, rgba(140,255,140,0) 0%, rgba(140,255,140,0.06) 30%, rgba(140,255,140,0.18) 50%, rgba(140,255,140,0.06) 70%, rgba(140,255,140,0) 100%);
+    mix-blend-mode: screen;
+    animation: nvSweep 6s linear infinite;
+  }
+  .nv-corner {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-color: rgba(155,255,155,0.7);
+    border-style: solid;
+    opacity: 0.88;
+    filter: drop-shadow(0 0 6px rgba(120,255,120,0.18));
+  }
+  .nv-corner.tl { top: 18px; left: 18px; border-width: 2px 0 0 2px; }
+  .nv-corner.tr { top: 18px; right: 18px; border-width: 2px 2px 0 0; }
+  .nv-corner.bl { bottom: 44px; left: 18px; border-width: 0 0 2px 2px; }
+  .nv-corner.br { bottom: 44px; right: 18px; border-width: 0 2px 2px 0; }
+  @keyframes nvFlicker {
+    0% { opacity: 0.92; }
+    50% { opacity: 1; }
+    100% { opacity: 0.95; }
+  }
+  @keyframes nvBlink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.25; }
+  }
+  @keyframes nvSweep {
+    0% { top: -30%; }
+    100% { top: 100%; }
+  }
+
   /* ---------- DESKTOP ---------- */
   #desktop {
     position: relative;
@@ -2288,6 +2546,18 @@
 
   <canvas id="snowCanvas"></canvas>
 
+  <div id="nightVisionOverlay" aria-hidden="true">
+    <div class="nv-sweep"></div>
+    <div class="nv-hud nv-top-left">NIGHT VISION :: ONLINE</div>
+    <div class="nv-hud nv-top-right"><span class="nv-rec-dot"></span><span>REC 01</span></div>
+    <div class="nv-hud nv-bottom-left">GAIN AUTO · IR BOOST · PHOSPHOR</div>
+    <div class="nv-hud nv-bottom-right">TIME <span id="nvHudClock">00:00:00</span></div>
+    <div class="nv-reticle"></div>
+    <div class="nv-corner tl"></div>
+    <div class="nv-corner tr"></div>
+    <div class="nv-corner bl"></div>
+    <div class="nv-corner br"></div>
+  </div>
 
   <div id="icons"></div>
 
@@ -4042,7 +4312,7 @@ function showBootScreen() {
 /* Restore saved appearance preferences. Windows 3.1 is the default theme. */
 try {
   const savedTheme = localStorage.getItem('portfolioTheme');
-  const validThemes = ['theme-retro', 'theme-win31', 'theme-luna', 'theme-synth'];
+  const validThemes = ['theme-retro', 'theme-win31', 'theme-luna', 'theme-synth', 'theme-nightvision'];
   document.documentElement.classList.remove(...validThemes);
   if (savedTheme === 'classic') {
     // Classic intentionally uses no theme class.
@@ -4058,6 +4328,20 @@ try {
 } catch (err) {
   document.documentElement.classList.add('theme-win31');
 }
+
+(function initNightVisionHudClock() {
+  const clockEl = document.getElementById('nvHudClock');
+  if (!clockEl) return;
+  function update() {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    clockEl.textContent = `${hh}:${mm}:${ss}`;
+  }
+  update();
+  setInterval(update, 1000);
+})();
 
 /* ---------------- START MENU ---------------- */
 const startMenuEl = document.getElementById('startMenu');
@@ -4089,6 +4373,7 @@ function openDisplayPropertiesWindow() {
           <button type="button" class="dp-theme-btn" data-theme="theme-win31" style="flex:1 1 42%; padding:8px; cursor:pointer;">Windows 3.1</button>
           <button type="button" class="dp-theme-btn" data-theme="theme-luna" style="flex:1 1 42%; padding:8px; cursor:pointer;">Windows XP Luna</button>
           <button type="button" class="dp-theme-btn" data-theme="theme-synth" style="flex:1 1 42%; padding:8px; cursor:pointer;">Synthwave</button>
+          <button type="button" class="dp-theme-btn" data-theme="theme-nightvision" style="flex:1 1 42%; padding:8px; cursor:pointer;">Night Vision</button>
         </div>
         <div style="font-weight:bold; margin:16px 0 6px;">Appearance</div>
         <div style="margin-bottom:6px;">Dark Mode</div>
@@ -4106,7 +4391,7 @@ function openDisplayPropertiesWindow() {
     `,
   });
 
-  const ALL_THEME_CLASSES = ['theme-retro', 'theme-win31', 'theme-luna', 'theme-synth'];
+  const ALL_THEME_CLASSES = ['theme-retro', 'theme-win31', 'theme-luna', 'theme-synth', 'theme-nightvision'];
   const themeButtons = Array.from(win.querySelectorAll('.dp-theme-btn'));
 
   function refreshActiveButtons() {

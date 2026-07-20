@@ -711,6 +711,108 @@
     filter: saturate(1.15) brightness(0.75) contrast(1.05);
   }
 
+  /* ---------- OPTIONAL DARK MODE (System Properties) ---------- */
+  html.theme-dark body {
+    background: #111318;
+    color: #e6e6e6;
+  }
+  html.theme-dark .win {
+    background: #24262c;
+    border-color: #24262c;
+    box-shadow:
+      inset -1px -1px 0 #08090b,
+      inset 1px 1px 0 #555963,
+      inset -2px -2px 0 #15171b,
+      inset 2px 2px 0 #34373f,
+      2px 2px 8px rgba(0,0,0,0.55);
+  }
+  html.theme-dark .win-body,
+  html.theme-dark .music-player,
+  html.theme-dark #desktopMusicPlayer {
+    background: #24262c;
+    color: #e6e6e6;
+  }
+  html.theme-dark .win-body.white,
+  html.theme-dark .gallery-item,
+  html.theme-dark .music-playlist,
+  html.theme-dark .mini-playlist {
+    background: #17191e;
+    color: #e6e6e6;
+  }
+  html.theme-dark .win-status,
+  html.theme-dark .gallery-item .cap,
+  html.theme-dark .music-note,
+  html.theme-dark .contact-table td:first-child {
+    color: #d4d6dc;
+  }
+  html.theme-dark .contact-table td {
+    border-bottom-color: #3d4048;
+  }
+  html.theme-dark .contact-table a,
+  html.theme-dark .contact-table a:visited {
+    color: #7db7ff;
+  }
+  html.theme-dark #taskbar,
+  html.theme-dark #startMenu,
+  html.theme-dark .blurb-bar {
+    background: #24262c;
+    color: #e6e6e6;
+  }
+  html.theme-dark #startMenu {
+    box-shadow:
+      inset -1px -1px 0 #08090b,
+      inset 1px 1px 0 #555963,
+      inset -2px -2px 0 #15171b,
+      inset 2px 2px 0 #34373f,
+      2px 2px 8px rgba(0,0,0,0.55);
+  }
+  html.theme-dark .sm-item { color: #e6e6e6; }
+  html.theme-dark .sm-item:hover { background: #245da8; color: #fff; }
+  html.theme-dark #startBtn,
+  html.theme-dark .task-item,
+  html.theme-dark #clock,
+  html.theme-dark #dateDisplay,
+  html.theme-dark #weatherBtn,
+  html.theme-dark .titlebar button,
+  html.theme-dark .vid-arrow,
+  html.theme-dark .vid-controls button,
+  html.theme-dark .music-controls button,
+  html.theme-dark .music-playlist button,
+  html.theme-dark #desktopMusicControls button,
+  html.theme-dark #desktopMusicMute,
+  html.theme-dark #desktopMusicVolDown,
+  html.theme-dark #desktopMusicVolUp,
+  html.theme-dark #musicVolDown,
+  html.theme-dark #musicVolUp,
+  html.theme-dark .blurb-toggle {
+    background: #30333a;
+    color: #f1f1f1;
+    box-shadow: inset -1px -1px 0 #08090b, inset 1px 1px 0 #626671;
+  }
+  html.theme-dark .task-item.active {
+    background: #181a1f;
+    box-shadow: inset 1px 1px 0 #08090b, inset -1px -1px 0 #555963;
+  }
+  html.theme-dark .blurb-panel {
+    background: #1c1e23;
+    color: #e6e6e6;
+  }
+  html.theme-dark .mini-playlist .mini-track,
+  html.theme-dark .music-track {
+    color: #e6e6e6;
+    border-color: #343740;
+  }
+  html.theme-dark .mini-playlist .mini-track.active,
+  html.theme-dark .music-track.active {
+    background: #245da8;
+    color: #fff;
+  }
+  html.theme-dark .track-duration,
+  html.theme-dark .mini-playlist .track-duration {
+    color: #adb1bb;
+  }
+  html.theme-dark .placeholder-box { color: #c6c8ce; }
+
   /* ---------- DESKTOP ---------- */
   #desktop {
     position: relative;
@@ -3937,6 +4039,26 @@ function showBootScreen() {
   // the desktop or the music underneath, so playback stays uninterrupted.
 }
 
+/* Restore saved appearance preferences. Windows 3.1 is the default theme. */
+try {
+  const savedTheme = localStorage.getItem('portfolioTheme');
+  const validThemes = ['theme-retro', 'theme-win31', 'theme-luna', 'theme-synth'];
+  document.documentElement.classList.remove(...validThemes);
+  if (savedTheme === 'classic') {
+    // Classic intentionally uses no theme class.
+  } else if (validThemes.includes(savedTheme)) {
+    document.documentElement.classList.add(savedTheme);
+  } else {
+    document.documentElement.classList.add('theme-win31');
+  }
+
+  if (localStorage.getItem('portfolioDarkMode') === 'on') {
+    document.documentElement.classList.add('theme-dark');
+  }
+} catch (err) {
+  document.documentElement.classList.add('theme-win31');
+}
+
 /* ---------------- START MENU ---------------- */
 const startMenuEl = document.getElementById('startMenu');
 const startBtnEl = document.getElementById('startBtn');
@@ -3955,7 +4077,7 @@ function openDisplayPropertiesWindow() {
     title: 'Display Properties',
     glyph: '🖥️',
     width: 400,
-    height: 340,
+    height: 430,
     left: jitterPos(220, 40),
     top: jitterPos(120, 30),
     bodyHTML: `
@@ -3967,6 +4089,12 @@ function openDisplayPropertiesWindow() {
           <button type="button" class="dp-theme-btn" data-theme="theme-win31" style="flex:1 1 42%; padding:8px; cursor:pointer;">Windows 3.1</button>
           <button type="button" class="dp-theme-btn" data-theme="theme-luna" style="flex:1 1 42%; padding:8px; cursor:pointer;">Windows XP Luna</button>
           <button type="button" class="dp-theme-btn" data-theme="theme-synth" style="flex:1 1 42%; padding:8px; cursor:pointer;">Synthwave</button>
+        </div>
+        <div style="font-weight:bold; margin:16px 0 6px;">Appearance</div>
+        <div style="margin-bottom:6px;">Dark Mode</div>
+        <div style="display:flex; gap:8px;">
+          <button type="button" id="dpDarkModeOn" style="flex:1; padding:8px; cursor:pointer;">On</button>
+          <button type="button" id="dpDarkModeOff" style="flex:1; padding:8px; cursor:pointer;">Off</button>
         </div>
         <div style="font-weight:bold; margin:16px 0 6px;">Sounds</div>
         <div style="margin-bottom:6px;">Obnoxious Click Sound</div>
@@ -4000,8 +4128,34 @@ function openDisplayPropertiesWindow() {
       if (btn.dataset.theme) {
         document.documentElement.classList.add(btn.dataset.theme);
       }
+      try {
+        localStorage.setItem('portfolioTheme', btn.dataset.theme || 'classic');
+      } catch (err) { /* ignore */ }
       refreshActiveButtons();
     });
+  });
+
+  const darkModeOnBtn = win.querySelector('#dpDarkModeOn');
+  const darkModeOffBtn = win.querySelector('#dpDarkModeOff');
+
+  function refreshDarkModeButtons() {
+    const enabled = document.documentElement.classList.contains('theme-dark');
+    darkModeOnBtn.style.fontWeight = enabled ? 'bold' : 'normal';
+    darkModeOffBtn.style.fontWeight = enabled ? 'normal' : 'bold';
+  }
+  refreshDarkModeButtons();
+
+  darkModeOnBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.documentElement.classList.add('theme-dark');
+    try { localStorage.setItem('portfolioDarkMode', 'on'); } catch (err) { /* ignore */ }
+    refreshDarkModeButtons();
+  });
+  darkModeOffBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.documentElement.classList.remove('theme-dark');
+    try { localStorage.setItem('portfolioDarkMode', 'off'); } catch (err) { /* ignore */ }
+    refreshDarkModeButtons();
   });
 
   const clickSoundOnBtn = win.querySelector('#dpClickSoundOn');
@@ -4532,10 +4686,13 @@ startBtnEl.addEventListener('click', (e) => {
 })();
 
 /* ---------- OBNOXIOUS CLICK SOUND (separate, opt-in, toggled from Display Properties) ---------- */
-let obnoxiousClickEnabled = false;
+let obnoxiousClickEnabled = true;
 try {
-  obnoxiousClickEnabled = localStorage.getItem('obnoxiousClickSound') === 'on';
-} catch (e) { /* ignore */ }
+  // Enabled by default unless the visitor has explicitly turned it off.
+  obnoxiousClickEnabled = localStorage.getItem('obnoxiousClickSound') !== 'off';
+} catch (e) {
+  obnoxiousClickEnabled = true;
+}
 
 let obnoxiousClickCtx = null;
 

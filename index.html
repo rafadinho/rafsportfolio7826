@@ -2190,15 +2190,12 @@
   html.secret-uzi-mode #bgLayer,
   html.secret-uzi-mode #sunsetGlow,
   html.secret-uzi-mode #celestialBody,
-  html.secret-uzi-mode #snowCanvas,
-  html.secret-uzi-mode #startMenu,
-  html.secret-uzi-mode .win { display: none !important; }
-  html.secret-uzi-mode #icons,
-  html.secret-uzi-mode #taskbar,
-  html.secret-uzi-mode #desktopMusicPlayer { display: block !important; }
-  html.secret-uzi-mode #icons { z-index: 10000; }
-  html.secret-uzi-mode #taskbar { z-index: 10003; }
-  html.secret-uzi-mode #desktopMusicPlayer { z-index: 10001; }
+  html.secret-uzi-mode #snowCanvas { display: none !important; }
+  html.secret-uzi-mode #icons { display: block !important; z-index: 10000; }
+  html.secret-uzi-mode #taskbar { display: flex !important; z-index: 10005; }
+  html.secret-uzi-mode #desktopMusicPlayer { display: block !important; z-index: 10001; }
+  html.secret-uzi-mode #startMenu { z-index: 10006; }
+  html.secret-uzi-mode .win:not(.hidden) { z-index: 10002 !important; }
   html.secret-uzi-mode #desktop::after {
     content: "LIL UZI VERT ARCHIVE";
     position: absolute;
@@ -6075,6 +6072,8 @@ function playObnoxiousClickIfEnabled() {
   let normalAudioState = null;
   let normalPlaylistNodes = null;
   let normalBlurbText = "";
+  let windowsVisibleBeforeSecret = [];
+  let windowsKnownBeforeSecret = new Set();
   window.secretTrackMode = false;
 
   const audio = () => document.getElementById("desktopMusicAudio");
@@ -6195,9 +6194,15 @@ function playObnoxiousClickIfEnabled() {
       title: document.getElementById("desktopMusicTitle")?.textContent || ""
     };
 
+    windowsKnownBeforeSecret = new Set(Array.from(document.querySelectorAll(".win")).map(function (win) { return win.id; }));
+    windowsVisibleBeforeSecret = Array.from(document.querySelectorAll(".win:not(.hidden)"));
+    windowsVisibleBeforeSecret.forEach(function (win) {
+      win.classList.add("hidden");
+      win.dataset.hiddenForUziMode = "1";
+    });
+
     window.secretTrackMode = true;
     document.documentElement.classList.add("secret-uzi-mode");
-    document.getElementById("startMenu")?.classList.add("hidden");
     if (blurb) blurb.textContent = "All Lil Uzi Vert. Type rafael1021 again to skip to the next track.";
 
     renderSecretPlaylist();
@@ -6235,6 +6240,20 @@ function playObnoxiousClickIfEnabled() {
 
     window.secretTrackMode = false;
     document.documentElement.classList.remove("secret-uzi-mode");
+    document.getElementById("startMenu")?.classList.add("hidden");
+
+    document.querySelectorAll(".win").forEach(function (win) {
+      if (win.dataset.hiddenForUziMode === "1") {
+        win.classList.remove("hidden");
+        delete win.dataset.hiddenForUziMode;
+      } else if (!windowsKnownBeforeSecret.has(win.id)) {
+        win.classList.add("hidden");
+      } else if (!windowsVisibleBeforeSecret.includes(win)) {
+        win.classList.add("hidden");
+      }
+    });
+    windowsVisibleBeforeSecret = [];
+    windowsKnownBeforeSecret = new Set();
 
     restoreNormalPlaylist();
     if (blurb) blurb.textContent = normalBlurbText || "Incredibly random assortment of my favorite songs!";

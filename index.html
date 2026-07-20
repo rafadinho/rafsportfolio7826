@@ -1999,6 +1999,13 @@
       0 6px 0 #000,
       0 12px 20px rgba(0,0,0,0.55);
   }
+  .drum-pad[data-drum="kick"] .drum-pad-key {
+    position: absolute;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 4;
+  }
   .drum-pad[data-drum="kick"]::before {
     width: 18px;
     height: 10px;
@@ -2252,99 +2259,23 @@
   html.secret-uzi-mode #desktopMusicPlayer { display: block !important; z-index: 10001; }
   html.secret-uzi-mode #startMenu { z-index: 10006; }
   html.secret-uzi-mode .win:not(.hidden) { z-index: 10002 !important; }
-  /* Lil Uzi archive pink + purple desktop theme */
-  html.secret-uzi-mode .icon.folder-standard:not(.open) .glyph img {
-    filter: hue-rotate(238deg) saturate(2.15) brightness(0.92) contrast(1.12);
-  }
-  html.secret-uzi-mode .icon.folder-standard:not(.open):hover .glyph img,
-  html.secret-uzi-mode .icon.folder-standard:not(.open).selected .glyph img {
-    filter: hue-rotate(238deg) saturate(2.35) brightness(1.08) contrast(1.08)
-      drop-shadow(0 0 5px rgba(220, 95, 255, 0.7));
-  }
-  html.secret-uzi-mode .icon.folder-mystery:not(.open) .glyph img {
-    filter: hue-rotate(222deg) saturate(2.4) brightness(0.9) contrast(1.18);
-  }
-  html.secret-uzi-mode .icon.folder-mystery:not(.open):hover .glyph img,
-  html.secret-uzi-mode .icon.folder-mystery:not(.open).selected .glyph img {
-    filter: hue-rotate(222deg) saturate(2.65) brightness(1.06) contrast(1.14)
-      drop-shadow(0 0 6px rgba(220, 95, 255, 0.78));
-  }
-
-  html.secret-uzi-mode #taskbar {
-    background: linear-gradient(180deg, #ffb2dc 0%, #f176bd 48%, #c84d9d 100%) !important;
-    border-top-color: #ffd9ee !important;
-    box-shadow:
-      inset 0 1px 0 #ffe8f5,
-      inset 0 2px 0 rgba(255,255,255,0.45),
-      0 -2px 8px rgba(88, 0, 64, 0.35) !important;
-  }
-  html.secret-uzi-mode #startBtn,
-  html.secret-uzi-mode .task-item,
-  html.secret-uzi-mode #dateDisplay,
-  html.secret-uzi-mode #weatherBtn,
-  html.secret-uzi-mode #clock,
-  html.secret-uzi-mode #secretUziReturn,
-  html.secret-uzi-mode #secretUziChangeBackground {
-    background: linear-gradient(180deg, #ffd5ec 0%, #f89fd0 52%, #dc68ae 100%) !important;
-    color: #3d1232 !important;
-    border-color: #8f376f !important;
-    box-shadow:
-      inset -1px -1px 0 #8c356d,
-      inset 1px 1px 0 #fff1f8 !important;
-  }
-  html.secret-uzi-mode .task-item.active,
-  html.secret-uzi-mode #startBtn:active,
-  html.secret-uzi-mode #secretUziReturn:active,
-  html.secret-uzi-mode #secretUziChangeBackground:active,
-  html.secret-uzi-mode #weatherBtn:active {
-    background: linear-gradient(180deg, #cf5b9f 0%, #ef83bd 100%) !important;
-    box-shadow:
-      inset 1px 1px 0 #7d2e61,
-      inset -1px -1px 0 #ffd7ed !important;
-  }
-  html.secret-uzi-mode #taskbar-sep {
-    border-left-color: #9b3f78 !important;
-    border-right-color: #ffd5eb !important;
-  }
-
-  html.secret-uzi-mode #desktopMusicPlayer {
-    background: linear-gradient(180deg, #ffb4dd 0%, #dc67ad 100%) !important;
-    border-color: #f49acb !important;
-    color: #3a102e !important;
-    box-shadow:
-      inset -1px -1px 0 #7e2d62,
-      inset 1px 1px 0 #ffeaf5,
-      inset -2px -2px 0 #aa3d80,
-      inset 2px 2px 0 #ffd5ea !important;
-  }
-  html.secret-uzi-mode #desktopMusicTitle {
-    background: #170511 !important;
-    color: #ff7ed1 !important;
-    border-color: #8f286c !important;
-    box-shadow:
-      inset 1px 1px 4px #000,
-      inset -1px -1px 0 #d858a5 !important;
-    text-shadow:
-      0 0 1px rgba(255,180,231,0.95),
-      0 0 5px rgba(255,75,184,0.8),
-      0 0 11px rgba(255,40,162,0.45) !important;
-  }
-  html.secret-uzi-mode #desktopMusicControls button,
-  html.secret-uzi-mode #desktopMusicMute,
-  html.secret-uzi-mode #desktopMusicVolDown,
-  html.secret-uzi-mode #desktopMusicVolUp,
-  html.secret-uzi-mode .blurb-toggle {
-    background: linear-gradient(180deg, #ffd8ed 0%, #f394c8 100%) !important;
-    color: #3d1232 !important;
-    box-shadow: inset -1px -1px 0 #8c356d, inset 1px 1px 0 #fff4fa !important;
-  }
-  html.secret-uzi-mode .blurb-bar {
-    background: #d85da5 !important;
-    box-shadow: inset 0 1px 0 #ffd9ed !important;
-  }
-  html.secret-uzi-mode .blurb-panel {
-    background: #f8acd4 !important;
-    color: #421332 !important;
+  /* Lil Uzi desktop starts with Pink selected. Choosing Default removes
+     this accent and uses the same neutral system colors as the main desktop. */
+  html.custom-uzi-accent {
+    --uzi-bar-gradient: linear-gradient(180deg, #ffeaf5 0%, #dc68ae 48%, #b7468a 100%);
+    --uzi-button-gradient: linear-gradient(180deg, #ffeaf5 0%, #f8acd4 52%, #dc68ae 100%);
+    --uzi-active-gradient: linear-gradient(180deg, #b7468a 0%, #dc68ae 100%);
+    --uzi-player-gradient: linear-gradient(180deg, #f8acd4 0%, #dc68ae 100%);
+    --uzi-light: #ffeaf5;
+    --uzi-soft: #f8acd4;
+    --uzi-mid: #d85da5;
+    --uzi-dark: #7e2d62;
+    --uzi-border: #a74382;
+    --uzi-text: #3d1232;
+    --uzi-glow: #ff7ed1;
+    --uzi-shadow: #7e2d6299;
+    --uzi-folder-filter: hue-rotate(222deg) saturate(2.35) brightness(.93) contrast(1.15);
+    --uzi-folder-filter-hover: hue-rotate(222deg) saturate(2.6) brightness(1.08) contrast(1.1) drop-shadow(0 0 6px #ff7ed1);
   }
 
   html.secret-uzi-mode #desktop::after {
@@ -2372,6 +2303,175 @@
     }
     #secretUziReturn, #secretUziChangeBackground { padding-left: 6px; padding-right: 6px; font-size: 10px; }
     html.secret-uzi-mode #desktop::after { top: 54px; font-size: 8px; }
+  }
+
+
+
+  /* ---------- DESKTOP ACCENT COLOR OPTIONS ---------- */
+  .desktop-color-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(42px, 1fr));
+    gap: 7px;
+    margin-top: 7px;
+  }
+  .desktop-color-btn {
+    min-height: 42px;
+    padding: 4px 2px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 10px;
+    color: #111;
+    border: 2px solid #808080;
+    box-shadow: inset -1px -1px 0 #000, inset 1px 1px 0 #fff;
+  }
+  .desktop-color-btn.active {
+    outline: 2px solid #000;
+    outline-offset: 1px;
+    font-weight: bold;
+  }
+  .desktop-color-btn[data-color="black"] { color:#fff; }
+
+  html.custom-main-accent:not(.secret-uzi-mode) #taskbar {
+    background: var(--main-bar-gradient) !important;
+    border-top-color: var(--main-light) !important;
+    box-shadow: inset 0 1px 0 var(--main-light), 0 -2px 8px var(--main-shadow) !important;
+  }
+  html.custom-main-accent:not(.secret-uzi-mode) #startBtn,
+  html.custom-main-accent:not(.secret-uzi-mode) .task-item,
+  html.custom-main-accent:not(.secret-uzi-mode) #dateDisplay,
+  html.custom-main-accent:not(.secret-uzi-mode) #weatherBtn,
+  html.custom-main-accent:not(.secret-uzi-mode) #clock {
+    background: var(--main-button-gradient) !important;
+    color: var(--main-text) !important;
+    border-color: var(--main-border) !important;
+    box-shadow: inset -1px -1px 0 var(--main-dark), inset 1px 1px 0 var(--main-light) !important;
+  }
+  html.custom-main-accent:not(.secret-uzi-mode) .task-item.active,
+  html.custom-main-accent:not(.secret-uzi-mode) #startBtn:active,
+  html.custom-main-accent:not(.secret-uzi-mode) #weatherBtn:active {
+    background: var(--main-active-gradient) !important;
+  }
+  html.custom-main-accent:not(.secret-uzi-mode) #desktopMusicPlayer {
+    background: var(--main-player-gradient) !important;
+    border-color: var(--main-border) !important;
+    color: var(--main-text) !important;
+    box-shadow: inset -1px -1px 0 var(--main-dark), inset 1px 1px 0 var(--main-light), inset -2px -2px 0 var(--main-border), inset 2px 2px 0 var(--main-light) !important;
+  }
+  html.custom-main-accent:not(.secret-uzi-mode) #desktopMusicTitle {
+    color: var(--main-glow) !important;
+    border-color: var(--main-border) !important;
+    text-shadow: 0 0 1px var(--main-light), 0 0 5px var(--main-glow), 0 0 11px var(--main-shadow) !important;
+  }
+  html.custom-main-accent:not(.secret-uzi-mode) #desktopMusicControls button,
+  html.custom-main-accent:not(.secret-uzi-mode) #desktopMusicMute,
+  html.custom-main-accent:not(.secret-uzi-mode) #desktopMusicVolDown,
+  html.custom-main-accent:not(.secret-uzi-mode) #desktopMusicVolUp,
+  html.custom-main-accent:not(.secret-uzi-mode) .blurb-toggle {
+    background: var(--main-button-gradient) !important;
+    color: var(--main-text) !important;
+    box-shadow: inset -1px -1px 0 var(--main-dark), inset 1px 1px 0 var(--main-light) !important;
+  }
+  html.custom-main-accent:not(.secret-uzi-mode) .blurb-bar { background: var(--main-mid) !important; }
+  html.custom-main-accent:not(.secret-uzi-mode) .blurb-panel { background: var(--main-soft) !important; color: var(--main-text) !important; }
+
+  html.secret-uzi-mode.custom-uzi-accent .icon.folder-standard:not(.open) .glyph img,
+  html.secret-uzi-mode.custom-uzi-accent .icon.folder-mystery:not(.open) .glyph img {
+    filter: var(--uzi-folder-filter) !important;
+  }
+  html.secret-uzi-mode.custom-uzi-accent .icon.folder-standard:not(.open):hover .glyph img,
+  html.secret-uzi-mode.custom-uzi-accent .icon.folder-standard:not(.open).selected .glyph img,
+  html.secret-uzi-mode.custom-uzi-accent .icon.folder-mystery:not(.open):hover .glyph img,
+  html.secret-uzi-mode.custom-uzi-accent .icon.folder-mystery:not(.open).selected .glyph img {
+    filter: var(--uzi-folder-filter-hover) !important;
+  }
+  html.secret-uzi-mode.custom-uzi-accent #taskbar {
+    background: var(--uzi-bar-gradient) !important;
+    border-top-color: var(--uzi-light) !important;
+    box-shadow: inset 0 1px 0 var(--uzi-light), 0 -2px 8px var(--uzi-shadow) !important;
+  }
+  html.secret-uzi-mode.custom-uzi-accent #startBtn,
+  html.secret-uzi-mode.custom-uzi-accent .task-item,
+  html.secret-uzi-mode.custom-uzi-accent #dateDisplay,
+  html.secret-uzi-mode.custom-uzi-accent #weatherBtn,
+  html.secret-uzi-mode.custom-uzi-accent #clock,
+  html.secret-uzi-mode.custom-uzi-accent #secretUziReturn,
+  html.secret-uzi-mode.custom-uzi-accent #secretUziChangeBackground {
+    background: var(--uzi-button-gradient) !important;
+    color: var(--uzi-text) !important;
+    border-color: var(--uzi-border) !important;
+    box-shadow: inset -1px -1px 0 var(--uzi-dark), inset 1px 1px 0 var(--uzi-light) !important;
+  }
+  html.secret-uzi-mode.custom-uzi-accent .task-item.active,
+  html.secret-uzi-mode.custom-uzi-accent #startBtn:active,
+  html.secret-uzi-mode.custom-uzi-accent #weatherBtn:active,
+  html.secret-uzi-mode.custom-uzi-accent #secretUziReturn:active,
+  html.secret-uzi-mode.custom-uzi-accent #secretUziChangeBackground:active {
+    background: var(--uzi-active-gradient) !important;
+  }
+  html.secret-uzi-mode.custom-uzi-accent #desktopMusicPlayer {
+    background: var(--uzi-player-gradient) !important;
+    border-color: var(--uzi-border) !important;
+    color: var(--uzi-text) !important;
+    box-shadow: inset -1px -1px 0 var(--uzi-dark), inset 1px 1px 0 var(--uzi-light), inset -2px -2px 0 var(--uzi-border), inset 2px 2px 0 var(--uzi-light) !important;
+  }
+  html.secret-uzi-mode.custom-uzi-accent #desktopMusicTitle {
+    color: var(--uzi-glow) !important;
+    border-color: var(--uzi-border) !important;
+    text-shadow: 0 0 1px var(--uzi-light), 0 0 5px var(--uzi-glow), 0 0 11px var(--uzi-shadow) !important;
+  }
+  html.secret-uzi-mode.custom-uzi-accent #desktopMusicControls button,
+  html.secret-uzi-mode.custom-uzi-accent #desktopMusicMute,
+  html.secret-uzi-mode.custom-uzi-accent #desktopMusicVolDown,
+  html.secret-uzi-mode.custom-uzi-accent #desktopMusicVolUp,
+  html.secret-uzi-mode.custom-uzi-accent .blurb-toggle {
+    background: var(--uzi-button-gradient) !important;
+    color: var(--uzi-text) !important;
+    box-shadow: inset -1px -1px 0 var(--uzi-dark), inset 1px 1px 0 var(--uzi-light) !important;
+  }
+  html.secret-uzi-mode.custom-uzi-accent .blurb-bar { background: var(--uzi-mid) !important; }
+  html.secret-uzi-mode.custom-uzi-accent .blurb-panel { background: var(--uzi-soft) !important; color: var(--uzi-text) !important; }
+
+  /* Carry the selected accent through the open window chrome too. */
+  html.custom-main-accent:not(.secret-uzi-mode) .win:not(.inactive) > .titlebar {
+    background: var(--main-mid) !important;
+    color: var(--main-text) !important;
+  }
+  html.custom-main-accent:not(.secret-uzi-mode) .win.inactive > .titlebar {
+    background: var(--main-soft) !important;
+    color: var(--main-text) !important;
+  }
+  html.custom-main-accent:not(.secret-uzi-mode) .titlebar button,
+  html.custom-main-accent:not(.secret-uzi-mode) .win-status,
+  html.custom-main-accent:not(.secret-uzi-mode) .gallery-item .cap,
+  html.custom-main-accent:not(.secret-uzi-mode) .vid-caption {
+    background: var(--main-button-gradient) !important;
+    color: var(--main-text) !important;
+    border-color: var(--main-border) !important;
+  }
+  html.custom-main-accent:not(.secret-uzi-mode) .win {
+    border-color: var(--main-border) !important;
+    box-shadow: inset -1px -1px 0 var(--main-dark), inset 1px 1px 0 var(--main-light), 5px 6px 0 var(--main-shadow) !important;
+  }
+
+  html.secret-uzi-mode.custom-uzi-accent .win:not(.inactive) > .titlebar {
+    background: var(--uzi-mid) !important;
+    color: var(--uzi-text) !important;
+  }
+  html.secret-uzi-mode.custom-uzi-accent .win.inactive > .titlebar {
+    background: var(--uzi-soft) !important;
+    color: var(--uzi-text) !important;
+  }
+  html.secret-uzi-mode.custom-uzi-accent .titlebar button,
+  html.secret-uzi-mode.custom-uzi-accent .win-status,
+  html.secret-uzi-mode.custom-uzi-accent .gallery-item .cap,
+  html.secret-uzi-mode.custom-uzi-accent .vid-caption {
+    background: var(--uzi-button-gradient) !important;
+    color: var(--uzi-text) !important;
+    border-color: var(--uzi-border) !important;
+  }
+  html.secret-uzi-mode.custom-uzi-accent .win {
+    border-color: var(--uzi-border) !important;
+    box-shadow: inset -1px -1px 0 var(--uzi-dark), inset 1px 1px 0 var(--uzi-light), 5px 6px 0 var(--uzi-shadow) !important;
   }
 
   /* ---------- TASKBAR ---------- */
@@ -4970,7 +5070,7 @@ function openDisplayPropertiesWindow() {
     title: 'Display Properties',
     glyph: '🖥️',
     width: 450,
-    height: 600,
+    height: 720,
     left: jitterPos(220, 40),
     top: jitterPos(120, 30),
     bodyHTML: `
@@ -4983,6 +5083,16 @@ function openDisplayPropertiesWindow() {
           <button type="button" class="dp-theme-btn" data-theme="theme-luna" style="flex:1 1 42%; padding:8px; cursor:pointer;">Windows XP Luna</button>
           <button type="button" class="dp-theme-btn" data-theme="theme-synth" style="flex:1 1 42%; padding:8px; cursor:pointer;">Synthwave</button>
         </div>
+        <div style="font-weight:bold; margin:16px 0 6px;">Desktop Colors</div>
+        <div id="mainDesktopColorSection">
+          <div style="margin-bottom:5px;">Main Desktop</div>
+          <div class="desktop-color-grid" id="mainDesktopColors"></div>
+        </div>
+        <div id="uziDesktopColorSection" style="display:none;">
+          <div style="margin-bottom:5px;">Lil Uzi Desktop</div>
+          <div class="desktop-color-grid" id="uziDesktopColors"></div>
+        </div>
+        <div style="font-size:10px; color:#555; margin-top:7px;">Colors apply only to the desktop currently being viewed.</div>
         <div style="font-weight:bold; margin:16px 0 6px;">Appearance</div>
         <div style="margin-bottom:6px;">Dark Mode</div>
         <div style="display:flex; gap:8px;">
@@ -5007,6 +5117,120 @@ function openDisplayPropertiesWindow() {
         </div>
       </div>
     `,
+  });
+
+
+  const DESKTOP_COLOR_OPTIONS = {
+    default:{ label:'Default',base:'#c0c0c0', soft:'#d8d8d8', light:'#f0f0f0', mid:'#c0c0c0', dark:'#666', border:'#888', text:'#111', glow:'#ffffff', hue:0 },
+    red:    { label:'Red',    base:'#d94a4a', soft:'#f2abab', light:'#ffe0e0', mid:'#d94a4a', dark:'#7d2020', border:'#973232', text:'#2e0909', glow:'#ff5c5c', hue:330 },
+    orange: { label:'Orange', base:'#e98032', soft:'#f7c393', light:'#fff0dc', mid:'#e98032', dark:'#8f430f', border:'#a95b20', text:'#351804', glow:'#ff9b45', hue:350 },
+    yellow: { label:'Yellow', base:'#e4c53e', soft:'#f5e79b', light:'#fffbd9', mid:'#d8b62e', dark:'#806b0c', border:'#a58c20', text:'#282000', glow:'#ffe55b', hue:10 },
+    green:  { label:'Green',  base:'#45a95f', soft:'#a9dbb4', light:'#e2f7e7', mid:'#45a95f', dark:'#206432', border:'#347b46', text:'#082710', glow:'#58e777', hue:65 },
+    teal:   { label:'Teal',   base:'#35aaa3', soft:'#a4ddda', light:'#e0f8f6', mid:'#35aaa3', dark:'#17625e', border:'#287d78', text:'#062a28', glow:'#4be8df', hue:100 },
+    blue:   { label:'Blue',   base:'#4c83d8', soft:'#aac5ed', light:'#e4efff', mid:'#4c83d8', dark:'#244f91', border:'#3567ad', text:'#081b38', glow:'#5fa1ff', hue:140 },
+    purple: { label:'Purple', base:'#9a55cf', soft:'#cfade7', light:'#f0e2fb', mid:'#9a55cf', dark:'#55247c', border:'#713c99', text:'#20082f', glow:'#c06dff', hue:238 },
+    pink:   { label:'Pink',   base:'#dc68ae', soft:'#f8acd4', light:'#ffeaf5', mid:'#d85da5', dark:'#7e2d62', border:'#a74382', text:'#3d1232', glow:'#ff7ed1', hue:222 },
+    brown:  { label:'Brown',  base:'#9b704e', soft:'#d4b69e', light:'#f3e5d9', mid:'#9b704e', dark:'#533620', border:'#725039', text:'#241309', glow:'#c79268', hue:5 },
+    gray:   { label:'Gray',   base:'#9b9b9b', soft:'#d0d0d0', light:'#f1f1f1', mid:'#999', dark:'#505050', border:'#707070', text:'#171717', glow:'#d7d7d7', hue:0 },
+    black:  { label:'Black',  base:'#333438', soft:'#74767d', light:'#a9abb1', mid:'#333438', dark:'#08090a', border:'#1c1d20', text:'#f4f4f4', glow:'#d7d9df', hue:0 },
+    white:  { label:'White',  base:'#e8e8e8', soft:'#f6f6f6', light:'#ffffff', mid:'#dedede', dark:'#888', border:'#aaa', text:'#111', glow:'#ffffff', hue:0 }
+  };
+  const htmlRoot = document.documentElement;
+  const openedFromUziDesktop = htmlRoot.classList.contains('secret-uzi-mode');
+  let mainDesktopColor = htmlRoot.classList.contains('custom-main-accent')
+    ? (htmlRoot.dataset.mainDesktopColor || 'gray')
+    : 'default';
+  let uziDesktopColor = htmlRoot.classList.contains('custom-uzi-accent')
+    ? (htmlRoot.dataset.uziDesktopColor || 'pink')
+    : 'default';
+
+  function shade(hex, amount) {
+    const n = parseInt(hex.slice(1), 16);
+    const r = Math.max(0, Math.min(255, (n >> 16) + amount));
+    const g = Math.max(0, Math.min(255, ((n >> 8) & 255) + amount));
+    const b = Math.max(0, Math.min(255, (n & 255) + amount));
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+  function applyDesktopColor(target, key) {
+    const html = document.documentElement;
+    const prefix = target === 'uzi' ? 'uzi' : 'main';
+    const customClass = target === 'uzi' ? 'custom-uzi-accent' : 'custom-main-accent';
+
+    if (key === 'default') {
+      html.classList.remove(customClass);
+      [
+        'bar-gradient','button-gradient','active-gradient','player-gradient',
+        'light','soft','mid','dark','border','text','glow','shadow'
+      ].forEach(name => html.style.removeProperty(`--${prefix}-${name}`));
+      if (target === 'uzi') {
+        html.style.removeProperty('--uzi-folder-filter');
+        html.style.removeProperty('--uzi-folder-filter-hover');
+        html.dataset.uziDesktopColor = 'default';
+        uziDesktopColor = 'default';
+      } else {
+        delete html.dataset.mainDesktopColor;
+        mainDesktopColor = 'default';
+      }
+      return;
+    }
+
+    const c = DESKTOP_COLOR_OPTIONS[key] || DESKTOP_COLOR_OPTIONS.gray;
+    html.classList.add(customClass);
+    html.style.setProperty(`--${prefix}-bar-gradient`, `linear-gradient(180deg, ${c.light} 0%, ${c.base} 48%, ${shade(c.base,-24)} 100%)`);
+    html.style.setProperty(`--${prefix}-button-gradient`, `linear-gradient(180deg, ${c.light} 0%, ${c.soft} 52%, ${c.base} 100%)`);
+    html.style.setProperty(`--${prefix}-active-gradient`, `linear-gradient(180deg, ${shade(c.base,-22)} 0%, ${c.base} 100%)`);
+    html.style.setProperty(`--${prefix}-player-gradient`, `linear-gradient(180deg, ${c.soft} 0%, ${c.base} 100%)`);
+    html.style.setProperty(`--${prefix}-light`, c.light);
+    html.style.setProperty(`--${prefix}-soft`, c.soft);
+    html.style.setProperty(`--${prefix}-mid`, c.mid);
+    html.style.setProperty(`--${prefix}-dark`, c.dark);
+    html.style.setProperty(`--${prefix}-border`, c.border);
+    html.style.setProperty(`--${prefix}-text`, c.text);
+    html.style.setProperty(`--${prefix}-glow`, c.glow);
+    html.style.setProperty(`--${prefix}-shadow`, `${c.dark}99`);
+    if (target === 'uzi') {
+      const isNeutral = key === 'gray' || key === 'black' || key === 'white';
+      html.style.setProperty('--uzi-folder-filter', isNeutral
+        ? (key === 'black' ? 'grayscale(1) brightness(.48) contrast(1.35)' : key === 'white' ? 'grayscale(1) brightness(1.45) contrast(.85)' : 'grayscale(1) brightness(.92) contrast(1.08)')
+        : `hue-rotate(${c.hue}deg) saturate(2.35) brightness(.93) contrast(1.15)`);
+      html.style.setProperty('--uzi-folder-filter-hover', isNeutral
+        ? (key === 'black' ? 'grayscale(1) brightness(.68) contrast(1.35) drop-shadow(0 0 6px #aaa)' : `grayscale(1) brightness(1.2) drop-shadow(0 0 6px ${c.glow})`)
+        : `hue-rotate(${c.hue}deg) saturate(2.6) brightness(1.08) contrast(1.1) drop-shadow(0 0 6px ${c.glow})`);
+      uziDesktopColor = key;
+      html.dataset.uziDesktopColor = key;
+    } else {
+      mainDesktopColor = key;
+      html.dataset.mainDesktopColor = key;
+    }
+  }
+
+  function buildColorPicker(container, target, activeKey) {
+    if (!container) return;
+    container.innerHTML = Object.entries(DESKTOP_COLOR_OPTIONS).map(([key,c]) => `
+      <button type="button" class="desktop-color-btn${key===activeKey?' active':''}" data-desktop-target="${target}" data-color="${key}" title="${c.label}" style="background:${key === 'default' ? 'linear-gradient(135deg,#f4f4f4 0 48%,#9a9a9a 48% 52%,#c0c0c0 52% 100%)' : c.base};">${c.label}</button>
+    `).join('');
+  }
+  const mainSection = win.querySelector('#mainDesktopColorSection');
+  const uziSection = win.querySelector('#uziDesktopColorSection');
+  const mainColorsEl = win.querySelector('#mainDesktopColors');
+  const uziColorsEl = win.querySelector('#uziDesktopColors');
+
+  if (openedFromUziDesktop) {
+    mainSection.style.display = 'none';
+    uziSection.style.display = 'block';
+    buildColorPicker(uziColorsEl, 'uzi', uziDesktopColor);
+  } else {
+    mainSection.style.display = 'block';
+    uziSection.style.display = 'none';
+    buildColorPicker(mainColorsEl, 'main', mainDesktopColor);
+  }
+  win.querySelectorAll('.desktop-color-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const target = btn.dataset.desktopTarget;
+      applyDesktopColor(target, btn.dataset.color);
+      win.querySelectorAll(`.desktop-color-btn[data-desktop-target="${target}"]`).forEach(b => b.classList.toggle('active', b === btn));
+    });
   });
 
   const ALL_THEME_CLASSES = ['theme-retro', 'theme-win31', 'theme-luna', 'theme-synth'];
@@ -6425,7 +6649,12 @@ function playObnoxiousClickIfEnabled() {
     };
 
     window.secretTrackMode = true;
-    document.documentElement.classList.add("secret-uzi-mode");
+    const html = document.documentElement;
+    if (!html.dataset.uziDesktopColor) {
+      html.dataset.uziDesktopColor = 'pink';
+      html.classList.add('custom-uzi-accent');
+    }
+    html.classList.add("secret-uzi-mode");
     syncDesktopSessionUI();
     document.getElementById("startMenu")?.classList.add("hidden");
     if (blurb) blurb.textContent = "All Lil Uzi Vert. Type rafael1021 again to skip to the next track.";

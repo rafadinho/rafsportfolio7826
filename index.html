@@ -2147,6 +2147,85 @@
     .drum-pad-key { min-width: 24px; height: 22px; line-height: 18px; }
   }
 
+  /* ---------- SECRET LIL UZI MODE ---------- */
+  #secretUziBackground {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #000;
+    z-index: 1;
+    display: none;
+    pointer-events: none;
+  }
+  #secretUziReturn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 10002;
+    display: none;
+    padding: 8px 12px;
+    background: #c0c0c0;
+    color: #000;
+    border: 0;
+    box-shadow: inset -2px -2px 0 #000, inset 2px 2px 0 #fff,
+                inset -3px -3px 0 #808080, inset 3px 3px 0 #dfdfdf;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  #secretUziReturn:active {
+    box-shadow: inset 2px 2px 0 #000, inset -2px -2px 0 #fff;
+    padding-top: 9px;
+    padding-left: 13px;
+  }
+  html.secret-uzi-mode #secretUziBackground,
+  html.secret-uzi-mode #secretUziReturn { display: block; }
+  html.secret-uzi-mode #bgLayer,
+  html.secret-uzi-mode #sunsetGlow,
+  html.secret-uzi-mode #celestialBody,
+  html.secret-uzi-mode #snowCanvas,
+  html.secret-uzi-mode #icons,
+  html.secret-uzi-mode #taskbar,
+  html.secret-uzi-mode #startMenu,
+  html.secret-uzi-mode .win { display: none !important; }
+  html.secret-uzi-mode #desktopMusicPlayer {
+    display: block !important;
+    right: 50%;
+    bottom: 34px;
+    transform: translateX(50%);
+    z-index: 10001;
+  }
+  html.secret-uzi-mode #desktop::after {
+    content: "LIL UZI VERT ARCHIVE";
+    position: absolute;
+    left: 50%;
+    top: 24px;
+    transform: translateX(-50%);
+    z-index: 10001;
+    color: rgba(255,255,255,0.78);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.9);
+    pointer-events: none;
+  }
+  html.secret-uzi-mode #musicBlurbText::before {
+    content: "SECRET PLAYLIST — ";
+    font-weight: bold;
+  }
+  @media (max-width: 520px) {
+    html.secret-uzi-mode #desktopMusicPlayer {
+      width: calc(100vw - 18px);
+      right: 9px;
+      transform: none;
+    }
+    #secretUziReturn { top: 8px; right: 8px; }
+    html.secret-uzi-mode #desktop::after { top: 54px; font-size: 8px; }
+  }
+
   /* ---------- TASKBAR ---------- */
   #startMenu {
     position: absolute;
@@ -2667,6 +2746,8 @@
 
 <div id="desktop">
 
+  <video id="secretUziBackground" src="media/secret-uzi-background.mp4" muted loop playsinline preload="metadata"></video>
+  <button id="secretUziReturn" type="button">Return to Desktop</button>
 
   <div id="bgLayer">
     <canvas id="cloudCanvas"></canvas>
@@ -5145,6 +5226,10 @@ startBtnEl.addEventListener('click', (e) => {
 
     prev.onclick = function (e) {
       e.preventDefault();
+      if (window.secretTrackMode && typeof window.playPreviousSecretTrack === "function") {
+        window.playPreviousSecretTrack();
+        return;
+      }
       if (musicHistory.length > 0) {
         loadTrack(musicHistory.pop());
       } else {
@@ -5155,6 +5240,10 @@ startBtnEl.addEventListener('click', (e) => {
 
     next.onclick = function (e) {
       e.preventDefault();
+      if (window.secretTrackMode && typeof window.playNextSecretTrack === "function") {
+        window.playNextSecretTrack();
+        return;
+      }
       musicHistory.push(index);
       loadTrack(pickRandomTrackIndex(index, tracks.length));
       audio.play().catch(function () {});
@@ -5202,6 +5291,10 @@ startBtnEl.addEventListener('click', (e) => {
     audio.addEventListener("play", update);
     audio.addEventListener("pause", update);
     audio.addEventListener("ended", function () {
+      if (window.secretTrackMode && typeof window.playNextSecretTrack === "function") {
+        window.playNextSecretTrack();
+        return;
+      }
       musicHistory.push(index);
       loadTrack(pickRandomTrackIndex(index, tracks.length));
       audio.play().catch(function () {});
@@ -5945,54 +6038,225 @@ function playObnoxiousClickIfEnabled() {
 </script>
 
 <script>
-/* ---------- SECRET TRACK: type "rafael1021" anywhere on the page ---------- */
+/* ---------- SECRET LIL UZI MODE: type "rafael1021" ---------- */
 (function () {
   const SECRET_CODE = "rafael1021";
-  const SECRET_TRACK = {
-    title: "Better By Myself by Lil Uzi Vert (Unreleased)",
-    src: "media/better-by-myself-lil-uzi-vert-unreleased.mp3"
-  };
+  const SECRET_TRACKS = [
+    { title: "Better By Myself by Lil Uzi Vert (Unreleased)", src: "media/better-by-myself-lil-uzi-vert-unreleased.mp3" },
+    { title: "Swaggin by Lil Uzi Vert", src: "media/swaggin-lil-uzi-vert.mp3" },
+    { title: "Waking Up The Demon by Lil Uzi Vert", src: "media/waking-up-the-demon-lil-uzi-vert.mp3" },
+    { title: "Baby Pluto by Lil Uzi Vert", src: "media/baby-pluto-lil-uzi-vert.mp3" },
+    { title: "280 by Lil Uzi Vert", src: "media/280-lil-uzi-vert.mp3" },
+    { title: "Tone by Lil Uzi Vert", src: "media/tone-lil-uzi-vert.mp3" },
+    { title: "Party With The Demons V2 by Lil Uzi Vert", src: "media/party-with-the-demons-v2-lil-uzi-vert.mp3" },
+    { title: "5AM by Lil Uzi Vert", src: "media/5am-lil-uzi-vert.mp3" },
+    { title: "At The Gates by Lil Uzi Vert", src: "media/at-the-gates-lil-uzi-vert.mp3" },
+    { title: "Buy It by Lil Uzi Vert", src: "media/buy-it-lil-uzi-vert.mp3" },
+    { title: "Mr. Trending Topic by Lil Uzi Vert", src: "media/mr-trending-topic-lil-uzi-vert.mp3" },
+    { title: "16 Zone by Lil Uzi Vert", src: "media/16-zone-lil-uzi-vert.mp3" },
+    { title: "What You On by Lil Uzi Vert", src: "media/what-you-on-lil-uzi-vert.mp3" },
+    { title: "Today by Lil Uzi Vert", src: "media/today-lil-uzi-vert.mp3" },
+    { title: "Spaceship to Mars by Lil Uzi Vert", src: "media/spaceship-to-mars-lil-uzi-vert.mp3" },
+    { title: "In The Mirror by Lil Uzi Vert", src: "media/in-the-mirror-lil-uzi-vert.mp3" }
+  ];
+
   let buffer = "";
+  let secretIndex = -1;
+  let normalAudioState = null;
+  let normalPlaylistNodes = null;
+  let normalBlurbText = "";
+  window.secretTrackMode = false;
+
+  const audio = () => document.getElementById("desktopMusicAudio");
+  const playBtn = () => document.getElementById("desktopMusicPlay");
+  const miniPlaylist = () => document.getElementById("miniPlaylist");
 
   window.addEventListener("keydown", function (e) {
     const tag = (e.target && e.target.tagName) || "";
     if (tag === "INPUT" || tag === "TEXTAREA" || (e.target && e.target.isContentEditable)) return;
-    if (e.key.length !== 1) return; // ignore Shift/Enter/arrows/etc., only single characters count
+    if (e.key.length !== 1) return;
 
     buffer = (buffer + e.key.toLowerCase()).slice(-SECRET_CODE.length);
+    if (buffer !== SECRET_CODE) return;
+    buffer = "";
 
-    if (buffer === SECRET_CODE) {
-      buffer = "";
-      triggerSecretTrack();
+    if (!window.secretTrackMode) {
+      enterSecretMode();
+    } else {
+      playSecretTrack(secretIndex + 1);
     }
   });
 
-  function triggerSecretTrack() {
-    const audio = document.getElementById("desktopMusicAudio");
-    const title = document.getElementById("desktopMusicTitle");
-    const playBtn = document.getElementById("desktopMusicPlay");
-    if (!audio) return;
-
-    audio.pause();
-    audio.src = SECRET_TRACK.src;
-    setDesktopMusicTitle(SECRET_TRACK.title);
-    audio.load();
-    audio.play().catch(function () {});
-
-    if (playBtn && typeof ICON_PAUSE !== "undefined") {
-      playBtn.innerHTML = ICON_PAUSE;
-    }
-
-    // Clear "active" highlighting in the mini playlist — this secret track
-    // isn't part of the visible list, so nothing there should look selected.
-    document.querySelectorAll(".mini-track").forEach(function (row) {
+  function clearVisiblePlaylistHighlighting() {
+    document.querySelectorAll(".mini-track, .music-track").forEach(function (row) {
       row.classList.remove("active");
-      const btn = row.querySelector("[data-play-idx]");
+      const btn = row.querySelector("[data-play-idx], [data-track-play]");
       if (btn && typeof ICON_PLAY !== "undefined") btn.innerHTML = ICON_PLAY;
     });
   }
-})();
-</script>
+
+  function renderSecretPlaylist() {
+    const list = miniPlaylist();
+    if (!list) return;
+
+    if (!normalPlaylistNodes) {
+      normalPlaylistNodes = document.createDocumentFragment();
+      while (list.firstChild) normalPlaylistNodes.appendChild(list.firstChild);
+    } else {
+      list.replaceChildren();
+    }
+
+    SECRET_TRACKS.forEach(function (track, i) {
+      const row = document.createElement("div");
+      row.className = "mini-track";
+      row.dataset.secretIdx = String(i);
+
+      const name = document.createElement("span");
+      name.className = "mini-track-name";
+      name.textContent = (i + 1) + ". " + track.title;
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.title = "Play this song";
+      button.innerHTML = typeof ICON_PLAY !== "undefined" ? ICON_PLAY : "▶";
+
+      row.append(name, button);
+      row.addEventListener("click", function (event) {
+        event.stopPropagation();
+        if (i === secretIndex && !audio().paused) audio().pause();
+        else if (i === secretIndex) audio().play().catch(function () {});
+        else playSecretTrack(i);
+        updateSecretPlaylistHighlighting();
+      });
+      list.appendChild(row);
+    });
+    updateSecretPlaylistHighlighting();
+  }
+
+  function updateSecretPlaylistHighlighting() {
+    const list = miniPlaylist();
+    const player = audio();
+    if (!list || !player) return;
+    list.querySelectorAll("[data-secret-idx]").forEach(function (row) {
+      const active = Number(row.dataset.secretIdx) === secretIndex;
+      row.classList.toggle("active", active);
+      const btn = row.querySelector("button");
+      if (btn) btn.innerHTML = active && !player.paused && typeof ICON_PAUSE !== "undefined" ? ICON_PAUSE : ICON_PLAY;
+    });
+  }
+
+  function restoreNormalPlaylist() {
+    const list = miniPlaylist();
+    if (!list || !normalPlaylistNodes) return;
+    list.replaceChildren();
+    list.appendChild(normalPlaylistNodes);
+    normalPlaylistNodes = null;
+  }
+
+  function enterSecretMode() {
+    const player = audio();
+    if (!player || !SECRET_TRACKS.length) return;
+
+    const blurb = document.getElementById("musicBlurbText");
+    normalBlurbText = blurb ? blurb.textContent : "";
+    normalAudioState = {
+      src: player.currentSrc || player.getAttribute("src") || "",
+      currentTime: Number.isFinite(player.currentTime) ? player.currentTime : 0,
+      paused: player.paused,
+      muted: player.muted,
+      volume: player.volume,
+      title: document.getElementById("desktopMusicTitle")?.textContent || ""
+    };
+
+    window.secretTrackMode = true;
+    document.documentElement.classList.add("secret-uzi-mode");
+    document.getElementById("startMenu")?.classList.add("hidden");
+    if (blurb) blurb.textContent = "All Lil Uzi Vert. Type rafael1021 again to skip to the next track.";
+
+    renderSecretPlaylist();
+
+    const bgVideo = document.getElementById("secretUziBackground");
+    if (bgVideo) {
+      bgVideo.muted = true;
+      bgVideo.currentTime = 0;
+      bgVideo.play().catch(function () {});
+    }
+
+    secretIndex = Math.floor(Math.random() * SECRET_TRACKS.length);
+    playSecretTrack(secretIndex);
+  }
+
+  function playSecretTrack(index) {
+    const player = audio();
+    const button = playBtn();
+    if (!player || !SECRET_TRACKS.length) return;
+
+    secretIndex = (index + SECRET_TRACKS.length) % SECRET_TRACKS.length;
+    const track = SECRET_TRACKS[secretIndex];
+    window.secretTrackMode = true;
+
+    player.pause();
+    player.src = track.src;
+    setDesktopMusicTitle(track.title);
+    player.load();
+    player.play().catch(function () {});
+
+    if (button && typeof ICON_PAUSE !== "undefined") button.innerHTML = ICON_PAUSE;
+    clearVisiblePlaylistHighlighting();
+    updateSecretPlaylistHighlighting();
+  }
+
+  function exitSecretMode() {
+    if (!window.secretTrackMode) return;
+    const player = audio();
+    const bgVideo = document.getElementById("secretUziBackground");
+    const blurb = document.getElementById("musicBlurbText");
+
+    window.secretTrackMode = false;
+    document.documentElement.classList.remove("secret-uzi-mode");
+    if (bgVideo) {
+      bgVideo.pause();
+      bgVideo.currentTime = 0;
+    }
+
+    restoreNormalPlaylist();
+    if (blurb) blurb.textContent = normalBlurbText || "Incredibly random assortment of my favorite songs!";
+
+    if (player && normalAudioState) {
+      player.pause();
+      player.muted = normalAudioState.muted;
+      player.volume = normalAudioState.volume;
+      player.src = normalAudioState.src;
+      setDesktopMusicTitle(normalAudioState.title);
+      player.load();
+      const restorePlayback = function () {
+        try { player.currentTime = normalAudioState.currentTime; } catch (_) {}
+        if (!normalAudioState.paused) player.play().catch(function () {});
+        player.removeEventListener("loadedmetadata", restorePlayback);
+      };
+      player.addEventListener("loadedmetadata", restorePlayback);
+    }
+
+    normalAudioState = null;
+    secretIndex = -1;
+  }
+
+  window.playNextSecretTrack = function () {
+    if (window.secretTrackMode) playSecretTrack(secretIndex + 1);
+  };
+  window.playPreviousSecretTrack = function () {
+    if (window.secretTrackMode) playSecretTrack(secretIndex - 1);
+  };
+  window.exitSecretUziMode = exitSecretMode;
+
+  document.getElementById("secretUziReturn")?.addEventListener("click", exitSecretMode);
+  document.addEventListener("play", function (event) {
+    if (event.target && event.target.id === "desktopMusicAudio" && window.secretTrackMode) updateSecretPlaylistHighlighting();
+  }, true);
+  document.addEventListener("pause", function (event) {
+    if (event.target && event.target.id === "desktopMusicAudio" && window.secretTrackMode) updateSecretPlaylistHighlighting();
+  }, true);
+})();</script>
 
 </body>
 </html>

@@ -1389,6 +1389,23 @@
     object-fit: contain;
     display: block;
   }
+  .uzi-video-player .win-body {
+    padding: 0;
+    background: #000;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .uzi-video-player video,
+  .uzi-video-player iframe {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    border: 0;
+  }
   .vid-arrow {
     position: absolute;
     top: 50%;
@@ -3894,41 +3911,152 @@ function openImageViewer(index) {
   });
 }
 
+function openUziShortVideos() {
+  const win = createWindow({
+    id: 'video',
+    title: 'Now Playing.raf',
+    glyph: '🎬',
+    width: 640,
+    height: 460,
+    left: 210,
+    top: 85,
+    bodyHTML: `
+      <button class="vid-arrow left uzi-short-prev" type="button" title="Previous">‹</button>
+      <video class="uzi-short-video" playsinline></video>
+      <iframe class="uzi-short-youtube" style="display:none" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <div class="yt-note uzi-short-note" style="display:none">Use the YouTube player controls for this clip.</div>
+      <button class="vid-arrow right uzi-short-next" type="button" title="Next">›</button>
+      <div class="vid-controls uzi-short-controls">
+        <button class="uzi-short-back" title="Back 5 seconds">« 5s</button>
+        <button class="uzi-short-play" title="Play/Pause">▶</button>
+        <button class="uzi-short-forward" title="Forward 5 seconds">5s »</button>
+        <input class="uzi-short-seek" type="range" min="0" max="100" value="0" step="0.1">
+        <span class="vid-time uzi-short-time">0:00 / 0:00</span>
+        <div class="vid-volume">
+          <button class="uzi-short-mute" title="Mute/Unmute">🔇</button>
+          <button class="uzi-short-voldown" title="Volume down">–</button>
+          <button class="uzi-short-volup" title="Volume up">+</button>
+        </div>
+      </div>
+      <div class="vid-caption uzi-short-caption"></div>
+    `,
+    statusText: 'Short Videos — Lil Uzi desktop'
+  });
+  win.classList.add('uzi-video-player');
+  if (win.dataset.playerReady === '1') return win;
+  win.dataset.playerReady = '1';
+
+  const video = win.querySelector('.uzi-short-video');
+  const frame = win.querySelector('.uzi-short-youtube');
+  const note = win.querySelector('.uzi-short-note');
+  const controls = win.querySelector('.uzi-short-controls');
+  const caption = win.querySelector('.uzi-short-caption');
+  const seek = win.querySelector('.uzi-short-seek');
+  const time = win.querySelector('.uzi-short-time');
+  const play = win.querySelector('.uzi-short-play');
+  const mute = win.querySelector('.uzi-short-mute');
+  let index = 0;
+  video.volume = 0.2;
+
+  const fmt = n => {
+    if (!Number.isFinite(n)) return '0:00';
+    return `${Math.floor(n/60)}:${Math.floor(n%60).toString().padStart(2,'0')}`;
+  };
+  function sync() {
+    const d = video.duration || 0;
+    seek.max = d || 100;
+    seek.value = video.currentTime || 0;
+    time.textContent = `${fmt(video.currentTime)} / ${fmt(d)}`;
+    play.textContent = video.paused ? '▶' : '❚❚';
+    mute.textContent = video.muted || video.volume === 0 ? '🔇' : '🔊';
+  }
+  function load(i) {
+    index = (i + videoPlaylist.length) % videoPlaylist.length;
+    const item = videoPlaylist[index];
+    if (item.type === 'youtube') {
+      video.pause();
+      video.removeAttribute('src');
+      video.style.display = 'none';
+      controls.style.display = 'none';
+      note.style.display = 'block';
+      frame.style.display = 'block';
+      frame.src = `https://www.youtube.com/embed/${item.youtubeId}?autoplay=1&mute=1&loop=1&playlist=${item.youtubeId}&controls=1&modestbranding=1&rel=0`;
+    } else {
+      frame.src = '';
+      frame.style.display = 'none';
+      note.style.display = 'none';
+      controls.style.display = 'flex';
+      video.style.display = 'block';
+      video.src = item.src;
+      video.play().catch(()=>{});
+    }
+    caption.textContent = `${item.caption} — ${index + 1} of ${videoPlaylist.length}`;
+    sync();
+  }
+  win.querySelector('.uzi-short-prev').addEventListener('click', e => { e.stopPropagation(); load(index-1); });
+  win.querySelector('.uzi-short-next').addEventListener('click', e => { e.stopPropagation(); load(index+1); });
+  win.querySelector('.uzi-short-back').addEventListener('click', e => { e.stopPropagation(); video.currentTime=Math.max(0,video.currentTime-5); sync(); });
+  win.querySelector('.uzi-short-forward').addEventListener('click', e => { e.stopPropagation(); video.currentTime=Math.min(video.duration||video.currentTime+5,video.currentTime+5); sync(); });
+  play.addEventListener('click', e => { e.stopPropagation(); video.paused ? video.play().catch(()=>{}) : video.pause(); sync(); });
+  mute.addEventListener('click', e => { e.stopPropagation(); video.muted=!video.muted; sync(); });
+  win.querySelector('.uzi-short-voldown').addEventListener('click', e => { e.stopPropagation(); video.volume=Math.max(0,video.volume-0.1); video.muted=false; sync(); });
+  win.querySelector('.uzi-short-volup').addEventListener('click', e => { e.stopPropagation(); video.volume=Math.min(1,video.volume+0.1); video.muted=false; sync(); });
+  seek.addEventListener('input', () => { video.currentTime=Number(seek.value)||0; sync(); });
+  video.addEventListener('timeupdate', sync);
+  video.addEventListener('loadedmetadata', sync);
+  video.addEventListener('play', sync);
+  video.addEventListener('pause', sync);
+  video.addEventListener('ended', () => load(index+1));
+  win.querySelector('[data-act="close"]').addEventListener('click', () => { video.pause(); frame.src=''; }, { once:true });
+  load(0);
+  return win;
+}
+
+function openUziLongVideos() {
+  const win = createWindow({
+    id: 'longvideos',
+    title: 'Long Videos',
+    glyph: '🎬',
+    width: 650,
+    height: 470,
+    left: 190,
+    top: 70,
+    bodyHTML: `
+      <button class="vid-arrow left uzi-long-prev" type="button" title="Previous">‹</button>
+      <iframe class="uzi-long-frame" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <button class="vid-arrow right uzi-long-next" type="button" title="Next">›</button>
+      <div class="vid-caption uzi-long-caption"></div>
+    `,
+    statusText: 'Long Videos — Lil Uzi desktop'
+  });
+  win.classList.add('uzi-video-player');
+  if (win.dataset.playerReady === '1') return win;
+  win.dataset.playerReady = '1';
+  const frame = win.querySelector('.uzi-long-frame');
+  const caption = win.querySelector('.uzi-long-caption');
+  let index = 0;
+  function load(i) {
+    index = (i + longVideoPlaylist.length) % longVideoPlaylist.length;
+    const item = longVideoPlaylist[index];
+    frame.src = `https://www.youtube.com/embed/${item.youtubeId}?autoplay=0&rel=0&modestbranding=1`;
+    caption.textContent = `${item.caption} — ${index + 1} of ${longVideoPlaylist.length}`;
+  }
+  win.querySelector('.uzi-long-prev').addEventListener('click', e => { e.stopPropagation(); load(index-1); });
+  win.querySelector('.uzi-long-next').addEventListener('click', e => { e.stopPropagation(); load(index+1); });
+  win.querySelector('[data-act="close"]').addEventListener('click', () => { frame.src=''; }, { once:true });
+  load(0);
+  return win;
+}
+
 function openFolder(f) {
   if (f.type === 'video') {
-    if (currentDesktopSession() === 'uzi') {
-      createWindow({
-        id: 'video',
-        title: 'Now Playing.raf',
-        glyph: '🎬',
-        width: 620,
-        height: 420,
-        left: 210,
-        top: 85,
-        bodyHTML: `<div class="placeholder-box"><div class="big">🎬</div><p><strong>Video Player</strong></p><p>This archive desktop keeps its own video window, separate from the OG desktop player.</p></div>`,
-        statusText: 'Lil Uzi archive desktop video window'
-      });
-    } else {
-      openVideoWindow();
-    }
+    if (currentDesktopSession() === 'uzi') openUziShortVideos();
+    else openVideoWindow();
     return;
   }
   if (f.type === 'longvideo') {
-    if (currentDesktopSession() === 'uzi') {
-      createWindow({
-        id: 'longvideos',
-        title: 'Long Videos',
-        glyph: '🎬',
-        width: 650,
-        height: 470,
-        left: 190,
-        top: 70,
-        bodyHTML: `<div class="placeholder-box"><div class="big">🎞️</div><p><strong>Long Videos</strong></p><p>This is the archive desktop's separate window.</p></div>`,
-        statusText: 'Lil Uzi archive desktop'
-      });
-    } else {
-      openLongVideosWindow();
-    }
+    if (currentDesktopSession() === 'uzi') openUziLongVideos();
+    else openLongVideosWindow();
     return;
   }
   if (f.type === 'music') {

@@ -2252,8 +2252,11 @@
   }
   html.secret-uzi-mode #bgLayer,
   html.secret-uzi-mode #sunsetGlow,
-  html.secret-uzi-mode #celestialBody,
-  html.secret-uzi-mode #snowCanvas { display: none !important; }
+  html.secret-uzi-mode #celestialBody { display: none !important; }
+  html.secret-uzi-mode #snowCanvas {
+    display: block !important;
+    z-index: 2;
+  }
   html.secret-uzi-mode #icons { display: block !important; z-index: 10000; }
   html.secret-uzi-mode #taskbar { display: flex !important; z-index: 10005; }
   html.secret-uzi-mode #desktopMusicPlayer { display: block !important; z-index: 10001; }

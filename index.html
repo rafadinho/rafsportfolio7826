@@ -2261,6 +2261,14 @@
     filter: hue-rotate(238deg) saturate(2.35) brightness(1.08) contrast(1.08)
       drop-shadow(0 0 5px rgba(220, 95, 255, 0.7));
   }
+  html.secret-uzi-mode .icon.folder-mystery:not(.open) .glyph img {
+    filter: hue-rotate(222deg) saturate(2.4) brightness(0.9) contrast(1.18);
+  }
+  html.secret-uzi-mode .icon.folder-mystery:not(.open):hover .glyph img,
+  html.secret-uzi-mode .icon.folder-mystery:not(.open).selected .glyph img {
+    filter: hue-rotate(222deg) saturate(2.65) brightness(1.06) contrast(1.14)
+      drop-shadow(0 0 6px rgba(220, 95, 255, 0.78));
+  }
 
   html.secret-uzi-mode #taskbar {
     background: linear-gradient(180deg, #ffb2dc 0%, #f176bd 48%, #c84d9d 100%) !important;
@@ -3122,7 +3130,8 @@ function updateIconIndicators() {
 folders.forEach(f => {
   const div = document.createElement('div');
   div.className = 'icon';
-  if (!mysteryFolderIds.includes(f.id)) div.classList.add('folder-standard');
+  if (mysteryFolderIds.includes(f.id)) div.classList.add('folder-mystery');
+  else div.classList.add('folder-standard');
   div.dataset.id = f.id;
   div.dataset.winid = windowIdForFolder(f);
   const iconSrc = mysteryFolderIds.includes(f.id) ? mysteryFolderIconDataUri : folderIconDataUri;

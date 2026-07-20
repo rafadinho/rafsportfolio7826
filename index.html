@@ -2252,6 +2252,93 @@
   html.secret-uzi-mode #desktopMusicPlayer { display: block !important; z-index: 10001; }
   html.secret-uzi-mode #startMenu { z-index: 10006; }
   html.secret-uzi-mode .win:not(.hidden) { z-index: 10002 !important; }
+  /* Lil Uzi archive pink + purple desktop theme */
+  html.secret-uzi-mode .icon.folder-standard:not(.open) .glyph img {
+    filter: hue-rotate(238deg) saturate(2.15) brightness(0.92) contrast(1.12);
+  }
+  html.secret-uzi-mode .icon.folder-standard:not(.open):hover .glyph img,
+  html.secret-uzi-mode .icon.folder-standard:not(.open).selected .glyph img {
+    filter: hue-rotate(238deg) saturate(2.35) brightness(1.08) contrast(1.08)
+      drop-shadow(0 0 5px rgba(220, 95, 255, 0.7));
+  }
+
+  html.secret-uzi-mode #taskbar {
+    background: linear-gradient(180deg, #ffb2dc 0%, #f176bd 48%, #c84d9d 100%) !important;
+    border-top-color: #ffd9ee !important;
+    box-shadow:
+      inset 0 1px 0 #ffe8f5,
+      inset 0 2px 0 rgba(255,255,255,0.45),
+      0 -2px 8px rgba(88, 0, 64, 0.35) !important;
+  }
+  html.secret-uzi-mode #startBtn,
+  html.secret-uzi-mode .task-item,
+  html.secret-uzi-mode #dateDisplay,
+  html.secret-uzi-mode #weatherBtn,
+  html.secret-uzi-mode #clock,
+  html.secret-uzi-mode #secretUziReturn,
+  html.secret-uzi-mode #secretUziChangeBackground {
+    background: linear-gradient(180deg, #ffd5ec 0%, #f89fd0 52%, #dc68ae 100%) !important;
+    color: #3d1232 !important;
+    border-color: #8f376f !important;
+    box-shadow:
+      inset -1px -1px 0 #8c356d,
+      inset 1px 1px 0 #fff1f8 !important;
+  }
+  html.secret-uzi-mode .task-item.active,
+  html.secret-uzi-mode #startBtn:active,
+  html.secret-uzi-mode #secretUziReturn:active,
+  html.secret-uzi-mode #secretUziChangeBackground:active,
+  html.secret-uzi-mode #weatherBtn:active {
+    background: linear-gradient(180deg, #cf5b9f 0%, #ef83bd 100%) !important;
+    box-shadow:
+      inset 1px 1px 0 #7d2e61,
+      inset -1px -1px 0 #ffd7ed !important;
+  }
+  html.secret-uzi-mode #taskbar-sep {
+    border-left-color: #9b3f78 !important;
+    border-right-color: #ffd5eb !important;
+  }
+
+  html.secret-uzi-mode #desktopMusicPlayer {
+    background: linear-gradient(180deg, #ffb4dd 0%, #dc67ad 100%) !important;
+    border-color: #f49acb !important;
+    color: #3a102e !important;
+    box-shadow:
+      inset -1px -1px 0 #7e2d62,
+      inset 1px 1px 0 #ffeaf5,
+      inset -2px -2px 0 #aa3d80,
+      inset 2px 2px 0 #ffd5ea !important;
+  }
+  html.secret-uzi-mode #desktopMusicTitle {
+    background: #170511 !important;
+    color: #ff7ed1 !important;
+    border-color: #8f286c !important;
+    box-shadow:
+      inset 1px 1px 4px #000,
+      inset -1px -1px 0 #d858a5 !important;
+    text-shadow:
+      0 0 1px rgba(255,180,231,0.95),
+      0 0 5px rgba(255,75,184,0.8),
+      0 0 11px rgba(255,40,162,0.45) !important;
+  }
+  html.secret-uzi-mode #desktopMusicControls button,
+  html.secret-uzi-mode #desktopMusicMute,
+  html.secret-uzi-mode #desktopMusicVolDown,
+  html.secret-uzi-mode #desktopMusicVolUp,
+  html.secret-uzi-mode .blurb-toggle {
+    background: linear-gradient(180deg, #ffd8ed 0%, #f394c8 100%) !important;
+    color: #3d1232 !important;
+    box-shadow: inset -1px -1px 0 #8c356d, inset 1px 1px 0 #fff4fa !important;
+  }
+  html.secret-uzi-mode .blurb-bar {
+    background: #d85da5 !important;
+    box-shadow: inset 0 1px 0 #ffd9ed !important;
+  }
+  html.secret-uzi-mode .blurb-panel {
+    background: #f8acd4 !important;
+    color: #421332 !important;
+  }
+
   html.secret-uzi-mode #desktop::after {
     content: "LIL UZI VERT ARCHIVE";
     position: absolute;
@@ -3035,6 +3122,7 @@ function updateIconIndicators() {
 folders.forEach(f => {
   const div = document.createElement('div');
   div.className = 'icon';
+  if (!mysteryFolderIds.includes(f.id)) div.classList.add('folder-standard');
   div.dataset.id = f.id;
   div.dataset.winid = windowIdForFolder(f);
   const iconSrc = mysteryFolderIds.includes(f.id) ? mysteryFolderIconDataUri : folderIconDataUri;

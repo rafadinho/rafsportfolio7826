@@ -2172,33 +2172,77 @@
     display: none;
     pointer-events: none;
   }
+  #uziTaskbarControls {
+    display: none;
+    align-items: center;
+    gap: 4px;
+    flex: 0 0 auto;
+  }
   #secretUziReturn,
   #secretUziChangeBackground {
-    position: absolute;
-    z-index: 10002;
     display: none;
-    padding: 8px 12px;
+    height: 24px;
+    padding: 3px 8px;
     background: #c0c0c0;
     color: #000;
     border: 0;
-    box-shadow: inset -2px -2px 0 #000, inset 2px 2px 0 #fff,
-                inset -3px -3px 0 #808080, inset 3px 3px 0 #dfdfdf;
-    font-family: Tahoma, Verdana, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: bold;
+    box-shadow: inset -1px -1px 0 #000, inset 1px 1px 0 #fff;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 18px;
+    white-space: nowrap;
     cursor: pointer;
   }
-  #secretUziReturn { top: 14px; right: 14px; }
-  #secretUziChangeBackground { right: 8px; bottom: 174px; }
   #secretUziReturn:active,
   #secretUziChangeBackground:active {
-    box-shadow: inset 2px 2px 0 #000, inset -2px -2px 0 #fff;
-    padding-top: 9px;
-    padding-left: 13px;
+    box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #fff;
+    transform: translate(1px, 1px);
   }
-  html.secret-uzi-mode #secretUziBackground,
+  html.secret-uzi-mode #secretUziBackground { display: block; }
+  html.secret-uzi-mode #uziTaskbarControls { display: flex; }
   html.secret-uzi-mode #secretUziReturn,
-  html.secret-uzi-mode #secretUziChangeBackground { display: block; }
+  html.secret-uzi-mode #secretUziChangeBackground { display: inline-flex; align-items: center; }
+
+  /* Match archive controls to the selected System Properties theme */
+  html.theme-retro #secretUziReturn,
+  html.theme-retro #secretUziChangeBackground {
+    font-family: 'VT323', 'Courier New', monospace;
+    font-size: 13px;
+    font-weight: normal;
+    border-radius: 0;
+  }
+  html.theme-win31 #secretUziReturn,
+  html.theme-win31 #secretUziChangeBackground {
+    font-family: 'MS Sans Serif', Tahoma, Arial, sans-serif;
+    border-radius: 0;
+    box-shadow: inset -1px -1px 0 #000, inset 1px 1px 0 #fff;
+  }
+  html.theme-luna #secretUziReturn,
+  html.theme-luna #secretUziChangeBackground {
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+    background: linear-gradient(180deg, #ffffff 0%, #bcd6f5 100%);
+    color: #000;
+    border-radius: 4px;
+    box-shadow: none;
+  }
+  html.theme-synth #secretUziReturn,
+  html.theme-synth #secretUziChangeBackground {
+    font-family: 'Audiowide', 'Arial Narrow', sans-serif;
+    background: #1a0e2e;
+    color: #00e5ff;
+    border: 1px solid #00e5ff;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  html.theme-dark #secretUziReturn,
+  html.theme-dark #secretUziChangeBackground {
+    background: #2b2d31;
+    color: #f1f1f1;
+    border: 1px solid #555;
+    box-shadow: inset -1px -1px 0 #111, inset 1px 1px 0 #666;
+  }
   html.secret-uzi-mode #bgLayer,
   html.secret-uzi-mode #sunsetGlow,
   html.secret-uzi-mode #celestialBody,
@@ -2231,8 +2275,7 @@
       width: calc(100vw - 18px);
       right: 9px;
     }
-    #secretUziReturn { top: 8px; right: 8px; }
-    #secretUziChangeBackground { right: 8px; bottom: 174px; }
+    #secretUziReturn, #secretUziChangeBackground { padding-left: 6px; padding-right: 6px; font-size: 10px; }
     html.secret-uzi-mode #desktop::after { top: 54px; font-size: 8px; }
   }
 
@@ -2757,8 +2800,6 @@
 <div id="desktop">
 
   <img id="secretUziBackground" src="media/secret-uzi-bg-1.webp" alt="" aria-hidden="true">
-  <button id="secretUziReturn" type="button">Return to Desktop</button>
-  <button id="secretUziChangeBackground" type="button">Change Background</button>
   <div id="uziWindowLayer" aria-hidden="true"></div>
 
   <div id="bgLayer">
@@ -2882,6 +2923,10 @@
     <div id="startBtn"><span>▣</span><span>Start</span></div>
     <div id="taskbar-sep"></div>
     <div id="taskItems" style="display:flex; gap:4px; flex:1; overflow:hidden;"></div>
+    <div id="uziTaskbarControls">
+      <button id="secretUziReturn" type="button">Return to Desktop</button>
+      <button id="secretUziChangeBackground" type="button">Change Background</button>
+    </div>
     <div id="dateDisplay" title="Today's date">
       <span id="dateValue"></span>
     </div>

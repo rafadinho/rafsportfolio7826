@@ -2154,15 +2154,15 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    image-rendering: pixelated;
     background: #000;
     z-index: 1;
     display: none;
     pointer-events: none;
   }
-  #secretUziReturn {
+  #secretUziReturn,
+  #secretUziChangeBackground {
     position: absolute;
-    top: 14px;
-    right: 14px;
     z-index: 10002;
     display: none;
     padding: 8px 12px;
@@ -2176,28 +2176,29 @@
     font-weight: bold;
     cursor: pointer;
   }
-  #secretUziReturn:active {
+  #secretUziReturn { top: 14px; right: 14px; }
+  #secretUziChangeBackground { right: 8px; bottom: 174px; }
+  #secretUziReturn:active,
+  #secretUziChangeBackground:active {
     box-shadow: inset 2px 2px 0 #000, inset -2px -2px 0 #fff;
     padding-top: 9px;
     padding-left: 13px;
   }
   html.secret-uzi-mode #secretUziBackground,
-  html.secret-uzi-mode #secretUziReturn { display: block; }
+  html.secret-uzi-mode #secretUziReturn,
+  html.secret-uzi-mode #secretUziChangeBackground { display: block; }
   html.secret-uzi-mode #bgLayer,
   html.secret-uzi-mode #sunsetGlow,
   html.secret-uzi-mode #celestialBody,
   html.secret-uzi-mode #snowCanvas,
-  html.secret-uzi-mode #icons,
-  html.secret-uzi-mode #taskbar,
   html.secret-uzi-mode #startMenu,
   html.secret-uzi-mode .win { display: none !important; }
-  html.secret-uzi-mode #desktopMusicPlayer {
-    display: block !important;
-    right: 50%;
-    bottom: 34px;
-    transform: translateX(50%);
-    z-index: 10001;
-  }
+  html.secret-uzi-mode #icons,
+  html.secret-uzi-mode #taskbar,
+  html.secret-uzi-mode #desktopMusicPlayer { display: block !important; }
+  html.secret-uzi-mode #icons { z-index: 10000; }
+  html.secret-uzi-mode #taskbar { z-index: 10003; }
+  html.secret-uzi-mode #desktopMusicPlayer { z-index: 10001; }
   html.secret-uzi-mode #desktop::after {
     content: "LIL UZI VERT ARCHIVE";
     position: absolute;
@@ -2220,9 +2221,9 @@
     html.secret-uzi-mode #desktopMusicPlayer {
       width: calc(100vw - 18px);
       right: 9px;
-      transform: none;
     }
     #secretUziReturn { top: 8px; right: 8px; }
+    #secretUziChangeBackground { right: 8px; bottom: 174px; }
     html.secret-uzi-mode #desktop::after { top: 54px; font-size: 8px; }
   }
 
@@ -2746,8 +2747,9 @@
 
 <div id="desktop">
 
-  <video id="secretUziBackground" src="media/secret-uzi-background.mp4" muted loop playsinline preload="metadata"></video>
+  <img id="secretUziBackground" src="media/secret-uzi-bg-1.webp" alt="" aria-hidden="true">
   <button id="secretUziReturn" type="button">Return to Desktop</button>
+  <button id="secretUziChangeBackground" type="button">Change Background</button>
 
   <div id="bgLayer">
     <canvas id="cloudCanvas"></canvas>
@@ -6060,8 +6062,16 @@ function playObnoxiousClickIfEnabled() {
     { title: "In The Mirror by Lil Uzi Vert", src: "media/in-the-mirror-lil-uzi-vert.mp3" }
   ];
 
+  const SECRET_BACKGROUNDS = [
+    "media/secret-uzi-bg-1.webp",
+    "media/secret-uzi-bg-2.gif",
+    "media/secret-uzi-bg-3.gif",
+    "media/secret-uzi-bg-4.webp"
+  ];
+
   let buffer = "";
   let secretIndex = -1;
+  let secretBackgroundIndex = -1;
   let normalAudioState = null;
   let normalPlaylistNodes = null;
   let normalBlurbText = "";
@@ -6153,6 +6163,23 @@ function playObnoxiousClickIfEnabled() {
     normalPlaylistNodes = null;
   }
 
+  function changeSecretBackground(randomize = false) {
+    const bg = document.getElementById("secretUziBackground");
+    if (!bg || !SECRET_BACKGROUNDS.length) return;
+
+    if (randomize) {
+      let next = Math.floor(Math.random() * SECRET_BACKGROUNDS.length);
+      if (SECRET_BACKGROUNDS.length > 1 && next === secretBackgroundIndex) {
+        next = (next + 1) % SECRET_BACKGROUNDS.length;
+      }
+      secretBackgroundIndex = next;
+    } else {
+      secretBackgroundIndex = (secretBackgroundIndex + 1 + SECRET_BACKGROUNDS.length) % SECRET_BACKGROUNDS.length;
+    }
+
+    bg.src = SECRET_BACKGROUNDS[secretBackgroundIndex];
+  }
+
   function enterSecretMode() {
     const player = audio();
     if (!player || !SECRET_TRACKS.length) return;
@@ -6175,12 +6202,7 @@ function playObnoxiousClickIfEnabled() {
 
     renderSecretPlaylist();
 
-    const bgVideo = document.getElementById("secretUziBackground");
-    if (bgVideo) {
-      bgVideo.muted = true;
-      bgVideo.currentTime = 0;
-      bgVideo.play().catch(function () {});
-    }
+    changeSecretBackground(true);
 
     secretIndex = Math.floor(Math.random() * SECRET_TRACKS.length);
     playSecretTrack(secretIndex);
@@ -6209,15 +6231,10 @@ function playObnoxiousClickIfEnabled() {
   function exitSecretMode() {
     if (!window.secretTrackMode) return;
     const player = audio();
-    const bgVideo = document.getElementById("secretUziBackground");
     const blurb = document.getElementById("musicBlurbText");
 
     window.secretTrackMode = false;
     document.documentElement.classList.remove("secret-uzi-mode");
-    if (bgVideo) {
-      bgVideo.pause();
-      bgVideo.currentTime = 0;
-    }
 
     restoreNormalPlaylist();
     if (blurb) blurb.textContent = normalBlurbText || "Incredibly random assortment of my favorite songs!";
@@ -6250,6 +6267,9 @@ function playObnoxiousClickIfEnabled() {
   window.exitSecretUziMode = exitSecretMode;
 
   document.getElementById("secretUziReturn")?.addEventListener("click", exitSecretMode);
+  document.getElementById("secretUziChangeBackground")?.addEventListener("click", function () {
+    changeSecretBackground(false);
+  });
   document.addEventListener("play", function (event) {
     if (event.target && event.target.id === "desktopMusicAudio" && window.secretTrackMode) updateSecretPlaylistHighlighting();
   }, true);

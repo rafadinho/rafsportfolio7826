@@ -2589,6 +2589,50 @@
     box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #fff;
     background: #d4d0c8;
   }
+  #fullscreenBtn {
+    position: relative;
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    padding: 0;
+    margin-left: 3px;
+    border: 0;
+    font: inherit;
+    line-height: 1;
+    overflow: visible;
+  }
+  #fullscreenBtn .fullscreen-symbol {
+    position: absolute;
+    inset: 5px;
+    display: block;
+  }
+  #fullscreenBtn .fullscreen-symbol::before,
+  #fullscreenBtn .fullscreen-symbol::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  #fullscreenBtn .fullscreen-symbol::before {
+    background:
+      linear-gradient(currentColor,currentColor) left top / 5px 1px no-repeat,
+      linear-gradient(currentColor,currentColor) left top / 1px 5px no-repeat,
+      linear-gradient(currentColor,currentColor) right top / 5px 1px no-repeat,
+      linear-gradient(currentColor,currentColor) right top / 1px 5px no-repeat,
+      linear-gradient(currentColor,currentColor) left bottom / 5px 1px no-repeat,
+      linear-gradient(currentColor,currentColor) left bottom / 1px 5px no-repeat,
+      linear-gradient(currentColor,currentColor) right bottom / 5px 1px no-repeat,
+      linear-gradient(currentColor,currentColor) right bottom / 1px 5px no-repeat;
+  }
+  #fullscreenBtn.active .fullscreen-symbol::before {
+    transform: scale(0.72);
+  }
+  #fullscreenBtn:active,
+  #fullscreenBtn.active {
+    box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #fff;
+    background: #d4d0c8;
+  }
   #clock {
     margin-left: auto;
     background: #c0c0c0;
@@ -3147,6 +3191,7 @@
     </div>
     <button id="weatherBtn" type="button" title="Change weather"></button>
     <div id="clock">--:--</div>
+    <button id="fullscreenBtn" class="task-item" type="button" title="Enter fullscreen" aria-label="Enter fullscreen"><span class="fullscreen-symbol" aria-hidden="true"></span></button>
   </div>
 </div>
 
@@ -4929,6 +4974,47 @@ function updateMusicUI() {
     if (btn) btn.innerHTML = (isActive && !musicAudio.paused) ? ICON_PAUSE : ICON_PLAY;
   });
 }
+
+/* ---------------- FULLSCREEN ---------------- */
+function getFullscreenElement() {
+  return document.fullscreenElement || document.webkitFullscreenElement || null;
+}
+
+async function toggleFullscreen() {
+  try {
+    if (getFullscreenElement()) {
+      const exit = document.exitFullscreen || document.webkitExitFullscreen;
+      if (exit) await exit.call(document);
+    } else {
+      const root = document.documentElement;
+      const enter = root.requestFullscreen || root.webkitRequestFullscreen;
+      if (enter) await enter.call(root);
+    }
+  } catch (error) {
+    console.warn('Fullscreen request was blocked:', error);
+  }
+}
+
+function updateFullscreenButton() {
+  const button = document.getElementById('fullscreenBtn');
+  if (!button) return;
+  const active = Boolean(getFullscreenElement());
+  const label = active ? 'Exit fullscreen' : 'Enter fullscreen';
+  button.title = label;
+  button.setAttribute('aria-label', label);
+  button.classList.toggle('active', active);
+}
+
+const fullscreenButton = document.getElementById('fullscreenBtn');
+if (fullscreenButton) {
+  fullscreenButton.addEventListener('click', event => {
+    event.stopPropagation();
+    toggleFullscreen();
+  });
+}
+document.addEventListener('fullscreenchange', updateFullscreenButton);
+document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+updateFullscreenButton();
 
 /* ---------------- CLOCK ---------------- */
 function tick() {

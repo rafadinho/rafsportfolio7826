@@ -2968,7 +2968,7 @@ function windowIdForFolder(f) {
 
 function updateIconIndicators() {
   document.querySelectorAll('.icon[data-winid]').forEach(iconEl => {
-    const win = openWindows[iconEl.dataset.winid];
+    const win = openWindows[windowRegistryKey(iconEl.dataset.winid)];
     const isOpen = !!(win && !win.classList.contains('hidden'));
     iconEl.classList.toggle('open', isOpen);
   });
@@ -3000,7 +3000,33 @@ document.getElementById('desktop').addEventListener('click', (e) => {
 
 /* ---------------- WINDOW MANAGEMENT ---------------- */
 let zTop = 10;
-const openWindows = {}; // id -> element
+const openWindows = {}; // session-aware key -> element
+
+function currentDesktopSession() {
+  return document.documentElement.classList.contains('secret-uzi-mode') ? 'uzi' : 'normal';
+}
+
+function windowRegistryKey(id, session = currentDesktopSession()) {
+  return session === 'normal' ? id : `${session}::${id}`;
+}
+
+function syncDesktopSessionUI() {
+  const session = currentDesktopSession();
+  document.querySelectorAll('.win[data-desktop-session]').forEach(win => {
+    const belongsHere = win.dataset.desktopSession === session;
+    win.style.display = belongsHere ? '' : 'none';
+  });
+  document.querySelectorAll('.task-item[data-desktop-session]').forEach(item => {
+    item.style.display = item.dataset.desktopSession === session ? '' : 'none';
+  });
+  updateTaskbarActive(null);
+  const visible = Array.from(document.querySelectorAll(`.win[data-desktop-session="${session}"]:not(.hidden)`))
+    .filter(win => win.style.display !== 'none')
+    .sort((a,b) => (Number(a.style.zIndex)||0) - (Number(b.style.zIndex)||0));
+  const front = visible[visible.length - 1];
+  if (front) updateTaskbarActive(front.dataset.winid);
+  updateIconIndicators();
+}
 
 function bringToFront(win) {
   zTop += 1;
@@ -3179,18 +3205,22 @@ function makeResizable(win) {
 
 function addTaskbarItem(id, label) {
   const bar = document.getElementById('taskItems');
-  let item = document.querySelector(`.task-item[data-winid="${id}"]`);
+  const session = currentDesktopSession();
+  let item = document.querySelector(`.task-item[data-winid="${id}"][data-desktop-session="${session}"]`);
   if (item) {
     item.textContent = label;
+    item.style.display = '';
     updateTaskbarActive(id);
     return item;
   }
   item = document.createElement('div');
   item.className = 'task-item active';
   item.dataset.winid = id;
+  item.dataset.desktopSession = session;
   item.textContent = label;
   item.addEventListener('click', () => {
-    const win = openWindows[id];
+    if (item.dataset.desktopSession !== currentDesktopSession()) return;
+    const win = openWindows[windowRegistryKey(id, item.dataset.desktopSession)];
     if (!win) return;
     const isActive = item.classList.contains('active');
     const isVisible = !win.classList.contains('hidden');
@@ -3206,13 +3236,15 @@ function addTaskbarItem(id, label) {
 }
 
 function updateTaskbarActive(activeId) {
+  const session = currentDesktopSession();
   document.querySelectorAll('.task-item').forEach(t => {
-    t.classList.toggle('active', t.dataset.winid === activeId);
+    const inSession = t.dataset.desktopSession === session;
+    t.classList.toggle('active', inSession && t.dataset.winid === activeId);
   });
 }
 
-function removeTaskbarItem(id) {
-  const item = document.querySelector(`.task-item[data-winid="${id}"]`);
+function removeTaskbarItem(id, session = currentDesktopSession()) {
+  const item = document.querySelector(`.task-item[data-winid="${id}"][data-desktop-session="${session}"]`);
   if (item) item.remove();
 }
 
@@ -3231,7 +3263,7 @@ function playWindowOpenAnim(win, delay = 0) {
 function minimizeWindow(win) {
   if (isTouchDevice) return;
   win.classList.add('hidden');
-  const item = document.querySelector(`.task-item[data-winid="${win.dataset.winid}"]`);
+  const item = document.querySelector(`.task-item[data-winid="${win.dataset.winid}"][data-desktop-session="${win.dataset.desktopSession}"]`);
   if (item) item.classList.remove('active');
   updateIconIndicators();
 }
@@ -3246,10 +3278,10 @@ function restoreWindow(win) {
 function closeWindow(win, { removeFromDom = true } = {}) {
   const id = win.dataset.winid;
   win.classList.add('hidden');
-  removeTaskbarItem(id);
+  removeTaskbarItem(id, win.dataset.desktopSession);
   if (removeFromDom) {
     win.remove();
-    delete openWindows[id];
+    delete openWindows[windowRegistryKey(id, win.dataset.desktopSession)];
   }
   updateIconIndicators();
 }
@@ -3336,16 +3368,20 @@ function getTitleIconSVG(glyph, title = '') {
 }
 
 function createWindow({ id, title, glyph, width, height, left, top, bodyHTML, statusText, blurbText }) {
-  if (openWindows[id]) {
-    openWindows[id].classList.remove('hidden');
-    bringToFront(openWindows[id]);
-    playWindowOpenAnim(openWindows[id]);
+  const session = currentDesktopSession();
+  const registryKey = windowRegistryKey(id, session);
+  if (openWindows[registryKey]) {
+    openWindows[registryKey].style.display = '';
+    openWindows[registryKey].classList.remove('hidden');
+    bringToFront(openWindows[registryKey]);
+    playWindowOpenAnim(openWindows[registryKey]);
     updateIconIndicators();
-    return openWindows[id];
+    return openWindows[registryKey];
   }
   const win = document.createElement('div');
   win.className = 'win';
   win.dataset.winid = id;
+  win.dataset.desktopSession = session;
 
   // Requested size/position is designed for a roomy desktop viewport, so
   // clamp both to whatever screen is actually available — this keeps
@@ -3410,7 +3446,7 @@ function createWindow({ id, title, glyph, width, height, left, top, bodyHTML, st
     setupBlurbToggle(win.querySelector('.blurb-toggle'), win.querySelector('.blurb-panel'), win, win.querySelector('.win-body'));
   }
 
-  openWindows[id] = win;
+  openWindows[registryKey] = win;
   addTaskbarItem(id, title);
   bringToFront(win);
   playWindowOpenAnim(win);
@@ -3788,6 +3824,7 @@ const vidEl = document.getElementById('vidEl');
 vidEl.muted = true;
 vidEl.volume = 0.05;
 const vidCaption = document.getElementById('vidCaption');
+videoWinEl.dataset.desktopSession = 'normal';
 openWindows['video'] = videoWinEl;
 videoWinEl.dataset.winid = 'video';
 addTaskbarItem('video', 'Now Playing.raf');
@@ -3821,6 +3858,7 @@ const vidVolDownBtn = document.getElementById('vidVolDown');
 const vidVolUpBtn = document.getElementById('vidVolUp');
 
 function openVideoWindow() {
+  videoWinEl.dataset.desktopSession = 'normal';
   openWindows['video'] = videoWinEl;
   videoWinEl.dataset.winid = 'video';
   addTaskbarItem('video', 'Now Playing.raf');
@@ -3850,6 +3888,7 @@ function loadLongVideo(i) {
 }
 
 function openLongVideosWindow() {
+  longVideoWinEl.dataset.desktopSession = 'normal';
   openWindows['longvideos'] = longVideoWinEl;
   longVideoWinEl.dataset.winid = 'longvideos';
   addTaskbarItem('longvideos', 'Long Videos');
@@ -6194,19 +6233,13 @@ function playObnoxiousClickIfEnabled() {
       title: document.getElementById("desktopMusicTitle")?.textContent || ""
     };
 
-    windowsKnownBeforeSecret = new Set(Array.from(document.querySelectorAll(".win")).map(function (win) { return win.id; }));
-    windowsVisibleBeforeSecret = Array.from(document.querySelectorAll(".win:not(.hidden)"));
-    windowsVisibleBeforeSecret.forEach(function (win) {
-      win.classList.add("hidden");
-      win.dataset.hiddenForUziMode = "1";
-    });
-
     window.secretTrackMode = true;
     document.documentElement.classList.add("secret-uzi-mode");
+    syncDesktopSessionUI();
+    document.getElementById("startMenu")?.classList.add("hidden");
     if (blurb) blurb.textContent = "All Lil Uzi Vert. Type rafael1021 again to skip to the next track.";
 
     renderSecretPlaylist();
-
     changeSecretBackground(true);
 
     secretIndex = Math.floor(Math.random() * SECRET_TRACKS.length);
@@ -6241,19 +6274,7 @@ function playObnoxiousClickIfEnabled() {
     window.secretTrackMode = false;
     document.documentElement.classList.remove("secret-uzi-mode");
     document.getElementById("startMenu")?.classList.add("hidden");
-
-    document.querySelectorAll(".win").forEach(function (win) {
-      if (win.dataset.hiddenForUziMode === "1") {
-        win.classList.remove("hidden");
-        delete win.dataset.hiddenForUziMode;
-      } else if (!windowsKnownBeforeSecret.has(win.id)) {
-        win.classList.add("hidden");
-      } else if (!windowsVisibleBeforeSecret.includes(win)) {
-        win.classList.add("hidden");
-      }
-    });
-    windowsVisibleBeforeSecret = [];
-    windowsKnownBeforeSecret = new Set();
+    syncDesktopSessionUI();
 
     restoreNormalPlaylist();
     if (blurb) blurb.textContent = normalBlurbText || "Incredibly random assortment of my favorite songs!";

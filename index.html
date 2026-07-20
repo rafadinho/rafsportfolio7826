@@ -2148,6 +2148,18 @@
   }
 
   /* ---------- SECRET LIL UZI MODE ---------- */
+
+  #uziWindowLayer {
+    position: absolute;
+    inset: 0 0 32px 0;
+    z-index: 10002;
+    display: none;
+    pointer-events: none;
+  }
+  #uziWindowLayer > .win { pointer-events: auto; }
+  html.secret-uzi-mode #uziWindowLayer { display: block; }
+  html:not(.secret-uzi-mode) #uziWindowLayer { display: none !important; }
+  html.secret-uzi-mode #desktop > .win[data-desktop-session="normal"] { display: none !important; }
   #secretUziBackground {
     position: absolute;
     inset: 0;
@@ -2747,6 +2759,7 @@
   <img id="secretUziBackground" src="media/secret-uzi-bg-1.webp" alt="" aria-hidden="true">
   <button id="secretUziReturn" type="button">Return to Desktop</button>
   <button id="secretUziChangeBackground" type="button">Change Background</button>
+  <div id="uziWindowLayer" aria-hidden="true"></div>
 
   <div id="bgLayer">
     <canvas id="cloudCanvas"></canvas>
@@ -3012,6 +3025,11 @@ function windowRegistryKey(id, session = currentDesktopSession()) {
 
 function syncDesktopSessionUI() {
   const session = currentDesktopSession();
+  const uziLayer = document.getElementById('uziWindowLayer');
+  if (uziLayer) {
+    uziLayer.style.display = session === 'uzi' ? 'block' : 'none';
+    uziLayer.setAttribute('aria-hidden', session === 'uzi' ? 'false' : 'true');
+  }
   document.querySelectorAll('.win[data-desktop-session]').forEach(win => {
     const belongsHere = win.dataset.desktopSession === session;
     win.style.display = belongsHere ? '' : 'none';
@@ -3425,7 +3443,10 @@ function createWindow({ id, title, glyph, width, height, left, top, bodyHTML, st
     <div class="resize-handle bl" data-resize="bl" title="Drag to resize"></div>
     <div class="resize-handle br" data-resize="br" title="Drag to resize"></div>
   `;
-  document.getElementById('desktop').appendChild(win);
+  const windowLayer = session === 'uzi'
+    ? document.getElementById('uziWindowLayer')
+    : document.getElementById('desktop');
+  windowLayer.appendChild(win);
 
   const titlebar = win.querySelector('.titlebar');
   makeDraggable(win, titlebar);
@@ -3630,11 +3651,39 @@ function openImageViewer(index) {
 
 function openFolder(f) {
   if (f.type === 'video') {
-    openVideoWindow();
+    if (currentDesktopSession() === 'uzi') {
+      createWindow({
+        id: 'video',
+        title: 'Now Playing.raf',
+        glyph: '🎬',
+        width: 620,
+        height: 420,
+        left: 210,
+        top: 85,
+        bodyHTML: `<div class="placeholder-box"><div class="big">🎬</div><p><strong>Video Player</strong></p><p>This archive desktop keeps its own video window, separate from the OG desktop player.</p></div>`,
+        statusText: 'Lil Uzi archive desktop video window'
+      });
+    } else {
+      openVideoWindow();
+    }
     return;
   }
   if (f.type === 'longvideo') {
-    openLongVideosWindow();
+    if (currentDesktopSession() === 'uzi') {
+      createWindow({
+        id: 'longvideos',
+        title: 'Long Videos',
+        glyph: '🎬',
+        width: 650,
+        height: 470,
+        left: 190,
+        top: 70,
+        bodyHTML: `<div class="placeholder-box"><div class="big">🎞️</div><p><strong>Long Videos</strong></p><p>This is the archive desktop's separate window.</p></div>`,
+        statusText: 'Lil Uzi archive desktop'
+      });
+    } else {
+      openLongVideosWindow();
+    }
     return;
   }
   if (f.type === 'music') {

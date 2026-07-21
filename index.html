@@ -1924,127 +1924,45 @@
     margin-left: 10px;
   }
   .drum-pads {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    min-height: 360px;
-    border: 2px solid #343434;
-    background: linear-gradient(180deg, #202226 0%, #131518 62%, #2d1d14 62%, #3c281b 100%);
-    box-shadow: inset 0 0 18px rgba(0,0,0,0.35);
-    overflow: auto;
-    padding: 16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:1;
+    min-height:360px;
+    border:2px solid #343434;
+    background:#cfd2d4;
+    box-shadow:inset 0 0 0 2px #9a9da0;
+    overflow:hidden;
+    padding:12px;
   }
-  .drum-stage {
+  .canvas-drum-stage {
     position: relative;
     width: min(100%, 520px);
-    aspect-ratio: 480 / 332;
-    margin: 0 auto;
+    aspect-ratio: 8 / 5;
+    margin: auto;
+    background: #cfd2d4;
+    border: 2px solid #8f9295;
+    box-shadow: inset 1px 1px 0 #eef0f1, inset -1px -1px 0 #777a7d;
+    overflow: hidden;
   }
-  .drum-stage::after {
-    content: "";
-    position: absolute;
-    left: 10%;
-    right: 10%;
-    bottom: 1%;
-    height: 12%;
-    background: radial-gradient(circle at center, rgba(0,0,0,0.34) 0%, rgba(0,0,0,0.14) 52%, rgba(0,0,0,0) 76%);
-    pointer-events: none;
-  }
-  .drum-sprite {
-    position: absolute;
-    inset: 0;
+  .pixel-drum-canvas {
+    display: block;
     width: 100%;
     height: 100%;
-    object-fit: contain;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
-    user-select: none;
-    pointer-events: none;
-    z-index: 1;
-  }
-  .drum-hitbox,
-  .drum-hitbox:hover,
-  .drum-hitbox:focus,
-  .drum-hitbox:focus-visible,
-  .drum-hitbox:active,
-  .drum-hitbox.hit {
-    position: absolute;
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    background: transparent !important;
-    background-color: transparent !important;
-    background-image: none !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    outline: none !important;
-    padding: 0;
-    margin: 0;
     cursor: pointer;
-    z-index: 2;
-    filter: none !important;
+    touch-action: manipulation;
   }
-  .drum-hitbox-label {
-    position: absolute;
-    right: 4px;
-    bottom: 4px;
-    min-width: 20px;
-    height: 18px;
-    padding: 0 4px;
-    background: rgba(240,240,240,0.96);
-    color: #000;
-    box-shadow: inset -1px -1px 0 #555, inset 1px 1px 0 #fff;
-    font-family: Tahoma, Verdana, Arial, sans-serif;
-    font-size: 11px;
-    font-weight: bold;
-    line-height: 18px;
-    text-align: center;
-    pointer-events: none;
+  .canvas-drum-stage:focus-within {
+    outline: 1px dotted #111;
+    outline-offset: -4px;
   }
-  .drum-hitbox[data-drum="hihat"] {
-    left: 0%; top: 0%; width: 24%; height: 25%;
-    clip-path: polygon(12% 22%, 29% 8%, 73% 8%, 89% 22%, 100% 48%, 89% 76%, 73% 90%, 29% 90%, 12% 76%, 0 48%);
+  @media(max-width:650px){
+    .drum-pads{min-height:315px;padding:6px}
+    .canvas-drum-stage{width:min(100%,460px)}
   }
-  .drum-hitbox[data-drum="tom"] {
-    left: 28%; top: 14%; width: 44%; height: 26%;
-  }
-  .drum-hitbox[data-drum="snare"] {
-    left: 8%; top: 40%; width: 23%; height: 25%;
-    clip-path: polygon(18% 0, 82% 0, 100% 16%, 100% 84%, 82% 100%, 18% 100%, 0 84%, 0 16%);
-  }
-  .drum-hitbox[data-drum="kick"] {
-    left: 35%; top: 38%; width: 30%; height: 56%;
-    clip-path: ellipse(41% 47% at 50% 47%);
-  }
-  .drum-hitbox[data-drum="floortom"] {
-    right: 9%; top: 40%; width: 23%; height: 25%;
-    clip-path: polygon(18% 0, 82% 0, 100% 16%, 100% 84%, 82% 100%, 18% 100%, 0 84%, 0 16%);
-  }
-  .drum-hitbox[data-drum="crash"] {
-    right: 1%; top: 0%; width: 28%; height: 25%;
-    clip-path: polygon(12% 22%, 29% 8%, 73% 8%, 89% 22%, 100% 48%, 89% 76%, 73% 90%, 29% 90%, 12% 76%, 0 48%);
-  }
-  @media (max-width: 650px) {
-    .drum-stage { width: min(100%, 460px); }
-    .drum-hitbox-label { min-width: 18px; height: 16px; font-size: 10px; line-height: 16px; }
-  }
-  @keyframes drumTargetPulse {
-    0%,100% { box-shadow: 0 5px 0 #000, 0 0 8px rgba(245,197,24,0.35), inset 0 0 0 2px rgba(245,197,24,0.7); }
-    50% { box-shadow: 0 5px 0 #000, 0 0 24px rgba(245,197,24,0.8), inset 0 0 0 4px rgba(255,255,255,0.95); }
-  }
-  @media (max-width: 650px) {
-    .drum-game-header { grid-template-columns: 1fr 1fr; }
-    .drum-game-title { grid-column: 1 / -1; }
-    .drum-pads { min-height: 315px; }
-    .drum-pad[data-drum="kick"] { width: 150px; height: 150px; }
-    .drum-pad[data-drum="snare"] { width: 112px; height: 112px; left: 9%; bottom: 84px; }
-    .drum-pad[data-drum="hihat"] { width: 114px; height: 66px; left: 3%; top: 42px; }
-    .drum-pad[data-drum="tom"] { width: 102px; height: 94px; top: 104px; }
-    .drum-pad[data-drum="floortom"] { width: 124px; height: 112px; right: 6%; bottom: 84px; }
-    .drum-pad[data-drum="crash"] { width: 126px; height: 72px; right: 2%; top: 38px; }
-    .drum-pad-name { font-size: 8px; }
-    .drum-pad-key { min-width: 24px; height: 22px; line-height: 18px; }
-  }
+
 
   /* ---------- SECRET LIL UZI MODE ---------- */
 
@@ -3735,20 +3653,6 @@ function playDrumSound(type) {
 preloadDrumSamples();
 
 function openDrumGame() {
-  const padDefs = [
-    { type: 'kick', key: 'A' },
-    { type: 'snare', key: 'S' },
-    { type: 'hihat', key: 'D' },
-    { type: 'tom', key: 'F' },
-    { type: 'floortom', key: 'J' },
-    { type: 'crash', key: 'K' }
-  ];
-  const padHTML = padDefs.map(p => `
-    <button class="drum-hitbox" type="button" data-drum="${p.type}" data-key="${p.key.toLowerCase()}" aria-label="${p.type}">
-      <span class="drum-hitbox-label">${p.key}</span>
-    </button>
-  `).join('');
-
   const win = createWindow({
     id: 'drumkit',
     title: 'RAF Drum Kit',
@@ -3759,59 +3663,201 @@ function openDrumGame() {
     top: jitterPos(70, 25),
     bodyHTML: `
       <div class="drum-game">
-        <div class="drum-game-header">
-          <div class="drum-game-title">RAF DRUM KIT</div>
-        </div>
+        <div class="drum-game-header"><div class="drum-game-title">RAF DRUM KIT</div></div>
         <div class="drum-pads">
-          <div class="drum-stage">
-            <img class="drum-sprite" src="media/raf-drum-kit-pixel.png" alt="Pixel art drum set">
-            ${padHTML}
+          <div class="canvas-drum-stage">
+            <canvas class="pixel-drum-canvas" width="240" height="150" tabindex="0" aria-label="Playable pixel drum kit"></canvas>
           </div>
         </div>
-      </div>
-    `,
+      </div>`,
     statusText: 'Playable 6-piece drum set'
   });
 
   if (win.dataset.drumReady === '1') return;
   win.dataset.drumReady = '1';
 
-  const pads = Array.from(win.querySelectorAll('.drum-hitbox'));
-  const byKey = Object.fromEntries(pads.map(p => [p.dataset.key, p]));
-  const state = { win, active: true };
-  drumGameState = state;
+  const canvas = win.querySelector('.pixel-drum-canvas');
+  const ctx = canvas.getContext('2d', { alpha: false });
+  ctx.imageSmoothingEnabled = false;
 
-  function flashPad(pad) {
-    pad.classList.add('hit');
-    setTimeout(() => pad.classList.remove('hit'), 90);
+  const W = canvas.width;
+  const H = canvas.height;
+  const hits = Object.create(null);
+  const keyMap = { a: 'kick', s: 'snare', d: 'hihat', f: 'tom', j: 'floortom', k: 'crash' };
+  const regions = {
+    hihat:   { x: 16,  y: 18, w: 43, h: 89 },
+    tom:     { x: 73,  y: 31, w: 94, h: 47 },
+    crash:   { x: 181, y: 17, w: 43, h: 90 },
+    snare:   { x: 49,  y: 73, w: 48, h: 58 },
+    kick:    { x: 91,  y: 75, w: 58, h: 66 },
+    floortom:{ x: 148, y: 73, w: 48, h: 59 }
+  };
+
+  const C = {
+    bg: '#cfd2d4', shadow: '#aeb2b5', black: '#171717', dark: '#3d332e',
+    shell: '#9a6847', shellLight: '#b87d57', shellDark: '#704932',
+    head: '#f2f0ea', headShade: '#c9c7c2', metal: '#d6d6d6', metalDark: '#777777',
+    cymbal: '#efa128', cymbalLight: '#ffd05c', cymbalDark: '#c66c18', white: '#ffffff'
+  };
+
+  function px(x, y, w, h, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
   }
 
-  function hit(type, pad) {
-    playDrumSound(type);
-    flashPad(pad);
+  function steppedOval(cx, cy, w, h, color) {
+    const rows = [
+      [0.22, 0.10], [0.10, 0.18], [0.04, 0.30], [0.00, 0.50],
+      [0.00, 0.50], [0.04, 0.30], [0.10, 0.18], [0.22, 0.10]
+    ];
+    const rh = h / rows.length;
+    rows.forEach((r, i) => px(cx - w/2 + w*r[0], cy - h/2 + i*rh, w*(1-r[0]*2), Math.ceil(rh), color));
   }
 
-  pads.forEach(pad => {
-    pad.addEventListener('pointerdown', e => {
-      e.preventDefault();
-      hit(pad.dataset.drum, pad);
+  function drumBody(x, y, w, h, movingY = 0) {
+    y += movingY;
+    steppedOval(x + w/2, y + 8, w, 16, C.black);
+    steppedOval(x + w/2, y + 8, w - 6, 11, C.head);
+    px(x + 4, y + 9, w - 8, h - 13, C.black);
+    px(x + 7, y + 12, w - 14, h - 18, C.shell);
+    px(x + 8, y + 13, 5, h - 20, C.shellLight);
+    px(x + w - 13, y + 13, 5, h - 20, C.shellDark);
+    px(x + 5, y + h - 8, w - 10, 4, C.metalDark);
+    [0.24, 0.76].forEach(p => {
+      px(x + Math.round(w*p) - 2, y + 12, 4, h - 17, C.black);
+      px(x + Math.round(w*p) - 1, y + 14, 2, h - 21, C.metal);
     });
+  }
+
+  function stand(cx, top, bottom, spread=18) {
+    px(cx - 1, top, 3, bottom - top, C.black);
+    px(cx - 3, bottom - 5, 7, 5, C.dark);
+    px(cx - spread, bottom, spread, 3, C.black);
+    px(cx + 1, bottom, spread, 3, C.black);
+    for (let i=0;i<spread;i+=3) {
+      px(cx - spread + i, bottom + Math.floor(i/3), 4, 3, C.black);
+      px(cx + i, bottom + Math.floor(i/3), 4, 3, C.black);
+    }
+  }
+
+  function cymbal(cx, cy, w, tilt=0, isHat=false) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(tilt);
+    px(-2, -8, 4, 8, C.black);
+    const layers = [[0,0.18],[0.08,0.26],[0.18,0.34],[0.28,0.44]];
+    layers.forEach((l,i)=>px(-w/2 + w*l[0], i*3, w*(1-l[0]*2), 3, i<2?C.cymbalLight:C.cymbal));
+    px(-w/2 + 5, 12, w - 10, 3, C.cymbalDark);
+    if (isHat) {
+      px(-w/2 + 8, 17, w - 16, 3, C.cymbalDark);
+      px(-w/2 + 12, 20, w - 24, 3, C.cymbal);
+    }
+    ctx.restore();
+  }
+
+  function drawKey(x, y, label) {
+    px(x, y, 9, 9, C.black);
+    px(x + 1, y + 1, 7, 7, C.head);
+    ctx.fillStyle = C.black;
+    ctx.font = 'bold 6px monospace';
+    ctx.textBaseline = 'top';
+    ctx.fillText(label, x + 3, y + 2);
+  }
+
+  function anim(type, now) {
+    const start = hits[type] || 0;
+    const d = now - start;
+    if (d < 0 || d > 260) return { y: 0, r: 0, s: 1 };
+    const t = d / 260;
+    const pulse = Math.sin(t * Math.PI);
+    if (type === 'crash') return { y: 0, r: Math.sin(t * Math.PI * 4) * (1-t) * 0.14, s: 1 };
+    if (type === 'hihat') return { y: Math.round(pulse * 2), r: Math.sin(t * Math.PI * 5) * (1-t) * 0.07, s: 1 };
+    if (type === 'kick') return { y: 0, r: 0, s: 1 - pulse * 0.06 };
+    return { y: Math.round(pulse * 4), r: 0, s: 1 };
+  }
+
+  function draw(now = performance.now()) {
+    px(0, 0, W, H, C.bg);
+    px(22, 132, 196, 5, C.shadow);
+
+    const ah = anim('hihat', now), ac = anim('crash', now);
+    stand(37, 37, 119, 15);
+    stand(203, 36, 119, 15);
+    cymbal(37, 28 + ah.y, 43, ah.r, true);
+    cymbal(203, 27, 47, ac.r, false);
+
+    const at = anim('tom', now);
+    px(118, 50, 4, 39, C.black);
+    px(84, 68, 72, 4, C.black);
+    drumBody(75, 36, 38, 34, at.y);
+    drumBody(127, 36, 38, 34, at.y);
+
+    const as = anim('snare', now);
+    stand(72, 98, 127, 15);
+    drumBody(49, 76, 46, 42, as.y);
+
+    const af = anim('floortom', now);
+    stand(172, 99, 128, 15);
+    drumBody(149, 76, 46, 43, af.y);
+
+    const ak = anim('kick', now);
+    ctx.save();
+    ctx.translate(120, 108);
+    ctx.scale(ak.s, ak.s);
+    steppedOval(0, 0, 61, 66, C.black);
+    steppedOval(0, 0, 53, 58, C.metalDark);
+    steppedOval(0, 0, 45, 50, C.head);
+    px(-6, -35, 12, 8, C.black);
+    px(-4, -33, 8, 5, C.shell);
+    px(-26, 31, 8, 5, C.black);
+    px(18, 31, 8, 5, C.black);
+    ctx.restore();
+
+    drawKey(88, 112, 'S');
+    drawKey(111, 124, 'A');
+    drawKey(179, 112, 'J');
+    drawKey(99, 58, 'F');
+    drawKey(27, 67, 'D');
+    drawKey(207, 67, 'K');
+
+    if (Object.values(hits).some(t => now - t < 280)) requestAnimationFrame(draw);
+  }
+
+  function trigger(type) {
+    hits[type] = performance.now();
+    playDrumSound(type);
+    requestAnimationFrame(draw);
+  }
+
+  function canvasPoint(e) {
+    const r = canvas.getBoundingClientRect();
+    return { x: (e.clientX - r.left) * W / r.width, y: (e.clientY - r.top) * H / r.height };
+  }
+
+  canvas.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    canvas.focus();
+    const p = canvasPoint(e);
+    const type = Object.entries(regions).find(([,r]) => p.x >= r.x && p.x <= r.x+r.w && p.y >= r.y && p.y <= r.y+r.h)?.[0];
+    if (type) trigger(type);
   });
 
+  const state = { win, active: true };
+  drumGameState = state;
   function keyHandler(e) {
     if (!state.active || win.classList.contains('hidden') || e.repeat) return;
-    const pad = byKey[e.key.toLowerCase()];
-    if (!pad) return;
+    const type = keyMap[e.key.toLowerCase()];
+    if (!type) return;
     e.preventDefault();
-    hit(pad.dataset.drum, pad);
+    trigger(type);
   }
   document.addEventListener('keydown', keyHandler);
-
-  const closeBtn = win.querySelector('[data-act="close"]');
-  closeBtn.addEventListener('click', () => {
+  win.querySelector('[data-act="close"]').addEventListener('click', () => {
     state.active = false;
     document.removeEventListener('keydown', keyHandler);
   }, { once: true });
+
+  draw();
 }
 
 function openImageViewer(index) {

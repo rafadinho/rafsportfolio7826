@@ -3663,7 +3663,9 @@ function openDrumGame() {
     top: jitterPos(70, 25),
     bodyHTML: `
       <div class="drum-game">
-        <div class="drum-game-header"><div class="drum-game-title">RAF DRUM KIT</div></div>
+        <div class="drum-game-header">
+          <div class="drum-game-title">RAF DRUM KIT</div>
+        </div>
         <div class="drum-pads">
           <div class="canvas-drum-stage">
             <canvas class="pixel-drum-canvas" width="240" height="150" tabindex="0" aria-label="Playable pixel drum kit"></canvas>
@@ -3683,7 +3685,7 @@ function openDrumGame() {
   const W = canvas.width;
   const H = canvas.height;
   const hits = Object.create(null);
-  const keyMap = { a: 'kick', s: 'snare', d: 'hihat', f: 'tom', j: 'floortom', k: 'crash' };
+  const keyMap = { j: 'hihat', k: 'snare', f: 'kick', d: 'crash', s: 'tom' };
   const regions = {
     hihat:   { x: 16,  y: 18, w: 43, h: 89 },
     tom:     { x: 73,  y: 31, w: 94, h: 47 },
@@ -3756,12 +3758,13 @@ function openDrumGame() {
   }
 
   function drawKey(x, y, label) {
-    px(x, y, 9, 9, C.black);
-    px(x + 1, y + 1, 7, 7, C.head);
+    px(x, y, 12, 11, C.black);
+    px(x + 1, y + 1, 10, 9, C.white);
+    px(x + 2, y + 2, 8, 7, C.head);
     ctx.fillStyle = C.black;
-    ctx.font = 'bold 6px monospace';
+    ctx.font = 'bold 8px monospace';
     ctx.textBaseline = 'top';
-    ctx.fillText(label, x + 3, y + 2);
+    ctx.fillText(label, x + 3, y + 1);
   }
 
   function anim(type, now) {
@@ -3813,12 +3816,11 @@ function openDrumGame() {
     px(18, 31, 8, 5, C.black);
     ctx.restore();
 
-    drawKey(88, 112, 'S');
-    drawKey(111, 124, 'A');
-    drawKey(179, 112, 'J');
-    drawKey(99, 58, 'F');
-    drawKey(27, 67, 'D');
-    drawKey(207, 67, 'K');
+    drawKey(85, 108, 'K');
+    drawKey(109, 122, 'F');
+    drawKey(96, 55, 'S');
+    drawKey(25, 64, 'J');
+    drawKey(204, 64, 'D');
 
     if (Object.values(hits).some(t => now - t < 280)) requestAnimationFrame(draw);
   }
@@ -5908,6 +5910,32 @@ startBtnEl.addEventListener('click', (e) => {
     };
     document.addEventListener("click", startOnFirstInteraction, { once: true });
     document.addEventListener("keydown", startOnFirstInteraction, { once: true });
+  });
+})();
+</script>
+<script>
+/* ---------- UNIVERSAL MUSIC SHORTCUT: TYPE POP ---------- */
+(function () {
+  let popBuffer = "";
+
+  window.addEventListener("keydown", function (event) {
+    const target = event.target;
+    const tag = (target && target.tagName) || "";
+    if (tag === "INPUT" || tag === "TEXTAREA" || (target && target.isContentEditable)) return;
+    if (event.ctrlKey || event.metaKey || event.altKey || event.key.length !== 1) return;
+
+    popBuffer = (popBuffer + event.key.toLowerCase()).slice(-3);
+    if (popBuffer !== "pop") return;
+    popBuffer = "";
+
+    const audio = document.getElementById("desktopMusicAudio");
+    if (!audio) return;
+
+    if (audio.paused) {
+      audio.play().catch(function () {});
+    } else {
+      audio.pause();
+    }
   });
 })();
 </script>

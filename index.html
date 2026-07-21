@@ -1924,234 +1924,107 @@
     margin-left: 10px;
   }
   .drum-pads {
-    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex: 1;
     min-height: 360px;
     border: 2px solid #343434;
-    background:
-      radial-gradient(circle at 50% 10%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 32%),
-      linear-gradient(180deg, #262626 0%, #111 58%, #24140c 58%, #321d12 100%);
-    box-shadow: inset 0 0 35px rgba(0,0,0,0.55);
-    overflow: hidden;
+    background: linear-gradient(180deg, #202226 0%, #131518 62%, #2d1d14 62%, #3c281b 100%);
+    box-shadow: inset 0 0 18px rgba(0,0,0,0.35);
+    overflow: auto;
+    padding: 16px;
   }
-  .drum-pads::before {
+  .drum-stage {
+    position: relative;
+    width: min(100%, 520px);
+    aspect-ratio: 480 / 332;
+    margin: 0 auto;
+  }
+  .drum-stage::after {
     content: "";
     position: absolute;
-    left: 8%;
-    right: 8%;
-    bottom: 18px;
-    height: 72px;
-    border-radius: 50%;
-    background: radial-gradient(circle at center, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.18) 46%, rgba(0,0,0,0) 75%);
+    left: 10%;
+    right: 10%;
+    bottom: 1%;
+    height: 12%;
+    background: radial-gradient(circle at center, rgba(0,0,0,0.34) 0%, rgba(0,0,0,0.14) 52%, rgba(0,0,0,0) 76%);
     pointer-events: none;
   }
-  .drum-pad {
-    --tx: 0;
-    --ty: 0;
+  .drum-sprite {
     position: absolute;
-    border: 3px solid #101010;
-    border-radius: 50%;
-    color: #fff;
-    cursor: pointer;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
     user-select: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    transform: translate(var(--tx), var(--ty)) scale(1);
-    transition: transform 55ms ease, filter 55ms ease, box-shadow 55ms ease;
-    text-shadow: 0 1px 1px rgba(0,0,0,0.55);
-    z-index: 2;
-  }
-  .drum-pad::before,
-  .drum-pad::after {
-    content: "";
-    position: absolute;
     pointer-events: none;
-    z-index: -1;
+    z-index: 1;
   }
-  .drum-pad:hover { filter: brightness(1.08); }
-  .drum-pad.hit {
-    transform: translate(var(--tx), calc(var(--ty) + 4px)) scale(0.965);
-    filter: brightness(1.18);
-    box-shadow:
-      0 1px 0 #000,
-      0 0 20px rgba(245,197,24,0.36),
-      inset 0 0 0 2px rgba(255,255,255,0.75);
-  }
-  .drum-pad.target {
-    animation: drumTargetPulse 0.55s steps(2) infinite;
-  }
-  .drum-pad-name {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
-    text-align: center;
-    line-height: 1.35;
-    max-width: 85%;
-  }
-  .drum-pad-key {
-    min-width: 28px;
-    height: 24px;
-    padding: 2px 6px;
-    background: rgba(255,255,255,0.92);
-    color: #000;
-    border-radius: 2px;
-    box-shadow: inset -1px -1px 0 #000, inset 1px 1px 0 #fff;
-    font-weight: bold;
-    text-align: center;
-    line-height: 20px;
-  }
-  .drum-pad[data-drum="kick"] {
-    width: 188px;
-    height: 188px;
-    left: 50%;
-    bottom: 16px;
-    --tx: -50%;
-    background:
-      radial-gradient(circle at 50% 50%, #0e0e0e 0 20%, #1f1f1f 20% 28%, #f0f0f0 28% 54%, #2f2f2f 54% 62%, #0f0f0f 62% 100%);
-    box-shadow:
-      inset 0 0 0 4px #d8d8d8,
-      inset 0 0 0 11px #1e1e1e,
-      0 6px 0 #000,
-      0 12px 20px rgba(0,0,0,0.55);
-  }
-  .drum-pad[data-drum="kick"] .drum-pad-key {
+  .drum-hitbox {
     position: absolute;
-    left: 50%;
-    bottom: 24px;
-    transform: translateX(-50%);
-    z-index: 4;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    z-index: 2;
+    outline: none;
   }
-  .drum-pad[data-drum="kick"]::before {
-    width: 18px;
-    height: 10px;
-    bottom: 22px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #111;
-    border-radius: 10px;
-    box-shadow: -70px 30px 0 0 #777, 70px 30px 0 0 #777;
+  .drum-hitbox:hover,
+  .drum-hitbox:focus-visible {
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.55);
+    background: rgba(255,255,255,0.05);
   }
-  .drum-pad[data-drum="kick"]::after {
-    width: 118px;
-    height: 8px;
-    left: 50%;
-    bottom: -8px;
-    transform: translateX(-50%);
-    background: rgba(0,0,0,0.5);
-    border-radius: 50%;
+  .drum-hitbox.hit {
+    background: rgba(255,255,255,0.16);
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.85), 0 0 10px rgba(255,255,255,0.18);
   }
-  .drum-pad[data-drum="snare"] {
-    width: 132px;
-    height: 132px;
-    left: 14%;
-    bottom: 78px;
-    background:
-      radial-gradient(circle at 50% 42%, #fcfcfc 0 50%, #b9bcc2 50% 59%, #868b91 59% 70%, #2a2d31 70% 100%);
-    color: #111;
-    box-shadow:
-      inset 0 0 0 3px #ececec,
-      inset 0 0 0 9px #5e646b,
-      0 5px 0 #000,
-      0 10px 16px rgba(0,0,0,0.45);
-  }
-  .drum-pad[data-drum="snare"]::before,
-  .drum-pad[data-drum="tom"]::before,
-  .drum-pad[data-drum="floortom"]::before {
-    width: 8px;
-    height: 64px;
-    left: 50%;
-    bottom: -58px;
-    transform: translateX(-50%);
-    background: linear-gradient(180deg, #d7d7d7 0%, #878787 100%);
-    border-radius: 4px;
-  }
-  .drum-pad[data-drum="snare"]::after,
-  .drum-pad[data-drum="tom"]::after,
-  .drum-pad[data-drum="floortom"]::after {
-    width: 74px;
-    height: 26px;
-    left: 50%;
-    bottom: -78px;
-    transform: translateX(-50%);
-    background:
-      linear-gradient(90deg, transparent 0 10%, #b9b9b9 10% 13%, transparent 13% 49%, #b9b9b9 49% 52%, transparent 52% 87%, #b9b9b9 87% 90%, transparent 90% 100%);
-  }
-  .drum-pad[data-drum="hihat"],
-  .drum-pad[data-drum="crash"] {
-    height: 86px;
-    border-radius: 50%;
-    color: #111;
-    box-shadow:
-      inset 0 0 0 3px rgba(255,255,255,0.25),
-      inset 0 0 0 7px rgba(128,90,12,0.35),
-      0 5px 0 #000,
-      0 10px 16px rgba(0,0,0,0.42);
-  }
-  .drum-pad[data-drum="hihat"] {
-    width: 150px;
-    left: 7%;
-    top: 38px;
-    background: radial-gradient(ellipse at 50% 45%, #fff3b9 0 32%, #ddb957 32% 54%, #9d761d 54% 76%, #3c2908 100%);
-  }
-  .drum-pad[data-drum="crash"] {
-    width: 166px;
-    right: 6%;
-    top: 34px;
-    background: radial-gradient(ellipse at 50% 45%, #fff4bf 0 33%, #e4c45e 33% 56%, #9d751a 56% 77%, #3a2707 100%);
-  }
-  .drum-pad[data-drum="hihat"]::before,
-  .drum-pad[data-drum="crash"]::before {
-    width: 8px;
-    height: 142px;
-    left: 50%;
-    bottom: -130px;
-    transform: translateX(-50%);
-    background: linear-gradient(180deg, #e0e0e0 0%, #7a7a7a 100%);
-    border-radius: 4px;
-  }
-  .drum-pad[data-drum="hihat"]::after,
-  .drum-pad[data-drum="crash"]::after {
-    width: 86px;
-    height: 32px;
-    left: 50%;
-    bottom: -150px;
-    transform: translateX(-50%);
-    background:
-      linear-gradient(90deg, transparent 0 18%, #bebebe 18% 21%, transparent 21% 49%, #bebebe 49% 52%, transparent 52% 79%, #bebebe 79% 82%, transparent 82% 100%);
-  }
-  .drum-pad[data-drum="tom"] {
-    width: 126px;
-    height: 118px;
-    left: 50%;
-    top: 94px;
-    --tx: -50%;
-    background:
-      radial-gradient(circle at 50% 42%, #f8f8f8 0 48%, #cbcdd2 48% 56%, #8f2434 56% 72%, #3f0d16 72% 100%);
-    box-shadow:
-      inset 0 0 0 3px #ececec,
-      inset 0 0 0 9px #7a1121,
-      0 5px 0 #000,
-      0 10px 16px rgba(0,0,0,0.45);
-  }
-  .drum-pad[data-drum="floortom"] {
-    width: 148px;
-    height: 136px;
-    right: 11%;
-    bottom: 78px;
-    background:
-      radial-gradient(circle at 50% 42%, #f8f8f8 0 48%, #cbcdd2 48% 56%, #8f2434 56% 72%, #3f0d16 72% 100%);
-    box-shadow:
-      inset 0 0 0 3px #ececec,
-      inset 0 0 0 9px #7a1121,
-      0 5px 0 #000,
-      0 10px 16px rgba(0,0,0,0.45);
-  }
-  .drum-help {
-    color: #bdbdbd;
+  .drum-hitbox-label {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    min-width: 20px;
+    height: 18px;
+    padding: 0 4px;
+    background: rgba(240,240,240,0.96);
+    color: #000;
+    box-shadow: inset -1px -1px 0 #555, inset 1px 1px 0 #fff;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
     font-size: 11px;
+    font-weight: bold;
+    line-height: 18px;
     text-align: center;
+    pointer-events: none;
+  }
+  .drum-hitbox[data-drum="hihat"] {
+    left: 0%; top: 0%; width: 24%; height: 25%;
+    clip-path: polygon(12% 22%, 29% 8%, 73% 8%, 89% 22%, 100% 48%, 89% 76%, 73% 90%, 29% 90%, 12% 76%, 0 48%);
+  }
+  .drum-hitbox[data-drum="tom"] {
+    left: 28%; top: 14%; width: 44%; height: 26%;
+  }
+  .drum-hitbox[data-drum="snare"] {
+    left: 8%; top: 40%; width: 23%; height: 25%;
+    clip-path: polygon(18% 0, 82% 0, 100% 16%, 100% 84%, 82% 100%, 18% 100%, 0 84%, 0 16%);
+  }
+  .drum-hitbox[data-drum="kick"] {
+    left: 35%; top: 38%; width: 30%; height: 56%;
+    clip-path: ellipse(41% 47% at 50% 47%);
+  }
+  .drum-hitbox[data-drum="floortom"] {
+    right: 9%; top: 40%; width: 23%; height: 25%;
+    clip-path: polygon(18% 0, 82% 0, 100% 16%, 100% 84%, 82% 100%, 18% 100%, 0 84%, 0 16%);
+  }
+  .drum-hitbox[data-drum="crash"] {
+    right: 1%; top: 0%; width: 28%; height: 25%;
+    clip-path: polygon(12% 22%, 29% 8%, 73% 8%, 89% 22%, 100% 48%, 89% 76%, 73% 90%, 29% 90%, 12% 76%, 0 48%);
+  }
+  @media (max-width: 650px) {
+    .drum-stage { width: min(100%, 460px); }
+    .drum-hitbox-label { min-width: 18px; height: 16px; font-size: 10px; line-height: 16px; }
   }
   @keyframes drumTargetPulse {
     0%,100% { box-shadow: 0 5px 0 #000, 0 0 8px rgba(245,197,24,0.35), inset 0 0 0 2px rgba(245,197,24,0.7); }
@@ -3861,23 +3734,22 @@ preloadDrumSamples();
 
 function openDrumGame() {
   const padDefs = [
-    { type: 'kick', name: 'KICK', key: 'A' },
-    { type: 'snare', name: 'SNARE', key: 'S' },
-    { type: 'hihat', name: 'HI-HAT', key: 'D' },
-    { type: 'tom', name: 'RACK TOM', key: 'F' },
-    { type: 'floortom', name: 'FLOOR TOM', key: 'J' },
-    { type: 'crash', name: 'CRASH', key: 'K' }
+    { type: 'kick', key: 'A' },
+    { type: 'snare', key: 'S' },
+    { type: 'hihat', key: 'D' },
+    { type: 'tom', key: 'F' },
+    { type: 'floortom', key: 'J' },
+    { type: 'crash', key: 'K' }
   ];
   const padHTML = padDefs.map(p => `
-    <button class="drum-pad" type="button" data-drum="${p.type}" data-key="${p.key.toLowerCase()}">
-      <span class="drum-pad-name">${p.name}</span>
-      <span class="drum-pad-key">${p.key}</span>
+    <button class="drum-hitbox" type="button" data-drum="${p.type}" data-key="${p.key.toLowerCase()}" aria-label="${p.type}">
+      <span class="drum-hitbox-label">${p.key}</span>
     </button>
   `).join('');
 
   const win = createWindow({
     id: 'drumkit',
-    title: 'Drum Kit.exe',
+    title: 'RAF Drum Kit',
     glyph: '🥁',
     width: 720,
     height: 520,
@@ -3886,10 +3758,14 @@ function openDrumGame() {
     bodyHTML: `
       <div class="drum-game">
         <div class="drum-game-header">
-          <div class="drum-game-title">RAF DRUM KIT 96</div>
+          <div class="drum-game-title">RAF DRUM KIT</div>
         </div>
-        <div class="drum-pads">${padHTML}</div>
-        <div class="drum-help">Click the drums or use A S D F J K.</div>
+        <div class="drum-pads">
+          <div class="drum-stage">
+            <img class="drum-sprite" src="media/raf-drum-kit-pixel.png" alt="Pixel art drum set">
+            ${padHTML}
+          </div>
+        </div>
       </div>
     `,
     statusText: 'Playable 6-piece drum set'
@@ -3898,7 +3774,7 @@ function openDrumGame() {
   if (win.dataset.drumReady === '1') return;
   win.dataset.drumReady = '1';
 
-  const pads = Array.from(win.querySelectorAll('.drum-pad'));
+  const pads = Array.from(win.querySelectorAll('.drum-hitbox'));
   const byKey = Object.fromEntries(pads.map(p => [p.dataset.key, p]));
   const state = { win, active: true };
   drumGameState = state;

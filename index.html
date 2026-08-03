@@ -1991,6 +1991,21 @@
     display: none;
     pointer-events: none;
   }
+
+  #mainBackgroundVideo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    background: #000;
+    z-index: 0;
+    display: none;
+    pointer-events: none;
+  }
+  html.secret-uzi-mode #mainBackgroundVideo { display: none !important; }
+
   #mainChangeBackground {
     display: inline-flex;
     align-items: center;
@@ -2879,6 +2894,8 @@
   <img id="secretUziBackground" class="active" src="media/secret-uzi-bg-1.webp" alt="" aria-hidden="true">
   <video id="secretUziBackgroundVideo" muted loop playsinline preload="metadata" aria-hidden="true"></video>
   <div id="uziWindowLayer" aria-hidden="true"></div>
+
+  <video id="mainBackgroundVideo" muted loop playsinline preload="metadata" aria-hidden="true"></video>
 
   <div id="bgLayer">
     <canvas id="cloudCanvas"></canvas>
@@ -6690,18 +6707,43 @@ function playObnoxiousClickIfEnabled() {
 /* ---------- REGULAR DESKTOP BACKGROUND SWITCHER ---------- */
 (function () {
   const backgrounds = [
-    { image: "media/mario-background.gif", color: "#6b8cff", repeat: "repeat-x", position: "left bottom", size: "1080px 324px", pixelated: true },
-    { image: "media/synthwave-background.gif", color: "#120820", repeat: "no-repeat", position: "center bottom", size: "cover", pixelated: false }
+    { type: "image", src: "media/mario-background.gif", color: "#6b8cff", repeat: "repeat-x", position: "left bottom", size: "1080px 324px", pixelated: true },
+    { type: "image", src: "media/synthwave-background.gif", color: "#120820", repeat: "no-repeat", position: "center bottom", size: "cover", pixelated: false },
+    { type: "image", src: "media/secret-uzi-bg-1.webp", color: "#000", repeat: "no-repeat", position: "center center", size: "cover", pixelated: true },
+    { type: "image", src: "media/secret-uzi-bg-2.gif", color: "#000", repeat: "no-repeat", position: "center center", size: "cover", pixelated: true },
+    { type: "image", src: "media/secret-uzi-bg-3.gif", color: "#000", repeat: "no-repeat", position: "center center", size: "cover", pixelated: true },
+    { type: "image", src: "media/secret-uzi-bg-4.webp", color: "#000", repeat: "no-repeat", position: "center center", size: "cover", pixelated: true },
+    { type: "video", src: "media/secret-uzi-bg-5.mp4" }
   ];
+
   let index = 0;
   const layer = document.getElementById("bgLayer");
+  const video = document.getElementById("mainBackgroundVideo");
   const button = document.getElementById("mainChangeBackground");
 
   function applyBackground() {
-    if (!layer) return;
+    if (!layer || !video) return;
     const bg = backgrounds[index];
+
+    video.pause();
+    video.style.display = "none";
+    layer.style.display = "block";
+
+    if (bg.type === "video") {
+      layer.style.display = "none";
+      if (video.getAttribute("src") !== bg.src) {
+        video.src = bg.src;
+        video.load();
+      }
+      video.muted = true;
+      video.currentTime = 0;
+      video.style.display = "block";
+      video.play().catch(function () {});
+      return;
+    }
+
     layer.style.backgroundColor = bg.color;
-    layer.style.backgroundImage = 'url("' + bg.image + '")';
+    layer.style.backgroundImage = 'url("' + bg.src + '")';
     layer.style.backgroundRepeat = bg.repeat;
     layer.style.backgroundPosition = bg.position;
     layer.style.backgroundSize = bg.size;

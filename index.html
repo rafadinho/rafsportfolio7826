@@ -1977,7 +1977,8 @@
   html.secret-uzi-mode #uziWindowLayer { display: block; }
   html:not(.secret-uzi-mode) #uziWindowLayer { display: none !important; }
   html.secret-uzi-mode #desktop > .win[data-desktop-session="normal"] { display: none !important; }
-  #secretUziBackground {
+  #secretUziBackground,
+  #secretUziBackgroundVideo {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -2017,7 +2018,8 @@
     box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #fff;
     transform: translate(1px, 1px);
   }
-  html.secret-uzi-mode #secretUziBackground { display: block; }
+  html.secret-uzi-mode #secretUziBackground.active,
+  html.secret-uzi-mode #secretUziBackgroundVideo.active { display: block; }
   html.secret-uzi-mode #uziTaskbarControls { display: flex; }
   html.secret-uzi-mode #secretUziReturn,
   html.secret-uzi-mode #secretUziChangeBackground { display: inline-flex; align-items: center; }
@@ -2851,7 +2853,8 @@
 
 <div id="desktop">
 
-  <img id="secretUziBackground" src="media/secret-uzi-bg-1.webp" alt="" aria-hidden="true">
+  <img id="secretUziBackground" class="active" src="media/secret-uzi-bg-1.webp" alt="" aria-hidden="true">
+  <video id="secretUziBackgroundVideo" muted loop playsinline preload="metadata" aria-hidden="true"></video>
   <div id="uziWindowLayer" aria-hidden="true"></div>
 
   <div id="bgLayer">
@@ -6683,10 +6686,11 @@ function playObnoxiousClickIfEnabled() {
   ];
 
   const SECRET_BACKGROUNDS = [
-    "media/secret-uzi-bg-1.webp",
-    "media/secret-uzi-bg-2.gif",
-    "media/secret-uzi-bg-3.gif",
-    "media/secret-uzi-bg-4.webp"
+    { type: "image", src: "media/secret-uzi-bg-1.webp" },
+    { type: "image", src: "media/secret-uzi-bg-2.gif" },
+    { type: "image", src: "media/secret-uzi-bg-3.gif" },
+    { type: "image", src: "media/secret-uzi-bg-4.webp" },
+    { type: "video", src: "media/secret-uzi-bg-5.mp4" }
   ];
 
   let buffer = "";
@@ -6786,8 +6790,9 @@ function playObnoxiousClickIfEnabled() {
   }
 
   function changeSecretBackground(randomize = false) {
-    const bg = document.getElementById("secretUziBackground");
-    if (!bg || !SECRET_BACKGROUNDS.length) return;
+    const imageBg = document.getElementById("secretUziBackground");
+    const videoBg = document.getElementById("secretUziBackgroundVideo");
+    if (!imageBg || !videoBg || !SECRET_BACKGROUNDS.length) return;
 
     if (randomize) {
       let next = Math.floor(Math.random() * SECRET_BACKGROUNDS.length);
@@ -6799,7 +6804,24 @@ function playObnoxiousClickIfEnabled() {
       secretBackgroundIndex = (secretBackgroundIndex + 1 + SECRET_BACKGROUNDS.length) % SECRET_BACKGROUNDS.length;
     }
 
-    bg.src = SECRET_BACKGROUNDS[secretBackgroundIndex];
+    const background = SECRET_BACKGROUNDS[secretBackgroundIndex];
+    imageBg.classList.remove("active");
+    videoBg.classList.remove("active");
+    videoBg.pause();
+
+    if (background.type === "video") {
+      if (videoBg.getAttribute("src") !== background.src) {
+        videoBg.src = background.src;
+        videoBg.load();
+      }
+      videoBg.muted = true;
+      videoBg.currentTime = 0;
+      videoBg.classList.add("active");
+      videoBg.play().catch(function () {});
+    } else {
+      imageBg.src = background.src;
+      imageBg.classList.add("active");
+    }
   }
 
   function enterSecretMode() {

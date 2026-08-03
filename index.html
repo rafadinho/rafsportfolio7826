@@ -1991,6 +1991,28 @@
     display: none;
     pointer-events: none;
   }
+  #mainChangeBackground {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 3px 8px;
+    background: #c0c0c0;
+    color: #000;
+    border: 0;
+    box-shadow: inset -1px -1px 0 #000, inset 1px 1px 0 #fff;
+    font-family: inherit;
+    font-size: 11px;
+    line-height: 18px;
+    white-space: nowrap;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  #mainChangeBackground:active {
+    box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #fff;
+    transform: translate(1px, 1px);
+  }
+  html.secret-uzi-mode #mainChangeBackground { display: none !important; }
+
   #uziTaskbarControls {
     display: none;
     align-items: center;
@@ -2979,6 +3001,7 @@
     <div id="startBtn"><span>▣</span><span>Start</span></div>
     <div id="taskbar-sep"></div>
     <div id="taskItems" style="display:flex; gap:4px; flex:1; overflow:hidden;"></div>
+    <button id="mainChangeBackground" type="button">Change Background</button>
     <div id="uziTaskbarControls">
       <button id="secretUziReturn" type="button">Return to Desktop</button>
       <button id="secretUziChangeBackground" type="button">Change Background</button>
@@ -6664,6 +6687,35 @@ function playObnoxiousClickIfEnabled() {
 </script>
 
 <script>
+/* ---------- REGULAR DESKTOP BACKGROUND SWITCHER ---------- */
+(function () {
+  const backgrounds = [
+    { image: "media/mario-background.gif", color: "#6b8cff", repeat: "repeat-x", position: "left bottom", size: "1080px 324px", pixelated: true },
+    { image: "media/synthwave-background.gif", color: "#120820", repeat: "no-repeat", position: "center bottom", size: "cover", pixelated: false }
+  ];
+  let index = 0;
+  const layer = document.getElementById("bgLayer");
+  const button = document.getElementById("mainChangeBackground");
+
+  function applyBackground() {
+    if (!layer) return;
+    const bg = backgrounds[index];
+    layer.style.backgroundColor = bg.color;
+    layer.style.backgroundImage = 'url("' + bg.image + '")';
+    layer.style.backgroundRepeat = bg.repeat;
+    layer.style.backgroundPosition = bg.position;
+    layer.style.backgroundSize = bg.size;
+    layer.style.imageRendering = bg.pixelated ? "pixelated" : "auto";
+  }
+
+  button?.addEventListener("click", function () {
+    index = (index + 1) % backgrounds.length;
+    applyBackground();
+  });
+})();
+</script>
+
+<script>
 /* ---------- SECRET LIL UZI MODE: type "rafael1021" ---------- */
 (function () {
   const SECRET_CODE = "rafael1021";
@@ -6698,7 +6750,7 @@ function playObnoxiousClickIfEnabled() {
 
   let buffer = "";
   let secretIndex = -1;
-  let secretBackgroundIndex = -1;
+  let secretBackgroundIndex = 4;
   let normalAudioState = null;
   let normalPlaylistNodes = null;
   let normalBlurbText = "";
@@ -6792,21 +6844,12 @@ function playObnoxiousClickIfEnabled() {
     normalPlaylistNodes = null;
   }
 
-  function changeSecretBackground(randomize = false) {
+  function showSecretBackground(index) {
     const imageBg = document.getElementById("secretUziBackground");
     const videoBg = document.getElementById("secretUziBackgroundVideo");
     if (!imageBg || !videoBg || !SECRET_BACKGROUNDS.length) return;
 
-    if (randomize) {
-      let next = Math.floor(Math.random() * SECRET_BACKGROUNDS.length);
-      if (SECRET_BACKGROUNDS.length > 1 && next === secretBackgroundIndex) {
-        next = (next + 1) % SECRET_BACKGROUNDS.length;
-      }
-      secretBackgroundIndex = next;
-    } else {
-      secretBackgroundIndex = (secretBackgroundIndex + 1 + SECRET_BACKGROUNDS.length) % SECRET_BACKGROUNDS.length;
-    }
-
+    secretBackgroundIndex = (index + SECRET_BACKGROUNDS.length) % SECRET_BACKGROUNDS.length;
     const background = SECRET_BACKGROUNDS[secretBackgroundIndex];
     imageBg.classList.remove("active");
     videoBg.classList.remove("active");
@@ -6825,6 +6868,10 @@ function playObnoxiousClickIfEnabled() {
       imageBg.src = background.src;
       imageBg.classList.add("active");
     }
+  }
+
+  function changeSecretBackground() {
+    showSecretBackground(secretBackgroundIndex + 1);
   }
 
   function enterSecretMode() {
@@ -6854,7 +6901,7 @@ function playObnoxiousClickIfEnabled() {
     if (blurb) blurb.textContent = "All Lil Uzi Vert. Type rafael1021 again to skip to the next track.";
 
     renderSecretPlaylist();
-    changeSecretBackground(true);
+    showSecretBackground(4);
 
     secretIndex = Math.floor(Math.random() * SECRET_TRACKS.length);
     playSecretTrack(secretIndex);
@@ -6941,7 +6988,7 @@ function playObnoxiousClickIfEnabled() {
 
   document.getElementById("secretUziReturn")?.addEventListener("click", exitSecretMode);
   document.getElementById("secretUziChangeBackground")?.addEventListener("click", function () {
-    changeSecretBackground(false);
+    changeSecretBackground();
   });
   document.addEventListener("play", function (event) {
     if (event.target && event.target.id === "desktopMusicAudio" && window.secretTrackMode) updateSecretPlaylistHighlighting();

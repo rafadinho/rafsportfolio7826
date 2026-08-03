@@ -1979,11 +1979,12 @@
   html.secret-uzi-mode #desktop > .win[data-desktop-session="normal"] { display: none !important; }
   #secretUziBackground,
   #secretUziBackgroundVideo {
-    position: absolute;
+    position: fixed;
     inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover !important;
+    object-position: center center;
     image-rendering: pixelated;
     background: #000;
     z-index: 1;
@@ -6682,6 +6683,8 @@ function playObnoxiousClickIfEnabled() {
     { title: "What You On by Lil Uzi Vert", src: "media/what-you-on-lil-uzi-vert.mp3" },
     { title: "Today by Lil Uzi Vert", src: "media/today-lil-uzi-vert.mp3" },
     { title: "Spaceship to Mars by Lil Uzi Vert", src: "media/spaceship-to-mars-lil-uzi-vert.mp3" },
+    { title: "LUV SCARS K.O. 1600 by Lil Uzi Vert", src: "media/luv-scars-ko-1600-lil-uzi-vert.mp3" },
+    { title: "LUV SCARS K.O. 1600 (Slowed + Reverb) by Lil Uzi Vert", src: "media/luv-scars-ko-1600-slowed-reverb-lil-uzi-vert.mp3" },
     { title: "In The Mirror by Lil Uzi Vert", src: "media/in-the-mirror-lil-uzi-vert.mp3" }
   ];
 

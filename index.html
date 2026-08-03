@@ -2193,7 +2193,8 @@
   html.custom-main-accent:not(.secret-uzi-mode) .task-item,
   html.custom-main-accent:not(.secret-uzi-mode) #dateDisplay,
   html.custom-main-accent:not(.secret-uzi-mode) #weatherBtn,
-  html.custom-main-accent:not(.secret-uzi-mode) #clock {
+  html.custom-main-accent:not(.secret-uzi-mode) #clock,
+  html.custom-main-accent:not(.secret-uzi-mode) #mainChangeBackground {
     background: var(--main-button-gradient) !important;
     color: var(--main-text) !important;
     border-color: var(--main-border) !important;
@@ -2201,7 +2202,8 @@
   }
   html.custom-main-accent:not(.secret-uzi-mode) .task-item.active,
   html.custom-main-accent:not(.secret-uzi-mode) #startBtn:active,
-  html.custom-main-accent:not(.secret-uzi-mode) #weatherBtn:active {
+  html.custom-main-accent:not(.secret-uzi-mode) #weatherBtn:active,
+  html.custom-main-accent:not(.secret-uzi-mode) #mainChangeBackground:active {
     background: var(--main-active-gradient) !important;
   }
   html.custom-main-accent:not(.secret-uzi-mode) #desktopMusicPlayer {
@@ -2226,6 +2228,19 @@
   }
   html.custom-main-accent:not(.secret-uzi-mode) .blurb-bar { background: var(--main-mid) !important; }
   html.custom-main-accent:not(.secret-uzi-mode) .blurb-panel { background: var(--main-soft) !important; color: var(--main-text) !important; }
+
+  /* Match closed folder icons to the selected regular desktop accent. Open
+     folders retain their existing green treatment so their state stays obvious. */
+  html.custom-main-accent:not(.secret-uzi-mode) .icon.folder-standard:not(.open) .glyph img,
+  html.custom-main-accent:not(.secret-uzi-mode) .icon.folder-mystery:not(.open) .glyph img {
+    filter: var(--main-folder-filter) !important;
+  }
+  html.custom-main-accent:not(.secret-uzi-mode) .icon.folder-standard:not(.open):hover .glyph img,
+  html.custom-main-accent:not(.secret-uzi-mode) .icon.folder-standard:not(.open).selected .glyph img,
+  html.custom-main-accent:not(.secret-uzi-mode) .icon.folder-mystery:not(.open):hover .glyph img,
+  html.custom-main-accent:not(.secret-uzi-mode) .icon.folder-mystery:not(.open).selected .glyph img {
+    filter: var(--main-folder-filter-hover) !important;
+  }
 
   html.secret-uzi-mode.custom-uzi-accent .icon.folder-standard:not(.open) .glyph img,
   html.secret-uzi-mode.custom-uzi-accent .icon.folder-mystery:not(.open) .glyph img {
@@ -5355,6 +5370,8 @@ function openDisplayPropertiesWindow() {
         html.dataset.uziDesktopColor = 'default';
         uziDesktopColor = 'default';
       } else {
+        html.style.removeProperty('--main-folder-filter');
+        html.style.removeProperty('--main-folder-filter-hover');
         delete html.dataset.mainDesktopColor;
         mainDesktopColor = 'default';
       }
@@ -5386,6 +5403,27 @@ function openDisplayPropertiesWindow() {
       uziDesktopColor = key;
       html.dataset.uziDesktopColor = key;
     } else {
+      const isNeutral = key === 'gray' || key === 'black' || key === 'white';
+      /* The stock folder art is yellow and the open-state art is green. Give
+         yellow a deeper golden/orange cast and teal a darker cyan cast so both
+         remain clearly different from those two states. */
+      const folderHue = key === 'yellow' ? 345 : key === 'teal' ? 150 : c.hue;
+      const folderBase = key === 'yellow'
+        ? `hue-rotate(${folderHue}deg) saturate(2.25) brightness(.82) contrast(1.22)`
+        : key === 'teal'
+          ? `hue-rotate(${folderHue}deg) saturate(2.45) brightness(.72) contrast(1.28)`
+          : isNeutral
+            ? (key === 'black' ? 'grayscale(1) brightness(.42) contrast(1.4)' : key === 'white' ? 'grayscale(1) brightness(1.42) contrast(.88)' : 'grayscale(1) brightness(.86) contrast(1.12)')
+            : `hue-rotate(${folderHue}deg) saturate(2.3) brightness(.9) contrast(1.16)`;
+      const folderHover = key === 'yellow'
+        ? `hue-rotate(${folderHue}deg) saturate(2.5) brightness(.98) contrast(1.18) drop-shadow(0 0 6px ${c.glow})`
+        : key === 'teal'
+          ? `hue-rotate(${folderHue}deg) saturate(2.7) brightness(.9) contrast(1.2) drop-shadow(0 0 6px ${c.glow})`
+          : isNeutral
+            ? (key === 'black' ? 'grayscale(1) brightness(.64) contrast(1.35) drop-shadow(0 0 6px #aaa)' : `grayscale(1) brightness(1.16) drop-shadow(0 0 6px ${c.glow})`)
+            : `hue-rotate(${folderHue}deg) saturate(2.55) brightness(1.06) contrast(1.1) drop-shadow(0 0 6px ${c.glow})`;
+      html.style.setProperty('--main-folder-filter', folderBase);
+      html.style.setProperty('--main-folder-filter-hover', folderHover);
       mainDesktopColor = key;
       html.dataset.mainDesktopColor = key;
     }

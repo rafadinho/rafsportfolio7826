@@ -1158,22 +1158,33 @@
     color: #0000EE;
   }
 
-  /* ---------- RESUME (SNES MARIO KART HUD THEME) ---------- */
+  /* ---------- RESUME ---------- */
   .resume-doc {
-    padding: 0 0 18px 0;
-    font-family: 'VT323', monospace;
-    font-size: 18px;
-    line-height: 1.35;
+    padding: 0 0 20px 0;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
     color: #1a1a1a;
-    background: linear-gradient(180deg, #5c94fc 0%, #5c94fc 70px, #7ec850 70px, #7ec850 100%);
+    background: #fbfbf8;
     min-height: 100%;
   }
-  .mk-stripe {
-    height: 12px;
-    background-image: repeating-linear-gradient(-45deg, #e52521 0 10px, #fff 10px 20px);
-    border-top: 2px solid #000;
-    border-bottom: 2px solid #000;
-    image-rendering: pixelated;
+  .resume-header {
+    background: linear-gradient(180deg, #3f86d9 0%, #1f5fae 100%);
+    padding: 18px 16px 14px;
+    text-align: center;
+    border-bottom: 3px solid #14406e;
+  }
+  .resume-doc h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    color: #fff;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+    margin: 0 0 10px 0;
+    line-height: 1.5;
+  }
+  .resume-contact {
+    font-size: 12px;
+    color: #eaf2ff;
   }
   .resume-download {
     text-align: center;
@@ -1182,132 +1193,57 @@
   .resume-download a {
     display: inline-block;
     background: #fff;
-    color: #1a1a1a;
+    color: #1f5fae;
     text-decoration: none;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
-    padding: 9px 14px;
-    border: 3px solid #000;
-    box-shadow: 4px 4px 0 #000;
-    letter-spacing: 0.5px;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 8px 16px;
+    border: 2px solid #1f5fae;
+    border-radius: 4px;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.15);
   }
   .resume-download a:active {
-    box-shadow: 1px 1px 0 #000;
-    transform: translate(3px, 3px);
-  }
-  .resume-doc h1 {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 18px;
-    color: #fff;
-    -webkit-text-stroke: 1.5px #000;
-    text-shadow: 3px 3px 0 #000;
-    margin: 14px 0 8px 0;
-    text-align: center;
-    line-height: 1.6;
-    padding: 0 10px;
-  }
-  .resume-contact {
-    text-align: center;
-    font-family: 'VT323', monospace;
-    font-size: 16px;
-    font-weight: bold;
-    color: #1a1a1a;
-    background: #fff;
-    border: 3px solid #000;
-    border-radius: 10px;
-    margin: 0 16px 4px;
-    padding: 5px 8px;
+    box-shadow: 0 0 0 rgba(0,0,0,0.15);
+    transform: translate(2px, 2px);
   }
   .resume-doc h2 {
-    display: flex;
-    align-items: center;
-    gap: 8px;
     font-family: 'Press Start 2P', monospace;
-    font-size: 11px;
-    color: #1a1a1a;
-    background: #fbd000;
-    border: 3px solid #000;
-    border-radius: 10px;
-    padding: 8px 14px;
-    margin: 22px 16px 12px;
-    box-shadow: 3px 3px 0 rgba(0,0,0,0.35);
+    font-size: 10px;
     letter-spacing: 0.5px;
+    color: #fff;
+    background: #1f5fae;
+    padding: 7px 14px;
+    margin: 22px 16px 12px;
+    border-radius: 4px;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
   }
   .resume-doc > h2:first-of-type {
-    margin-top: 8px;
-  }
-  .mk-flag-icon {
-    flex-shrink: 0;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #fbd000;
-    border: 2px solid #000;
-    display: inline-block;
-  }
-  .mk-trophy-icon {
-    flex-shrink: 0;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #fbd000;
-    border: 2px solid #000;
-  }
-  .mk-item-icon {
-    flex-shrink: 0;
-    width: 18px;
-    height: 18px;
-    background: #fbd000;
-    border: 2px solid #000;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
-    color: #1a1a1a;
+    margin-top: 18px;
   }
   .resume-entry {
-    margin: 0 16px 14px 16px;
-    border: 3px solid #000;
-    border-radius: 10px;
-    box-shadow: 3px 3px 0 rgba(0,0,0,0.35);
-    background: #fffdf3;
+    margin: 0 16px 12px 16px;
+    border: 1px solid #dcdcd4;
+    border-left: 4px solid #1f5fae;
+    border-radius: 4px;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.08);
+    background: #fff;
     padding: 10px 12px;
     color: #1a1a1a;
   }
-  .race-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    color: #1a1a1a;
-    background: #fbd000;
-    border: 2px solid #000;
-    border-radius: 12px;
-    padding: 3px 8px 3px 4px;
-    margin-bottom: 8px;
-    letter-spacing: 0.5px;
-  }
-  .race-tag .mk-flag-icon {
-    width: 12px;
-    height: 12px;
-  }
   .job-title {
-    font-size: 20px;
+    font-size: 15px;
     font-weight: bold;
-    color: #d3242c;
+    color: #14406e;
     line-height: 1.2;
   }
   .job-role {
-    font-size: 16px;
+    font-size: 13px;
     color: #1a1a1a;
     margin-top: 1px;
   }
   .job-meta {
-    font-size: 13px;
-    color: #666;
+    font-size: 12px;
+    color: #777;
     margin-top: 2px;
     margin-bottom: 4px;
   }
@@ -1318,7 +1254,7 @@
   }
   .resume-doc li {
     margin-bottom: 4px;
-    padding-left: 18px;
+    padding-left: 16px;
     position: relative;
     color: #1a1a1a;
   }
@@ -1327,10 +1263,9 @@
     position: absolute;
     left: 2px;
     top: 8px;
-    width: 8px;
-    height: 8px;
-    background: #d3242c;
-    border: 1px solid #000;
+    width: 6px;
+    height: 6px;
+    background: #1f5fae;
     border-radius: 50%;
   }
   .resume-skills-row {
@@ -1338,6 +1273,20 @@
     align-items: flex-start;
     gap: 8px;
     margin-bottom: 6px;
+  }
+  .skill-pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .skill-pill {
+    font-size: 11px;
+    background: #eaf2ff;
+    color: #14406e;
+    border: 1px solid #b9d3f2;
+    border-radius: 12px;
+    padding: 3px 10px;
   }
 
   /* ---------- GALLERY ---------- */
@@ -3078,7 +3027,6 @@ const folders = [
   { id: 'videos',   label: 'Short Videos',    glyph: '🎬', type: 'video' },
   { id: 'longvideos', label: 'Long Videos',   glyph: '🎬', type: 'longvideo' },
   { id: 'design',   label: 'Design Work',     glyph: '📁', type: 'gallery' },
-  { id: 'about',    label: 'About Me',        glyph: '📁', type: 'placeholder' },
   { id: 'resume',   label: 'Resume',           glyph: '📁', type: 'placeholder' },
   { id: 'contact',  label: 'Contact',          glyph: '📁', type: 'placeholder' },
   { id: 'drumkit',  label: 'Drum Kit',         glyph: '🥁', type: 'drumgame' },
@@ -3123,6 +3071,8 @@ const longVideoPlaylist = [
   { youtubeId: 'fK2nvMEHlxU', caption: 'Enrico Emerald Session', blurb: 'Live session for Enrico directly from his bedroom.' },
   { youtubeId: 'VbK4aqu4Wtw', caption: 'Zen Studios Emerald Session', blurb: 'Live session for rap group Zen Studios!' },
   { youtubeId: 'vJ72k9aYju4', caption: 'Key Found Emerald Session', blurb: 'First live session I ever did for Green Line Records!' },
+  { youtubeId: '_oMvwIVI9uY', caption: 'Jhe Emerald Session', blurb: 'Live Session for singer jhe.' },
+  { youtubeId: 'lRSXvVZK03w', caption: 'Fire Escape! Emerald Session', blurb: 'Live session for band Fire Escape!.' },
 ];
 let longVidIndex = 0;
 
@@ -4126,14 +4076,15 @@ function openFolder(f) {
       top: 50 + Math.random() * 40,
       bodyHTML: `
         <div class="resume-doc">
-          <div class="mk-stripe"></div>
-          <h1>RAFAEL LUTTMANN</h1>
-          <div class="resume-download">
-            <a href="media/rafael-luttmann-resume.pdf" target="_blank" rel="noopener">Download PDF</a>
+          <div class="resume-header">
+            <h1>RAFAEL LUTTMANN</h1>
+            <div class="resume-contact">New York City, NY / Boston, MA &nbsp;|&nbsp; rafael.luttmann@gmail.com &nbsp;|&nbsp; (917) 742-6570</div>
+            <div class="resume-download">
+              <a href="media/rafael-luttmann-resume.pdf" target="_blank" rel="noopener">Download PDF</a>
+            </div>
           </div>
-          <div class="resume-contact">New York City, NY / Boston, MA &nbsp;|&nbsp; rafael.luttmann@gmail.com &nbsp;|&nbsp; (917) 742-6570</div>
 
-          <h2><span class="mk-flag-icon"></span>Driver License</h2>
+          <h2>Education</h2>
           <div class="resume-entry">
             <div class="job-title">Northeastern University</div>
             <div class="job-role">Candidate for B.S. in Mathematics — GPA: 3.7</div>
@@ -4141,8 +4092,8 @@ function openFolder(f) {
             <div>Involvement: Green Line Records</div>
           </div>
 
-          <h2><span class="mk-flag-icon"></span>Race Results</h2>
-          <div class="resume-entry"><div class="race-tag"><span class="mk-flag-icon"></span>RACE COMPLETE</div>
+          <h2>Experience</h2>
+          <div class="resume-entry">
             <div class="job-title">Wayfair</div>
             <div class="job-role">Brand Marketing and Events Co-op</div>
             <div class="job-meta">Boston, MA — Jan–Jun 2026</div>
@@ -4151,7 +4102,7 @@ function openFolder(f) {
               <li>Supported graphic design for Wayfair's Tastemaker program</li>
             </ul>
           </div>
-          <div class="resume-entry"><div class="race-tag"><span class="mk-flag-icon"></span>RACE COMPLETE</div>
+          <div class="resume-entry">
             <div class="job-title">Green Line Records</div>
             <div class="job-role">Head of Creative Services</div>
             <div class="job-meta">Boston, MA — Oct 2025–Present</div>
@@ -4160,7 +4111,7 @@ function openFolder(f) {
               <li>Manage the @greenlinerecords social media pages</li>
             </ul>
           </div>
-          <div class="resume-entry"><div class="race-tag"><span class="mk-flag-icon"></span>RACE COMPLETE</div>
+          <div class="resume-entry">
             <div class="job-title">Enrico</div>
             <div class="job-role">Content Manager</div>
             <div class="job-meta">Boston, MA — Mar 2026–Present</div>
@@ -4169,7 +4120,7 @@ function openFolder(f) {
               <li>Filmed, edited, and scheduled content to grow audience engagement</li>
             </ul>
           </div>
-          <div class="resume-entry"><div class="race-tag"><span class="mk-flag-icon"></span>RACE COMPLETE</div>
+          <div class="resume-entry">
             <div class="job-title">Nas Nuvens Music Group</div>
             <div class="job-role">Finance Sector Intern</div>
             <div class="job-meta">São Paulo, Brazil — Jul–Aug 2025</div>
@@ -4179,7 +4130,7 @@ function openFolder(f) {
               <li>Presented financial findings in companywide meetings</li>
             </ul>
           </div>
-          <div class="resume-entry"><div class="race-tag"><span class="mk-flag-icon"></span>RACE COMPLETE</div>
+          <div class="resume-entry">
             <div class="job-title">Amazon Audible</div>
             <div class="job-role">Marketing Representative</div>
             <div class="job-meta">Paraty–Rio de Janeiro, Brazil — Aug 2025</div>
@@ -4187,7 +4138,7 @@ function openFolder(f) {
               <li>Promoted Audible at FLIP Literary Festival via attendee engagement and trial giveaways</li>
             </ul>
           </div>
-          <div class="resume-entry"><div class="race-tag"><span class="mk-flag-icon"></span>RACE COMPLETE</div>
+          <div class="resume-entry">
             <div class="job-title">Developing Minds Foundation</div>
             <div class="job-role">Fundraiser Intern, City of God Project</div>
             <div class="job-meta">Rio de Janeiro, Brazil — Summer 2023</div>
@@ -4197,7 +4148,7 @@ function openFolder(f) {
               <li>Raised $95,000 total, including a $30,000/year corporate grant</li>
             </ul>
           </div>
-          <div class="resume-entry"><div class="race-tag"><span class="mk-flag-icon"></span>RACE COMPLETE</div>
+          <div class="resume-entry">
             <div class="job-title">Tortoise and Volt Marketing & Ventures</div>
             <div class="job-role">Content Creator</div>
             <div class="job-meta">New York, NY — Summer 2024</div>
@@ -4206,7 +4157,7 @@ function openFolder(f) {
               <li>Filmed a Tequila production video on-site in Mexico for a fundraising campaign</li>
             </ul>
           </div>
-          <div class="resume-entry"><div class="race-tag"><span class="mk-flag-icon"></span>RACE COMPLETE</div>
+          <div class="resume-entry">
             <div class="job-title">The Herc NYC</div>
             <div class="job-role">Brand Associate</div>
             <div class="job-meta">New York, NY — Summer 2024</div>
@@ -4216,13 +4167,29 @@ function openFolder(f) {
             </ul>
           </div>
 
-          <h2><span class="mk-item-icon">?</span>Item Box</h2>
+          <h2>Skills</h2>
           <div class="resume-entry">
-            <div><strong>Language:</strong> English, Portuguese</div>
-            <div><strong>Video &amp; Photo:</strong> Premiere Pro, After Effects, Photoshop, Canva</div>
-            <div><strong>Computer:</strong> Google Suite, Microsoft Office Suite</div>
+            <div><strong>Language:</strong>
+              <div class="skill-pill-row">
+                <span class="skill-pill">English</span>
+                <span class="skill-pill">Portuguese</span>
+              </div>
+            </div>
+            <div style="margin-top:8px;"><strong>Video &amp; Photo:</strong>
+              <div class="skill-pill-row">
+                <span class="skill-pill">Premiere Pro</span>
+                <span class="skill-pill">After Effects</span>
+                <span class="skill-pill">Photoshop</span>
+                <span class="skill-pill">Canva</span>
+              </div>
+            </div>
+            <div style="margin-top:8px;"><strong>Computer:</strong>
+              <div class="skill-pill-row">
+                <span class="skill-pill">Google Suite</span>
+                <span class="skill-pill">Microsoft Office Suite</span>
+              </div>
+            </div>
           </div>
-          <div class="mk-stripe" style="margin-top:16px;"></div>
         </div>
       `,
       statusText: 'Resume'

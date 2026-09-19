@@ -3901,11 +3901,15 @@ function openCactusPromo() {
     left: window.innerWidth - 460,
     top: 60,
     bodyHTML: `
+      <style>
+        .cactus-listen-btn:active {
+          box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #fff !important;
+        }
+      </style>
       <div style="position:relative; width:100%; height:100%; background:#000;">
         <img src="media/cactus-enrico-cover.png" style="width:100%; height:100%; object-fit:cover; display:block;">
         <div style="position:absolute; bottom:0; left:0; right:0; display:flex;">
-          <button class="cactus-listen-btn" type="button" style="flex:1; padding:16px; background:#2196f3; color:#fff; border:none; font-family:inherit; font-size:14px; font-weight:bold; cursor:pointer;">Listen</button>
-          <button class="cactus-close-btn" type="button" style="flex:0 0 100px; padding:16px; background:#222; color:#fff; border:none; font-family:inherit; font-size:14px; cursor:pointer;">Close</button>
+          <button class="cactus-listen-btn" type="button" style="flex:1; padding:6px 8px; background:#c0c0c0; color:#000; border:none; box-shadow:inset -1px -1px 0 #000, inset 1px 1px 0 #fff; font-family:Tahoma, Verdana, Arial, sans-serif; font-size:12px; cursor:pointer;">Listen</button>
         </div>
       </div>
     `,
@@ -3914,9 +3918,6 @@ function openCactusPromo() {
 
   win.querySelector('.cactus-listen-btn').addEventListener('click', () => {
     window.open('PASTE_SPOTIFY_LINK_HERE', '_blank', 'noopener');
-  });
-  win.querySelector('.cactus-close-btn').addEventListener('click', () => {
-    closeWindow(win);
   });
 }
 

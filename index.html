@@ -3892,21 +3892,31 @@ function openDrumGame() {
 }
 
 function openCactusPromo() {
-  createWindow({
+  const win = createWindow({
     id: 'cactusPromo',
     title: 'CACTUS by enrico',
     glyph: '🌵',
-    width: 380,
-    height: 480,
-    left: 260,
-    top: 100,
+    width: 440,
+    height: 560,
+    left: window.innerWidth - 460,
+    top: 60,
     bodyHTML: `
-      <a href="PASTE_SPOTIFY_LINK_HERE" target="_blank" rel="noopener" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; background:#000; gap:14px; padding:14px; box-sizing:border-box; text-decoration:none;">
-        <img src="media/cactus-enrico-cover.png" style="max-width:100%; max-height:75%; object-fit:contain;">
-        <span style="color:#fff; font-family:inherit; text-align:center; font-size:13px;">Listen to CACTUS by enrico. Cover art by me.</span>
-      </a>
+      <div style="position:relative; width:100%; height:100%; background:#000;">
+        <img src="media/cactus-enrico-cover.png" style="width:100%; height:100%; object-fit:cover; display:block;">
+        <div style="position:absolute; bottom:0; left:0; right:0; display:flex;">
+          <button class="cactus-listen-btn" type="button" style="flex:1; padding:16px; background:#2196f3; color:#fff; border:none; font-family:inherit; font-size:14px; font-weight:bold; cursor:pointer;">Listen</button>
+          <button class="cactus-close-btn" type="button" style="flex:0 0 100px; padding:16px; background:#222; color:#fff; border:none; font-family:inherit; font-size:14px; cursor:pointer;">Close</button>
+        </div>
+      </div>
     `,
     statusText: 'CACTUS by enrico'
+  });
+
+  win.querySelector('.cactus-listen-btn').addEventListener('click', () => {
+    window.open('PASTE_SPOTIFY_LINK_HERE', '_blank', 'noopener');
+  });
+  win.querySelector('.cactus-close-btn').addEventListener('click', () => {
+    closeWindow(win);
   });
 }
 

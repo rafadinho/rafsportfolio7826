@@ -2649,7 +2649,7 @@
     border: none;
     box-shadow: inset -1px -1px 0 #000, inset 1px 1px 0 #fff;
     font-family: Tahoma, Verdana, Arial, sans-serif;
-    font-size: 11px;
+    font-size: 9px;
     font-weight: bold;
     cursor: pointer;
     z-index: 1;
@@ -2662,6 +2662,14 @@
       background: #8f0e17;
       color: #fff;
     }
+  }
+  #desktopMusicPlayer.music-minimized {
+    height: 22px;
+    padding: 3px 6px;
+    overflow: hidden;
+  }
+  #desktopMusicPlayer.music-minimized > *:not(#musicHideBtn) {
+    display: none;
   }
 
   #desktopMusicTitle {
@@ -2990,7 +2998,7 @@
 
 
   <div id="desktopMusicPlayer">
-    <button id="musicHideBtn" type="button" title="Hide">×</button>
+    <button id="musicHideBtn" type="button" title="Minimize">▼</button>
     <audio id="desktopMusicAudio" preload="metadata"></audio>
     <div class="blurb-bar">
       <button class="blurb-toggle" id="musicBlurbToggle" type="button" data-label="Blurb">Open Blurb</button>
@@ -5863,7 +5871,9 @@ startBtnEl.addEventListener('click', (e) => {
 
     if (hideBtn) {
       hideBtn.addEventListener("click", () => {
-        player.style.display = "none";
+        const minimized = player.classList.toggle("music-minimized");
+        hideBtn.textContent = minimized ? "▲" : "▼";
+        hideBtn.title = minimized ? "Restore" : "Minimize";
       });
     }
 

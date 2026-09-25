@@ -2636,6 +2636,34 @@
     color: #000;
   }
 
+  #musicHideBtn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 16px;
+    height: 16px;
+    line-height: 14px;
+    padding: 0;
+    background: #c0c0c0;
+    color: #000;
+    border: none;
+    box-shadow: inset -1px -1px 0 #000, inset 1px 1px 0 #fff;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1;
+  }
+  #musicHideBtn:active {
+    box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #fff;
+  }
+  @media (hover: hover) {
+    #musicHideBtn:hover {
+      background: #8f0e17;
+      color: #fff;
+    }
+  }
+
   #desktopMusicTitle {
     background: #070707;
     color: #ff3d3d;
@@ -2962,6 +2990,7 @@
 
 
   <div id="desktopMusicPlayer">
+    <button id="musicHideBtn" type="button" title="Hide">×</button>
     <audio id="desktopMusicAudio" preload="metadata"></audio>
     <div class="blurb-bar">
       <button class="blurb-toggle" id="musicBlurbToggle" type="button" data-label="Blurb">Open Blurb</button>
@@ -3907,7 +3936,7 @@ function openCactusPromo() {
         }
       </style>
       <div style="position:relative; width:100%; height:100%; background:#000;">
-        <img src="media/cactus-enrico-cover.png" style="width:100%; height:100%; object-fit:cover; display:block;">
+        <img src="media/cactus-enrico-cover.jpg" style="width:100%; height:100%; object-fit:cover; display:block;">
         <div style="position:absolute; bottom:0; left:0; right:0; display:flex;">
           <button class="cactus-listen-btn" type="button" style="flex:1; padding:6px 8px; background:#c0c0c0; color:#000; border:none; box-shadow:inset -1px -1px 0 #000, inset 1px 1px 0 #fff; font-family:Tahoma, Verdana, Arial, sans-serif; font-size:12px; cursor:pointer;">Listen</button>
         </div>
@@ -3917,7 +3946,7 @@ function openCactusPromo() {
   });
 
   win.querySelector('.cactus-listen-btn').addEventListener('click', () => {
-    window.open('PASTE_SPOTIFY_LINK_HERE', '_blank', 'noopener');
+    window.open('https://open.spotify.com/track/6divyu5qL3E9iwOOyN3qKg?si=bc9f4ec9dcda4b53', '_blank', 'noopener');
   });
 }
 
@@ -5828,8 +5857,15 @@ startBtnEl.addEventListener('click', (e) => {
     const mute = document.getElementById("desktopMusicMute");
     const volDownBtn = document.getElementById("desktopMusicVolDown");
     const volUpBtn = document.getElementById("desktopMusicVolUp");
+    const hideBtn = document.getElementById("musicHideBtn");
 
     if (!player || !audio) return;
+
+    if (hideBtn) {
+      hideBtn.addEventListener("click", () => {
+        player.style.display = "none";
+      });
+    }
 
     setupBlurbToggle(document.getElementById('musicBlurbToggle'), document.getElementById('musicBlurbPanel'), player);
     setupBlurbToggle(document.getElementById('musicPlaylistToggle'), document.getElementById('musicPlaylistPanel'), player);

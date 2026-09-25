@@ -2636,6 +2636,27 @@
     color: #000;
   }
 
+  #desktopMusicStation {
+    height: 22px;
+    line-height: 20px;
+    padding: 0 6px;
+    background: #070707;
+    color: #ff3d3d;
+    border: 1px solid #5c1111;
+    box-shadow: inset 1px 1px 3px #000, inset -1px -1px 0 #7a1b1b;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0.86;
+    filter: blur(0.15px);
+    text-shadow: 0 0 1px rgba(255, 70, 70, 0.95), 0 0 4px rgba(255, 35, 35, 0.55), 0 0 9px rgba(255, 25, 25, 0.20);
+    animation: radioDisplayFlicker 3.8s steps(1, end) infinite;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
   #musicHideBtn {
     position: absolute;
     top: 4px;
@@ -3003,6 +3024,7 @@
     <div class="blurb-bar">
       <button class="blurb-toggle" id="musicBlurbToggle" type="button" data-label="Blurb">Open Blurb</button>
       <button class="blurb-toggle" id="musicPlaylistToggle" type="button" data-label="Playlist">Open Playlist</button>
+      <button class="blurb-toggle" id="musicStationToggle" type="button">Change Station</button>
     </div>
     <div class="blurb-panel" id="musicBlurbPanel">
       <p id="musicBlurbText">Incredibly random assortment of my favorite songs!</p>
@@ -3017,6 +3039,7 @@
       <button id="desktopMusicPlay" type="button" title="Play / pause"></button>
       <button id="desktopMusicForward" type="button" title="Forward 5 seconds">5s »</button>
       <button id="desktopMusicNext" type="button" title="Next song">&gt;|</button>
+      <div id="desktopMusicStation">RAFADINHO.11 FM</div>
       <span id="desktopMusicTime">0:00 / 0:00</span>
     </div>
     <input id="desktopMusicSeek" type="range" min="0" max="0" value="0" step="0.01" title="Song progress">
@@ -4653,6 +4676,36 @@ bringToFront(videoWinEl);
 
 /* ---------------- MUSIC PLAYER WINDOW ---------------- */
 const EMBEDDED_TRACK_SRC = 'media/lifetimes-enrico-mix-1.mp3';
+const musicPlaylistStation2 = [
+  { title: 'THE SINGER IN MY BAND by This Is Lorelei', artist: '', src: 'media/the-singer-in-my-band-this-is-lorelei.mp3' },
+  { title: 'RESET by Jonah Paz, Adeline Bateman', artist: '', src: 'media/reset-jonah-paz-adeline-bateman.mp3' },
+  { title: "DON'T CRY by will rhead", artist: '', src: 'media/dont-cry-will-rhead.mp3' },
+  { title: 'SWIMMING by villagerrr', artist: '', src: 'media/swimming-villagerrr.mp3' },
+  { title: 'BILLY CAME BACK by This Is Lorelei', artist: '', src: 'media/billy-came-back-this-is-lorelei.mp3' },
+  { title: 'THUNDER ROAD by colin miller', artist: '', src: 'media/thunder-road-colin-miller.mp3' },
+  { title: 'SLOW SINKIN (FT. FIELD MEDIC) by beaming', artist: '', src: 'media/slow-sinkin-ft-field-medic-beaming.mp3' },
+  { title: 'JUST SHOOT ME NOW by Tracey Nelson', artist: '', src: 'media/just-shoot-me-now-tracey-nelson.mp3' },
+  { title: 'FLIP A COIN by Oscar Lindsey', artist: '', src: 'media/flip-a-coin-oscar-lindsey.mp3' },
+  { title: 'HANG ON THE WALL WHAT YOU KILL by emory', artist: '', src: 'media/hang-on-the-wall-what-you-kill-emory.mp3' },
+  { title: 'JINX by Ms Gloom', artist: '', src: 'media/jinx-ms-gloom.mp3' },
+  { title: 'COME AND CHANGE MY BODY by Greg Freeman', artist: '', src: 'media/come-and-change-my-body-greg-freeman.mp3' },
+  { title: 'POSITIVELY 4TH STREET by Bob Dylan', artist: '', src: 'media/positively-4th-street-bob-dylan.mp3' },
+  { title: '1000(1)000 ONE IN A MILLION by the man the myth the meatslap', artist: '', src: 'media/1000-1-000-one-in-a-million-the-man-the-myth-the-meatslap.mp3' },
+  { title: 'PARTLY GET BY by horse vision', artist: '', src: 'media/partly-get-by-horse-vision.mp3' },
+  { title: 'MOLLY IN THE CLUB by Sophia Stel', artist: '', src: 'media/molly-in-the-club-sophia-stel.mp3' },
+  { title: 'LOVE LOVE (LOVE LOVE) by daine', artist: '', src: 'media/love-love-love-love-daine.mp3' },
+  { title: 'ROUND HERE by earfzilla', artist: '', src: 'media/round-here-earfzilla.mp3' },
+  { title: 'THESE DAYS by Slow Pulp', artist: '', src: 'media/these-days-slow-pulp.mp3' },
+  { title: 'GOING UP STATE by Aches', artist: '', src: 'media/going-up-state-aches.mp3' },
+  { title: 'HOOPS by liam mccay', artist: '', src: 'media/hoops-liam-mccay.mp3' },
+  { title: 'TOUGH LUCK by Faerybabyy', artist: '', src: 'media/tough-luck-faerybabyy.mp3' },
+  { title: 'IF I WAS A FOLKSTAR by the avalanches', artist: '', src: 'media/if-i-was-a-folkstar-the-avalanches.mp3' },
+  { title: 'SECRETS by Hirakish', artist: '', src: 'media/secrets-hirakish.mp3' },
+  { title: "I HAVEN'T FORGOTTEN YOU by Born At Midnite", artist: '', src: 'media/i-havent-forgotten-you-born-at-midnite.mp3' },
+  { title: 'THE COPS ARE COMING by junior mesa', artist: '', src: 'media/the-cops-are-coming-junior-mesa.mp3' },
+  { title: "DARLIN' by Jean Dawson", artist: '', src: 'media/darlin-jean-dawson.mp3' },
+  { title: 'PROFANE BREAK by Chanel Beads', artist: '', src: 'media/profane-break-chanel-beads.mp3' }
+];
 const musicPlaylist = [
   { title: '11TH DIMENSION by Julian Casablancas', artist: '', src: 'media/11th-dimension-julian-casablancas.mp3' },
   { title: '1979 by Smashing Pumpkins', artist: '', src: 'media/1979-smashing-pumpkins.mp3' },
@@ -5896,7 +5949,7 @@ startBtnEl.addEventListener('click', (e) => {
 <script>
 /* ---------- DESKTOP MUSIC PLAYER CONTROLS ---------- */
 (function () {
-  const tracks = musicPlaylist;
+  let tracks = musicPlaylist;
 
   let index = musicIndex;
 
@@ -5945,7 +5998,8 @@ startBtnEl.addEventListener('click', (e) => {
     setupBlurbToggle(document.getElementById('musicPlaylistToggle'), document.getElementById('musicPlaylistPanel'), player);
 
     const miniPlaylistEl = document.getElementById('miniPlaylist');
-    if (miniPlaylistEl) {
+    function renderMiniPlaylist() {
+      if (!miniPlaylistEl) return;
       miniPlaylistEl.innerHTML = tracks.map((t, i) => `
         <div class="mini-track" data-idx="${i}">
           <span class="mini-track-name">${i + 1}. ${t.title}</span>
@@ -5973,6 +6027,30 @@ startBtnEl.addEventListener('click', (e) => {
         });
       });
     }
+    renderMiniPlaylist();
+
+    const stationToggleBtn = document.getElementById('musicStationToggle');
+    const stationLabelEl = document.getElementById('desktopMusicStation');
+    if (stationToggleBtn) {
+      stationToggleBtn.addEventListener('click', () => {
+        tracks = (tracks === musicPlaylist) ? musicPlaylistStation2 : musicPlaylist;
+        if (stationLabelEl) {
+          stationLabelEl.textContent = (tracks === musicPlaylist) ? 'RAFADINHO.11 FM' : 'BUBBALUI.007 FM';
+        }
+        musicHistory.length = 0;
+        renderMiniPlaylist();
+        loadTrack(0);
+        audio.play().catch(function () {});
+        update();
+        if (player.classList.contains('music-minimized')) {
+          player.classList.remove('music-minimized');
+          if (hideBtn) {
+            hideBtn.textContent = '▼';
+            hideBtn.title = 'Minimize';
+          }
+        }
+      });
+    }
 
     function updateMiniPlaylistActive() {
       if (!miniPlaylistEl) return;
@@ -5997,6 +6075,12 @@ startBtnEl.addEventListener('click', (e) => {
     }
 
     window.playDesktopRadioTrack = function (i) {
+      if (tracks !== musicPlaylist) {
+        tracks = musicPlaylist;
+        renderMiniPlaylist();
+        const stationLabelEl = document.getElementById('desktopMusicStation');
+        if (stationLabelEl) stationLabelEl.textContent = 'RAFADINHO.11 FM';
+      }
       musicHistory.push(index);
       loadTrack(i);
       audio.play().catch(function () {});
@@ -6011,6 +6095,10 @@ startBtnEl.addEventListener('click', (e) => {
     };
 
     window.toggleDesktopRadioTrack = function (i) {
+      if (tracks !== musicPlaylist) {
+        window.playDesktopRadioTrack(i);
+        return;
+      }
       if (index === i && audio.src && !audio.paused) {
         audio.pause();
       } else if (index === i && audio.src) {
@@ -6028,7 +6116,8 @@ startBtnEl.addEventListener('click', (e) => {
     };
 
     window.getDesktopRadioState = function (i) {
-      return { isThisTrack: index === i, playing: index === i && audio.src && !audio.paused };
+      const onStation1 = tracks === musicPlaylist;
+      return { isThisTrack: onStation1 && index === i, playing: onStation1 && index === i && audio.src && !audio.paused };
     };
 
     audio.addEventListener('play', () => window.dispatchEvent(new Event('desktop-radio-state')));

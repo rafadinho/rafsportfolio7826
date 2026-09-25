@@ -3939,21 +3939,84 @@ function openCactusPromo() {
     top: 60,
     bodyHTML: `
       <style>
-        .cactus-listen-btn:active {
-          box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #fff !important;
+        .cactus-listen-btn:active, .cactus-spotify-btn:active {
+          box-shadow: inset 1px 1px 0 #000, inset -1px -1px 0 #fff, inset 2px 2px 0 #808080, inset -2px -2px 0 #dfdfdf !important;
+        }
+        .cactus-outnow-bar {
+          background: #070707;
+          color: #ff3d3d;
+          border: 1px solid #5c1111;
+          box-shadow: inset 1px 1px 3px #000, inset -1px -1px 0 #7a1b1b;
+          height: 24px;
+          line-height: 22px;
+          padding: 0 9px;
+          font-family: 'Courier New', Courier, monospace;
+          font-weight: 700;
+          font-size: 12px;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          opacity: 0.86;
+          filter: blur(0.18px);
+          text-shadow: 0 0 1px rgba(255, 70, 70, 0.95), 0 0 4px rgba(255, 35, 35, 0.55), 0 0 9px rgba(255, 25, 25, 0.20);
+          animation: radioDisplayFlicker 3.8s steps(1, end) infinite;
+          white-space: nowrap;
+          overflow: hidden;
+          position: relative;
+          flex: 1;
+          display: flex;
+          align-items: center;
+        }
+        .cactus-outnow-track {
+          display: inline-flex;
+          white-space: nowrap;
+          animation: cactusOutNowScroll 9s linear infinite;
+        }
+        .cactus-outnow-track span {
+          padding-right: 36px;
+        }
+        @keyframes cactusOutNowScroll {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
       </style>
       <div style="position:relative; width:100%; height:100%; background:#000;">
         <img src="media/cactus-enrico-cover.jpg" style="width:100%; height:100%; object-fit:cover; display:block;">
-        <div style="position:absolute; bottom:0; left:0; right:0; display:flex;">
-          <button class="cactus-listen-btn" type="button" style="flex:1; padding:6px 8px; background:#c0c0c0; color:#000; border:none; box-shadow:inset -1px -1px 0 #000, inset 1px 1px 0 #fff; font-family:Tahoma, Verdana, Arial, sans-serif; font-size:12px; cursor:pointer;">Listen</button>
+        <div style="position:absolute; bottom:0; left:0; right:0; display:flex; align-items:center; gap:5px; padding:4px 6px; background:#c0c0c0; box-shadow: inset 0 1px 0 #fff;">
+          <button class="cactus-listen-btn" type="button" style="flex:0 0 42px; height:24px; padding:2px 7px; background:#c0c0c0; color:#000; border:none; box-shadow:inset -1px -1px 0 #000, inset 1px 1px 0 #fff, inset -2px -2px 0 #808080, inset 2px 2px 0 #dfdfdf; font-family:Tahoma, Verdana, Arial, sans-serif; font-size:13px; font-weight:bold; cursor:pointer;">▶</button>
+          <div class="cactus-outnow-bar"><div class="cactus-outnow-track"><span>OUT NOW&nbsp;|&nbsp;OUT NOW&nbsp;|&nbsp;OUT NOW&nbsp;|&nbsp;OUT NOW&nbsp;|&nbsp;</span><span>OUT NOW&nbsp;|&nbsp;OUT NOW&nbsp;|&nbsp;OUT NOW&nbsp;|&nbsp;OUT NOW&nbsp;|&nbsp;</span></div></div>
+          <button class="cactus-spotify-btn" type="button" style="flex:0 0 90px; padding:6px 8px; background:#c0c0c0; color:#000; border:none; box-shadow:inset -1px -1px 0 #000, inset 1px 1px 0 #fff; font-family:Tahoma, Verdana, Arial, sans-serif; font-size:12px; cursor:pointer;">Spotify</button>
         </div>
       </div>
     `,
     statusText: 'CACTUS by enrico'
   });
 
-  win.querySelector('.cactus-listen-btn').addEventListener('click', () => {
+  const CACTUS_SRC = 'media/cactus-enrico.mp3';
+  const listenBtn = win.querySelector('.cactus-listen-btn');
+
+  function refreshCactusListenBtn() {
+    if (!window.getDesktopRadioState) return;
+    const idx = musicPlaylist.findIndex(song => song.src === CACTUS_SRC);
+    const state = window.getDesktopRadioState(idx);
+    listenBtn.textContent = state.playing ? '⏸' : '▶';
+  }
+
+  listenBtn.addEventListener('click', () => {
+    const idx = musicPlaylist.findIndex(song => song.src === CACTUS_SRC);
+    if (idx !== -1 && window.toggleDesktopRadioTrack) {
+      window.toggleDesktopRadioTrack(idx);
+    }
+  });
+  window.addEventListener('desktop-radio-state', refreshCactusListenBtn);
+  refreshCactusListenBtn();
+  const cactusCloseBtn = win.querySelector('[data-act="close"]');
+  if (cactusCloseBtn) {
+    cactusCloseBtn.addEventListener('click', () => {
+      window.removeEventListener('desktop-radio-state', refreshCactusListenBtn);
+    }, { once: true });
+  }
+
+  win.querySelector('.cactus-spotify-btn').addEventListener('click', () => {
     window.open('https://open.spotify.com/track/6divyu5qL3E9iwOOyN3qKg?si=bc9f4ec9dcda4b53', '_blank', 'noopener');
   });
 }
@@ -4611,6 +4674,7 @@ const musicPlaylist = [
   { title: 'BRAVE by Momma', artist: '', src: 'media/brave-momma.mp3' },
   { title: 'BROOKLYN BRIDGE TO CHORUS by The Strokes', artist: '', src: 'media/brooklyn-bridge-to-chorus-the-strokes.mp3' },
   { title: 'BUTTERFLY by Beno', artist: '', src: 'media/butterfly-beno.mp3' },
+  { title: 'CACTUS by enrico', artist: '', src: 'media/cactus-enrico.mp3' },
   { title: 'CAN WE JUST FORGET by baileyrp', artist: '', src: 'media/can-we-just-forget-baileyrp.mp3' },
   { title: 'CAN YOU HEAR THE WHISTLE BLOW by 缺省', artist: '', src: 'media/can-you-hear-the-whistle-blow-quesheng.mp3' },
   { title: 'CHANGE IS IN THE AIR by Jesse Welles', artist: '', src: 'media/change-is-in-the-air-jesse-welles.mp3' },
@@ -5931,6 +5995,45 @@ startBtnEl.addEventListener('click', (e) => {
       recordPlay(index);
       update();
     }
+
+    window.playDesktopRadioTrack = function (i) {
+      musicHistory.push(index);
+      loadTrack(i);
+      audio.play().catch(function () {});
+      update();
+      if (player.classList.contains('music-minimized')) {
+        player.classList.remove('music-minimized');
+        if (hideBtn) {
+          hideBtn.textContent = '▼';
+          hideBtn.title = 'Minimize';
+        }
+      }
+    };
+
+    window.toggleDesktopRadioTrack = function (i) {
+      if (index === i && audio.src && !audio.paused) {
+        audio.pause();
+      } else if (index === i && audio.src) {
+        audio.play().catch(function () {});
+        if (player.classList.contains('music-minimized')) {
+          player.classList.remove('music-minimized');
+          if (hideBtn) {
+            hideBtn.textContent = '▼';
+            hideBtn.title = 'Minimize';
+          }
+        }
+      } else {
+        window.playDesktopRadioTrack(i);
+      }
+    };
+
+    window.getDesktopRadioState = function (i) {
+      return { isThisTrack: index === i, playing: index === i && audio.src && !audio.paused };
+    };
+
+    audio.addEventListener('play', () => window.dispatchEvent(new Event('desktop-radio-state')));
+    audio.addEventListener('pause', () => window.dispatchEvent(new Event('desktop-radio-state')));
+    audio.addEventListener('ended', () => window.dispatchEvent(new Event('desktop-radio-state')));
 
     function update() {
       const duration = Number.isFinite(audio.duration) ? audio.duration : 0;

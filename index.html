@@ -4048,10 +4048,33 @@ function openCactusPromo() {
   });
 }
 
+let imgViewerIndex = 0;
+
+function updateImageViewerContent(win, index) {
+  imgViewerIndex = (index + designWorkImages.length) % designWorkImages.length;
+  const img = designWorkImages[imgViewerIndex];
+
+  const titleTextEl = win.querySelector('.titlebar .title span:last-child');
+  if (titleTextEl) titleTextEl.textContent = img.cap;
+  const titleIconEl = win.querySelector('.title-icon');
+  if (titleIconEl) titleIconEl.innerHTML = getTitleIconSVG('🖼️', img.cap);
+
+  const imgEl = win.querySelector('.imgview-photo');
+  if (imgEl) imgEl.src = img.src;
+
+  const statusEl = win.querySelector('.win-status');
+  if (statusEl) statusEl.textContent = img.cap;
+
+  const blurbPanelP = win.querySelector('.blurb-panel p');
+  if (blurbPanelP) blurbPanelP.textContent = img.blurb || `Add two sentences about "${img.cap}" here.`;
+
+  addTaskbarItem('imgviewer', img.cap);
+}
+
 function openImageViewer(index) {
   const img = designWorkImages[index];
-  createWindow({
-    id: 'imgview-' + index,
+  const win = createWindow({
+    id: 'imgviewer',
     title: img.cap,
     glyph: '🖼️',
     width: 620,
@@ -4059,13 +4082,29 @@ function openImageViewer(index) {
     left: 180 + Math.random() * 60,
     top: 50 + Math.random() * 40,
     bodyHTML: `
-      <div style="display:flex; align-items:center; justify-content:center; height:100%; background:#000;">
-        <img src="${img.src}" style="max-width:100%; max-height:100%; object-fit:contain;">
+      <div style="position:relative; display:flex; align-items:center; justify-content:center; height:100%; background:#000;">
+        <img class="imgview-photo" src="${img.src}" style="max-width:100%; max-height:100%; object-fit:contain;">
+        <button class="vid-arrow left" id="imgViewPrev" type="button" title="Previous">‹</button>
+        <button class="vid-arrow right" id="imgViewNext" type="button" title="Next">›</button>
       </div>
     `,
     statusText: img.cap,
     blurbText: img.blurb || `Add two sentences about "${img.cap}" here.`
   });
+
+  updateImageViewerContent(win, index);
+
+  if (!win.dataset.navBound) {
+    win.dataset.navBound = 'true';
+    win.querySelector('#imgViewPrev').addEventListener('click', (e) => {
+      e.stopPropagation();
+      updateImageViewerContent(win, imgViewerIndex - 1);
+    });
+    win.querySelector('#imgViewNext').addEventListener('click', (e) => {
+      e.stopPropagation();
+      updateImageViewerContent(win, imgViewerIndex + 1);
+    });
+  }
 }
 
 function openUziShortVideos() {

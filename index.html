@@ -3139,6 +3139,7 @@ designWorkImages.push({ src: 'media/blue-mountain-night.jpg', cap: 'Blue Mountai
 designWorkImages.push({ src: 'media/sepia-mountain-night.jpg', cap: 'Warm Mountain Night', blurb: 'Vibe I went for: quiet, starry, warm dust.' });
 designWorkImages.push({ src: 'media/orchid-horse.jpg', cap: 'Orchid Horse', blurb: 'Vibe I went for: violet and green, strange and electric.' });
 designWorkImages.push({ src: 'media/lorelei-tsimb1.png', cap: 'lorelei-tsimb1', blurb: "Poster for This is Lorelei's album 'The Singer In My Band'" });
+designWorkImages.push({ src: 'media/crawl.png', cap: 'crawl', blurb: 'Just something i made for fun. Silhouette from a sci-fi magazine.' });
 
 const videoPlaylist = [
   { src: 'media/key-found-concert-1.mp4', caption: "Key Found 'Helpit' Edit", blurb: 'Premiere Pro edit for band Key Found.' },
@@ -6031,23 +6032,54 @@ startBtnEl.addEventListener('click', (e) => {
 
     const stationToggleBtn = document.getElementById('musicStationToggle');
     const stationLabelEl = document.getElementById('desktopMusicStation');
-    if (stationToggleBtn) {
-      stationToggleBtn.addEventListener('click', () => {
-        tracks = (tracks === musicPlaylist) ? musicPlaylistStation2 : musicPlaylist;
+    let currentStation = 'station1';
+
+    function goToStation(key) {
+      if (key === 'secret') {
+        currentStation = 'secret';
+        if (stationLabelEl) stationLabelEl.textContent = 'PLUTO.025 FM';
+        if (window.__enterSecretPlaylist) window.__enterSecretPlaylist();
+      } else {
+        currentStation = key;
+        tracks = (key === 'station2') ? musicPlaylistStation2 : musicPlaylist;
         if (stationLabelEl) {
-          stationLabelEl.textContent = (tracks === musicPlaylist) ? 'RAFADINHO.11 FM' : 'BUBBALUI.007 FM';
+          stationLabelEl.textContent = (key === 'station2') ? 'BUBBALUI.007 FM' : 'RAFADINHO.11 FM';
         }
         musicHistory.length = 0;
         renderMiniPlaylist();
         loadTrack(0);
         audio.play().catch(function () {});
         update();
-        if (player.classList.contains('music-minimized')) {
-          player.classList.remove('music-minimized');
-          if (hideBtn) {
-            hideBtn.textContent = '▼';
-            hideBtn.title = 'Minimize';
-          }
+      }
+      if (player.classList.contains('music-minimized')) {
+        player.classList.remove('music-minimized');
+        if (hideBtn) {
+          hideBtn.textContent = '▼';
+          hideBtn.title = 'Minimize';
+        }
+      }
+    }
+
+    // Exposed so the secret Uzi mode script can sync the station label/state
+    // when it auto-enters/exits, without duplicating the switching logic here.
+    window.__setStation = goToStation;
+    window.__getStationKey = () => currentStation;
+    window.__setStationBookkeepingOnly = function (key) {
+      currentStation = key;
+      tracks = (key === 'station2') ? musicPlaylistStation2 : musicPlaylist;
+      if (stationLabelEl) {
+        stationLabelEl.textContent = (key === 'station2') ? 'BUBBALUI.007 FM' : 'RAFADINHO.11 FM';
+      }
+    };
+
+    if (stationToggleBtn) {
+      stationToggleBtn.addEventListener('click', () => {
+        if (window.secretTrackMode) {
+          const order = ['station1', 'station2', 'secret'];
+          const idx = order.indexOf(currentStation);
+          goToStation(order[(idx + 1) % order.length]);
+        } else {
+          goToStation(currentStation === 'station1' ? 'station2' : 'station1');
         }
       });
     }
@@ -6077,8 +6109,8 @@ startBtnEl.addEventListener('click', (e) => {
     window.playDesktopRadioTrack = function (i) {
       if (tracks !== musicPlaylist) {
         tracks = musicPlaylist;
+        currentStation = 'station1';
         renderMiniPlaylist();
-        const stationLabelEl = document.getElementById('desktopMusicStation');
         if (stationLabelEl) stationLabelEl.textContent = 'RAFADINHO.11 FM';
       }
       musicHistory.push(index);
@@ -7226,6 +7258,7 @@ function playObnoxiousClickIfEnabled() {
     };
 
     window.secretTrackMode = true;
+    window.__preSecretStationKey = window.__getStationKey ? window.__getStationKey() : 'station1';
     const html = document.documentElement;
     if (!html.dataset.uziDesktopColor) {
       html.dataset.uziDesktopColor = 'pink';
@@ -7236,11 +7269,14 @@ function playObnoxiousClickIfEnabled() {
     document.getElementById("startMenu")?.classList.add("hidden");
     if (blurb) blurb.textContent = "All Lil Uzi Vert. Type rafael1021 again to skip to the next track.";
 
-    renderSecretPlaylist();
     showSecretBackground(4);
-
-    secretIndex = Math.floor(Math.random() * SECRET_TRACKS.length);
-    playSecretTrack(secretIndex);
+    if (window.__setStation) {
+      window.__setStation('secret');
+    } else {
+      renderSecretPlaylist();
+      secretIndex = Math.floor(Math.random() * SECRET_TRACKS.length);
+      playSecretTrack(secretIndex);
+    }
   }
 
   function playSecretTrack(index) {
@@ -7262,6 +7298,12 @@ function playObnoxiousClickIfEnabled() {
     clearVisiblePlaylistHighlighting();
     updateSecretPlaylistHighlighting();
   }
+
+  window.__enterSecretPlaylist = function () {
+    renderSecretPlaylist();
+    secretIndex = Math.floor(Math.random() * SECRET_TRACKS.length);
+    playSecretTrack(secretIndex);
+  };
 
   function exitSecretMode() {
     if (!window.secretTrackMode) return;
@@ -7312,6 +7354,10 @@ function playObnoxiousClickIfEnabled() {
 
     normalAudioState = null;
     secretIndex = -1;
+
+    if (window.__setStationBookkeepingOnly) {
+      window.__setStationBookkeepingOnly(window.__preSecretStationKey || 'station1');
+    }
   }
 
   window.playNextSecretTrack = function () {

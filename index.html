@@ -3140,6 +3140,9 @@ designWorkImages.push({ src: 'media/sepia-mountain-night.jpg', cap: 'Warm Mounta
 designWorkImages.push({ src: 'media/orchid-horse.jpg', cap: 'Orchid Horse', blurb: 'Vibe I went for: violet and green, strange and electric.' });
 designWorkImages.push({ src: 'media/lorelei-tsimb1.png', cap: 'lorelei-tsimb1', blurb: "Poster for This is Lorelei's album 'The Singer In My Band'" });
 designWorkImages.push({ src: 'media/crawl.png', cap: 'crawl', blurb: 'Just something i made for fun. Silhouette from a sci-fi magazine.' });
+designWorkImages.push({ src: 'media/tsimbnavy.png', cap: 'tsimbnavy', blurb: '' });
+designWorkImages.push({ src: 'media/tsimbblood.png', cap: 'tsimbblood', blurb: '' });
+designWorkImages.push({ src: 'media/tismbred.png', cap: 'tismbred', blurb: '' });
 
 const videoPlaylist = [
   { src: 'media/key-found-concert-1.mp4', caption: "Key Found 'Helpit' Edit", blurb: 'Premiere Pro edit for band Key Found.' },
@@ -5989,9 +5992,17 @@ startBtnEl.addEventListener('click', (e) => {
 
     if (hideBtn) {
       hideBtn.addEventListener("click", () => {
+        const willMinimize = !player.classList.contains("music-minimized");
+        if (willMinimize) {
+          // Close any open Blurb/Playlist panel first so the leftover inline
+          // height it set (to fit the expanded panel) doesn't override the
+          // collapsed-bar height and leave a tall empty grey box.
+          player.querySelectorAll('.blurb-toggle.open').forEach(btn => btn.click());
+        }
         const minimized = player.classList.toggle("music-minimized");
         hideBtn.textContent = minimized ? "▲" : "▼";
         hideBtn.title = minimized ? "Restore" : "Minimize";
+        player.style.height = "";
       });
     }
 

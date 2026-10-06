@@ -4750,7 +4750,7 @@ const musicPlaylistStation2 = [
   { title: 'LOVE LOVE (LOVE LOVE) by daine', artist: '', src: 'media/love-love-love-love-daine.mp3' },
   { title: 'ROUND HERE by earfzilla', artist: '', src: 'media/round-here-earfzilla.mp3' },
   { title: 'THESE DAYS by Slow Pulp', artist: '', src: 'media/these-days-slow-pulp.mp3' },
-  { title: 'GOING UP STATE by Aches', artist: '', src: 'media/going-up-state-aches.mp3' },
+  { title: 'ACHES by Going Up State', artist: '', src: 'media/going-up-state-aches.mp3' },
   { title: 'HOOPS by liam mccay', artist: '', src: 'media/hoops-liam-mccay.mp3' },
   { title: 'TOUGH LUCK by Faerybabyy', artist: '', src: 'media/tough-luck-faerybabyy.mp3' },
   { title: 'IF I WAS A FOLKSTAR by the avalanches', artist: '', src: 'media/if-i-was-a-folkstar-the-avalanches.mp3' },
@@ -4758,7 +4758,8 @@ const musicPlaylistStation2 = [
   { title: "I HAVEN'T FORGOTTEN YOU by Born At Midnite", artist: '', src: 'media/i-havent-forgotten-you-born-at-midnite.mp3' },
   { title: 'THE COPS ARE COMING by junior mesa', artist: '', src: 'media/the-cops-are-coming-junior-mesa.mp3' },
   { title: "DARLIN' by Jean Dawson", artist: '', src: 'media/darlin-jean-dawson.mp3' },
-  { title: 'PROFANE BREAK by Chanel Beads', artist: '', src: 'media/profane-break-chanel-beads.mp3' }
+  { title: 'PROFANE BREAK by Chanel Beads', artist: '', src: 'media/profane-break-chanel-beads.mp3' },
+  { title: 'MANIFESTER by Loukeman', artist: '', src: 'media/manifester-loukeman.mp3' }
 ];
 const musicPlaylist = [
   { title: '11TH DIMENSION by Julian Casablancas', artist: '', src: 'media/11th-dimension-julian-casablancas.mp3' },
@@ -5322,6 +5323,7 @@ if (bootLoadingBarEl) {
 
 if (bootStartBtnEl && bootScreenEl) {
   bootStartBtnEl.addEventListener('click', () => {
+    if (window.startDesktopMusic) window.startDesktopMusic();
     bootStartBtnEl.style.display = 'none';
     if (bootLoadingBarEl) bootLoadingBarEl.classList.add('active');
     if (bootLoadingTextEl) bootLoadingTextEl.classList.add('active');
@@ -6156,7 +6158,8 @@ startBtnEl.addEventListener('click', (e) => {
       });
     }
 
-    audio.volume = 0.02;
+    // Desktop browsers honor this; iPhones ignore it and play at full volume.
+    audio.volume = 0.3;
 
     function loadTrack(i) {
       index = (i + tracks.length) % tracks.length;
@@ -6298,7 +6301,7 @@ startBtnEl.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         audio.muted = false;
-        audio.volume = Math.max(0, Math.round((audio.volume - 0.01) * 100) / 100);
+        audio.volume = Math.max(0, Math.round((audio.volume - 0.05) * 100) / 100);
         update();
       };
     }
@@ -6308,7 +6311,7 @@ startBtnEl.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         audio.muted = false;
-        audio.volume = Math.min(1, Math.round((audio.volume + 0.01) * 100) / 100);
+        audio.volume = Math.min(1, Math.round((audio.volume + 0.05) * 100) / 100);
         update();
       };
     }
@@ -6326,6 +6329,25 @@ startBtnEl.addEventListener('click', (e) => {
       loadTrack(pickRandomTrackIndex(index, tracks.length));
       audio.play().catch(function () {});
     });
+
+    // If a song file fails to load (missing or misnamed mp3), skip to another
+    // one instead of sitting there silently. Capped so a bad connection
+    // can't loop forever.
+    let consecutiveErrors = 0;
+    audio.addEventListener("error", function () {
+      if (window.secretTrackMode) return;
+      consecutiveErrors++;
+      console.warn("Could not load track:", tracks[index] && tracks[index].src);
+      if (consecutiveErrors > 5) return;
+      loadTrack(pickRandomTrackIndex(index, tracks.length));
+      audio.play().catch(function () {});
+    });
+    audio.addEventListener("playing", function () { consecutiveErrors = 0; });
+
+    // PRESS START is a real click, so browsers allow sound to start here.
+    window.startDesktopMusic = function () {
+      if (audio.paused) audio.play().catch(function () {});
+    };
 
     loadTrack(index);
     player.style.display = "block";

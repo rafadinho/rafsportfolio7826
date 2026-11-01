@@ -10,19 +10,15 @@
   @import url('https://cdn.jsdelivr.net/npm/@fontsource/dseg7-classic@5.2.5/index.css');
   * { box-sizing: border-box; user-select: none; }
 
-  /* ---------- 8-BIT BOOT SCREEN (fall festival) ---------- */
+  /* ---------- 8-BIT BOOT SCREEN (quiet winter evening) ---------- */
   #bootScreen {
     position: fixed;
     inset: 0;
     z-index: 99999;
-    /* Banded 8-bit dusk: hard color stops instead of a smooth gradient */
     background: linear-gradient(to bottom,
-      #160c28 0%,  #160c28 30%,
-      #22113a 30%, #22113a 50%,
-      #34163f 50%, #34163f 64%,
-      #4f1c3c 64%, #4f1c3c 74%,
-      #742a2c 74%, #742a2c 81%,
-      #a3421f 81%, #a3421f 86%);
+      #6f7fc0 0%,  #6f7fc0 45%,
+      #7d8dca 45%, #7d8dca 70%,
+      #8c9bd0 70%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -35,161 +31,119 @@
     inset: 0;
     background: repeating-linear-gradient(
       to bottom,
-      rgba(255,255,255,0.05) 0px,
-      rgba(255,255,255,0.05) 1px,
+      rgba(255,255,255,0.04) 0px,
+      rgba(255,255,255,0.04) 1px,
       transparent 1px,
       transparent 3px
     );
     pointer-events: none;
     z-index: 6;
   }
-  #bootScreen.hidden {
-    display: none;
+  #bootScreen.hidden { display: none; }
+  /* Alternate day: fall/winter — dusky amber sky, same snowy ground */
+  #bootScreen.scene-fall {
+    background: linear-gradient(to bottom,
+      #4f4170 0%,  #4f4170 45%,
+      #6e4f72 45%, #6e4f72 70%,
+      #9a6670 70%);
   }
-  #bootStars, #bootLeaves, #bootLights {
+  #bootScreen.scene-fall #bootHill { --bank: #d8cfe0; }
+  #bootScreen.scene-fall #bootTitle,
+  #bootScreen.scene-fall #bootStartBtn { --shadow: #2a1d3c; }
+  #bootTitle, #bootStartBtn { --shadow: #2c3466; }
+  .boot-pumpkin {
+    position: absolute;
+    bottom: calc(12% - 4px);
+    z-index: 4;
+    transform: translateX(-50%);
+  }
+  .boot-pumpkin svg { display: block; }
+  #bootSnow {
     position: absolute;
     inset: 0;
     pointer-events: none;
+    z-index: 5;
   }
-  #bootStars  { z-index: 1; }
-  #bootLights { z-index: 4; }
-  #bootLeaves { z-index: 5; }
-  .pixel-star {
-    position: absolute;
-    animation: pixelTwinkle ease-in-out infinite;
-  }
-  @keyframes pixelTwinkle {
-    0%, 100% { opacity: 0.15; }
-    50% { opacity: 0.9; }
-  }
-  #bootMoon {
-    position: absolute;
-    top: 22%;
-    right: 10%;
-    z-index: 1;
-    filter: drop-shadow(0 0 18px rgba(246, 196, 98, 0.55));
-  }
-  #bootMoon svg, .boot-pumpkin svg { display: block; }
-  /* Ground strip with a stepped grass edge */
-  #bootGround {
+  /* Far hill and near snowbank, each with a stepped pixel edge */
+  .boot-bank {
     position: absolute;
     left: 0; right: 0; bottom: 0;
-    height: 14%;
-    background: #2a1a10;
     z-index: 2;
   }
-  #bootGround::before {
+  .boot-bank::before {
     content: "";
     position: absolute;
     left: 0; right: 0; top: -8px;
     height: 8px;
-    background:
-      linear-gradient(to right, #3b2614 50%, transparent 50%) 0 4px / 16px 4px repeat-x,
-      linear-gradient(#3b2614, #3b2614) 0 4px / 100% 4px no-repeat;
+    background: linear-gradient(to right, var(--bank) 50%, transparent 50%) 0 0 / 24px 4px repeat-x,
+                linear-gradient(var(--bank), var(--bank)) 0 4px / 100% 4px no-repeat;
   }
-  #bootPumpkins {
+  #bootHill { --bank: #c9d3ef; background: var(--bank); height: 20%; }
+  #bootBank { --bank: #f4f6fc; background: var(--bank); height: 12%; z-index: 3; }
+  #bootTree {
     position: absolute;
-    left: 0; right: 0; bottom: calc(100% - 10px);
-    height: 0;
+    left: 14%;
+    bottom: calc(12% - 4px);
+    z-index: 4;
   }
-  .boot-pumpkin {
+  #bootTree svg { display: block; }
+  .boot-tree-light { animation: treeLight 1.8s steps(1) infinite; }
+  @keyframes treeLight {
+    0%, 55% { opacity: 1; }
+    56%, 100% { opacity: 0.3; }
+  }
+  .boot-flake {
     position: absolute;
-    bottom: 0;
-    transform: translateX(-50%);
+    top: -12px;
+    animation: flakeFall linear infinite;
   }
-  .boot-pumpkin.lit svg {
-    filter: drop-shadow(0 0 10px rgba(255, 150, 40, 0.6));
-  }
-  .boot-wire-dot {
-    position: absolute;
-    width: 3px; height: 3px;
-    background: #6b5a7a;
-  }
-  .boot-bulb {
-    position: absolute;
-    width: 8px; height: 11px;
-    margin-left: -4px;
-    background: var(--bulb);
-    box-shadow: 0 0 10px 2px var(--bulb);
-    animation: bulbChase 1.6s steps(1) infinite;
-  }
-  .boot-bulb::before {
-    content: "";
-    position: absolute;
-    top: -4px; left: 2px;
-    width: 4px; height: 4px;
-    background: #6b5a7a;
-  }
-  @keyframes bulbChase {
-    0%, 60%   { opacity: 1; }
-    61%, 100% { opacity: 0.35; box-shadow: none; }
-  }
-  .boot-leaf {
-    position: absolute;
-    top: -20px;
-    animation: leafFall linear infinite;
-  }
-  .boot-leaf > i {
+  .boot-flake > i {
     display: block;
-    background: var(--leaf);
-    animation: leafSway steps(4) infinite alternate;
+    background: #fff;
+    animation: flakeSway steps(3) infinite alternate;
   }
-  @keyframes leafFall {
+  @keyframes flakeFall {
     from { transform: translateY(0); }
     to   { transform: translateY(110vh); }
   }
-  @keyframes leafSway {
-    from { transform: translateX(-14px); }
-    to   { transform: translateX(14px); }
+  @keyframes flakeSway {
+    from { transform: translateX(-6px); }
+    to   { transform: translateX(6px); }
   }
   #bootContent {
     position: relative;
     z-index: 7;
     text-align: center;
     font-family: 'Press Start 2P', monospace;
-    color: #fff4dc;
+    color: #fff;
     margin-top: -6vh;
   }
   #bootTitle {
     font-size: 28px;
     line-height: 1.6;
-    color: #fff4dc;
-    --blink-color: #e8741e;
-    text-shadow:
-      3px 3px 0 var(--blink-color),
-      6px 6px 0 #120a1c;
+    color: #fff;
+    text-shadow: 3px 3px 0 var(--shadow);
     margin-bottom: 48px;
     letter-spacing: 1px;
-    animation: bootTitleBlink 2.4s steps(1) infinite;
-  }
-  @keyframes bootTitleBlink {
-    0%   { --blink-color: #e8741e; }
-    25%  { --blink-color: #f5c518; }
-    50%  { --blink-color: #c1481f; }
-    75%  { --blink-color: #8a9a2b; }
-    100% { --blink-color: #e8741e; }
   }
   #bootStartBtn {
     display: inline-block;
     font-size: 16px;
     padding: 14px 24px;
-    color: #fff4dc;
-    background: rgba(18, 10, 28, 0.55);
-    border: 3px solid #fff4dc;
+    color: #fff;
+    border: 3px solid #fff;
+    box-shadow: 3px 3px 0 var(--shadow);
     cursor: pointer;
     letter-spacing: 2px;
-    animation: bootBlinkColor 0.8s steps(1) infinite;
+    animation: bootBlink 1.2s steps(1) infinite;
   }
   #bootStartBtn:active {
     transform: translate(2px, 2px);
-  }
-  @keyframes bootBlinkColor {
-    0%, 50% { color: #fff4dc; border-color: #fff4dc; }
-    51%, 100% { color: #f5a623; border-color: #f5a623; }
+    box-shadow: 1px 1px 0 var(--shadow);
   }
   @keyframes bootBlink {
     0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0.25; }
+    51%, 100% { opacity: 0.35; }
   }
   #bootLoadingBar {
     display: none;
@@ -197,18 +151,14 @@
     justify-content: center;
     margin: 0 0 18px;
   }
-  #bootLoadingBar.active {
-    display: flex;
-  }
+  #bootLoadingBar.active { display: flex; }
   .boot-square {
     width: 18px;
     height: 18px;
-    border: 2px solid #fff4dc;
+    border: 2px solid #fff;
     background: transparent;
   }
-  .boot-square.filled {
-    background: #e8741e;
-  }
+  .boot-square.filled { background: #fff; }
   #bootLoadingText {
     display: none;
     font-size: 10px;
@@ -216,19 +166,17 @@
     margin-bottom: 18px;
     animation: bootBlink 0.6s steps(1) infinite;
   }
-  #bootLoadingText.active {
-    display: block;
-  }
+  #bootLoadingText.active { display: block; }
   @media (max-width: 480px) {
     #bootTitle { font-size: 20px; margin-bottom: 32px; }
     #bootStartBtn { font-size: 12px; padding: 12px 18px; }
     .boot-square { width: 14px; height: 14px; }
-    #bootMoon { top: 20%; right: 6%; transform: scale(0.7); transform-origin: top right; }
+    #bootTree { left: 8%; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .boot-leaf, .boot-leaf > i, .boot-bulb, .pixel-star,
-    #bootTitle, #bootStartBtn, #bootLoadingText { animation: none; }
-    .boot-leaf { display: none; }
+    .boot-flake, .boot-flake > i, .boot-tree-light,
+    #bootStartBtn, #bootLoadingText { animation: none; }
+    .boot-flake { display: none; }
   }
   html, body {
     margin: 0; padding: 0; height: 100%; overflow: hidden;
@@ -2931,11 +2879,7 @@
   }
 
   #desktopMusicTime {
-    margin-left: auto;
-    min-width: 78px;
-    text-align: right;
-    font-size: 11px;
-    white-space: nowrap;
+    display: none !important;
   }
 
   #desktopMusicSeek {
@@ -3014,11 +2958,10 @@
 <body>
 
 <div id="bootScreen">
-  <div id="bootStars"></div>
-  <div id="bootMoon"></div>
-  <div id="bootGround"><div id="bootPumpkins"></div></div>
-  <div id="bootLights"></div>
-  <div id="bootLeaves"></div>
+  <div class="boot-bank" id="bootHill"></div>
+  <div class="boot-bank" id="bootBank"></div>
+  <div id="bootTree"></div>
+  <div id="bootSnow"></div>
   <div id="bootContent">
     <div id="bootTitle">RAF'S<br>PORTFOLIO</div>
     <div id="bootStartBtn">PRESS START</div>
@@ -5400,138 +5343,102 @@ const bootLoadingTextEl = document.getElementById('bootLoadingText');
 const bootStarsEl = document.getElementById('bootStars');
 const BOOT_SQUARE_COUNT = 10;
 
-// ---- Fall festival scene: stars, harvest moon, string lights, pumpkins, leaves ----
+// ---- Quiet winter evening: falling snow and one small lit pine ----
 // Builds a crisp pixel-art SVG from rows of characters (one char = one pixel).
-function bootPixelSVG(rows, palette, px) {
+// Pixels marked with a light color get a blink class.
+function bootPixelSVG(rows, palette, px, blinkKeys) {
   const h = rows.length, w = rows[0].length;
   let rects = '';
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       const c = rows[y][x];
-      if (palette[c]) rects += `<rect x="${x}" y="${y}" width="1" height="1" fill="${palette[c]}"/>`;
+      if (!palette[c]) continue;
+      const blink = blinkKeys && blinkKeys.includes(c);
+      const delay = blink ? ` style="animation-delay:${((x + y) % 3) * 0.6}s"` : '';
+      rects += `<rect x="${x}" y="${y}" width="1" height="1" fill="${palette[c]}"${blink ? ' class="boot-tree-light"' + delay : ''}/>`;
     }
   }
   return `<svg width="${w * px}" height="${h * px}" viewBox="0 0 ${w} ${h}" shape-rendering="crispEdges" aria-hidden="true">${rects}</svg>`;
 }
 
+// The start screen alternates every day: winter, then fall/winter, then winter...
+// Based on the visitor's local date, so it flips at their midnight.
+const bootToday = new Date();
+const bootDayNumber = Math.floor(Date.UTC(bootToday.getFullYear(), bootToday.getMonth(), bootToday.getDate()) / 86400000);
+const BOOT_SCENE = bootDayNumber % 2 === 0 ? 'winter' : 'fall';
+if (bootScreenEl && BOOT_SCENE === 'fall') bootScreenEl.classList.add('scene-fall');
+
+const BOOT_PINE = [
+  '.....y.....',
+  '.....g.....',
+  '....wgg....',
+  '...ggrgg...',
+  '....wgg....',
+  '...wgggg...',
+  '..ggygggg..',
+  '...wggrg...',
+  '..wgggggg..',
+  '.gggrgggyg.',
+  '..wgggggg..',
+  '.wggggrggg.',
+  'gggygggggrg',
+  '.....b.....',
+  '.....b.....'
+];
+const bootTreeEl = document.getElementById('bootTree');
+if (bootTreeEl) {
+  const px = window.innerWidth < 480 ? 6 : 9;
+  bootTreeEl.innerHTML = bootPixelSVG(BOOT_PINE,
+    { g: '#2f6a4a', w: '#f4f6fc', b: '#5a3a24', y: '#ffd66b', r: '#e8504a' },
+    px, ['y', 'r']);
+}
+
+if (bootStarsEl) bootStarsEl.remove(); // not used in this scene
+
+// Fall/winter days: a couple of snow-dusted pumpkins beside the pine.
 const BOOT_PUMPKIN = [
   '......gg......',
-  '.....gg.ll....',
-  '..aabbaabbaa..',
-  '.haabaaaabaab.',
-  'haaabaaaabaaab',
+  '..wwwwgwwww...',
+  '.waabbaabbaaw.',
   'haaabaaaabaaab',
   'haaabaaaabaaab',
   'haaabaaaabaaab',
   '.haabaaaabaab.',
   '..bbbbbbbbbb..'
 ];
-const BOOT_PUMPKIN_COLORS = { a: '#e8741e', b: '#b8501a', h: '#f59a3c', g: '#5a3a1c', l: '#6f8a2a' };
-
-const BOOT_MOON = [
-  '....aaaa....',
-  '..aaaaaaaa..',
-  '.aaaaaaabaa.',
-  '.aabaaaaaaa.',
-  'aaaaaaaaaaaa',
-  'aaaaaaaabbaa',
-  'aaabaaaabbaa',
-  'aaaaaaaaaaaa',
-  '.aaaaabaaaa.',
-  '.aaaaaaaaaa.',
-  '..aaaaaaaa..',
-  '....aaaa....'
-];
-
-if (bootStarsEl) {
-  const STAR_COLORS = ['#fff4dc', '#f5c518', '#f59a3c'];
-  for (let i = 0; i < 45; i++) {
-    const star = document.createElement('div');
-    star.className = 'pixel-star';
-    const size = [2, 2, 3][Math.floor(Math.random() * 3)];
-    star.style.width = size + 'px';
-    star.style.height = size + 'px';
-    star.style.left = (Math.random() * 100).toFixed(2) + '%';
-    star.style.top = (Math.random() * 55).toFixed(2) + '%';
-    star.style.background = STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)];
-    star.style.animationDuration = (2 + Math.random() * 3).toFixed(2) + 's';
-    star.style.animationDelay = (Math.random() * 3).toFixed(2) + 's';
-    bootStarsEl.appendChild(star);
-  }
-}
-
-const bootMoonEl = document.getElementById('bootMoon');
-if (bootMoonEl) bootMoonEl.innerHTML = bootPixelSVG(BOOT_MOON, { a: '#f6d27a', b: '#e0b45c' }, 7);
-
-// Warm string lights sagging across the top, built from pixel "wire" dots.
-const bootLightsEl = document.getElementById('bootLights');
-if (bootLightsEl) {
-  const BULB_COLORS = ['#f5c518', '#e8741e', '#ff5a3c', '#ffd98a', '#8fbf4a'];
-  const SPANS = 5, TOP = 6, SAG = 7;        // percentages of the screen
-  const DOTS_PER_SPAN = 34, BULBS_PER_SPAN = 4;
-  let bulbIndex = 0;
-  for (let s = 0; s < SPANS; s++) {
-    for (let d = 0; d <= DOTS_PER_SPAN; d++) {
-      const t = d / DOTS_PER_SPAN;
-      const dot = document.createElement('div');
-      dot.className = 'boot-wire-dot';
-      dot.style.left = ((s + t) * 100 / SPANS).toFixed(2) + '%';
-      dot.style.top = (TOP + SAG * Math.sin(Math.PI * t)).toFixed(2) + '%';
-      bootLightsEl.appendChild(dot);
-    }
-    for (let b = 1; b <= BULBS_PER_SPAN; b++) {
-      const t = b / (BULBS_PER_SPAN + 1);
-      const bulb = document.createElement('div');
-      bulb.className = 'boot-bulb';
-      bulb.style.left = ((s + t) * 100 / SPANS).toFixed(2) + '%';
-      bulb.style.top = `calc(${(TOP + SAG * Math.sin(Math.PI * t)).toFixed(2)}% + 6px)`;
-      bulb.style.setProperty('--bulb', BULB_COLORS[bulbIndex % BULB_COLORS.length]);
-      bulb.style.animationDelay = ((bulbIndex % 3) * 0.53).toFixed(2) + 's';
-      bootLightsEl.appendChild(bulb);
-      bulbIndex++;
-    }
-  }
-}
-
-// A little pumpkin patch along the ground.
-const bootPumpkinsEl = document.getElementById('bootPumpkins');
-if (bootPumpkinsEl) {
-  const PATCH = [
-    { left: 7, px: 4 }, { left: 14, px: 6, lit: true }, { left: 21, px: 3 },
-    { left: 79, px: 3 }, { left: 86, px: 7, lit: true }, { left: 94, px: 4 }
-  ];
-  const PATCH_NARROW = [
-    { left: 14, px: 4, lit: true }, { left: 30, px: 2 },
-    { left: 72, px: 2 }, { left: 87, px: 4, lit: true }
-  ];
-  (window.innerWidth < 600 ? PATCH_NARROW : PATCH).forEach(p => {
+if (BOOT_SCENE === 'fall' && bootScreenEl) {
+  const small = window.innerWidth < 480;
+  [{ left: small ? 30 : 23, px: small ? 4 : 5 }, { left: small ? 40 : 28, px: small ? 3 : 3 }].forEach(p => {
     const el = document.createElement('div');
-    el.className = 'boot-pumpkin' + (p.lit ? ' lit' : '');
+    el.className = 'boot-pumpkin';
     el.style.left = p.left + '%';
-    el.innerHTML = bootPixelSVG(BOOT_PUMPKIN, BOOT_PUMPKIN_COLORS, p.px);
-    bootPumpkinsEl.appendChild(el);
+    el.innerHTML = bootPixelSVG(BOOT_PUMPKIN,
+      { a: '#e8741e', b: '#b8501a', h: '#f59a3c', g: '#5a3a1c', w: '#f4f6fc' }, p.px);
+    bootScreenEl.insertBefore(el, document.getElementById('bootSnow'));
   });
 }
 
-// Falling pixel leaves (same palette as the desktop's Autumn weather).
-const bootLeavesEl = document.getElementById('bootLeaves');
-if (bootLeavesEl) {
-  const LEAF_COLORS = ['#d9772e', '#c1481f', '#e0a83a', '#8a3b1f'];
-  for (let i = 0; i < 26; i++) {
-    const leaf = document.createElement('div');
-    leaf.className = 'boot-leaf';
-    leaf.style.left = (Math.random() * 100).toFixed(2) + '%';
-    const fall = 7 + Math.random() * 7;
-    leaf.style.animationDuration = fall.toFixed(2) + 's';
-    leaf.style.animationDelay = (-Math.random() * fall).toFixed(2) + 's';
-    const inner = document.createElement('i');
-    const size = [6, 8, 8, 10][Math.floor(Math.random() * 4)];
-    inner.style.width = size + 'px';
-    inner.style.height = size + 'px';
-    inner.style.setProperty('--leaf', LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)]);
-    inner.style.animationDuration = (0.9 + Math.random() * 0.8).toFixed(2) + 's';
-    leaf.appendChild(inner);
-    bootLeavesEl.appendChild(leaf);
+const bootSnowEl = document.getElementById('bootSnow');
+if (bootSnowEl) {
+  const FLAKES = window.innerWidth < 480 ? 45 : 90;
+  for (let i = 0; i < FLAKES; i++) {
+    const flake = document.createElement('div');
+    flake.className = 'boot-flake';
+    flake.style.left = (Math.random() * 100).toFixed(2) + '%';
+    const fall = 8 + Math.random() * 8;
+    flake.style.animationDuration = fall.toFixed(2) + 's';
+    flake.style.animationDelay = (-Math.random() * fall).toFixed(2) + 's';
+    const dot = document.createElement('i');
+    // On fall/winter days about a third of the flakes are falling leaves.
+    const isLeaf = BOOT_SCENE === 'fall' && Math.random() < 0.35;
+    const size = isLeaf ? [5, 6, 7][Math.floor(Math.random() * 3)] : [3, 3, 4, 5][Math.floor(Math.random() * 4)];
+    dot.style.width = size + 'px';
+    dot.style.height = size + 'px';
+    if (isLeaf) dot.style.background = ['#d9772e', '#c1481f', '#e0a83a', '#8a3b1f'][Math.floor(Math.random() * 4)];
+    dot.style.opacity = (0.6 + Math.random() * 0.4).toFixed(2);
+    dot.style.animationDuration = (1.2 + Math.random() * 1.2).toFixed(2) + 's';
+    flake.appendChild(dot);
+    bootSnowEl.appendChild(flake);
   }
 }
 

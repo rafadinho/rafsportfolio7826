@@ -4865,6 +4865,10 @@ const musicPlaylistStation2 = [
   { title: 'PROFANE BREAK by Chanel Beads', artist: '', src: 'media/profane-break-chanel-beads.mp3' },
   { title: 'MANIFESTER by Loukeman', artist: '', src: 'media/manifester-loukeman.mp3' }
 ];
+const musicPlaylistStation3 = [
+  { title: 'Charlie Brown Christmas', artist: '', src: 'media/charlie-brown-christmas.mp3' }
+];
+
 const musicPlaylist = [
   { title: '11TH DIMENSION by Julian Casablancas', artist: '', src: 'media/11th-dimension-julian-casablancas.mp3' },
   { title: '1979 by Smashing Pumpkins', artist: '', src: 'media/1979-smashing-pumpkins.mp3' },
@@ -6315,17 +6319,22 @@ startBtnEl.addEventListener('click', (e) => {
     const stationLabelEl = document.getElementById('desktopMusicStation');
     let currentStation = 'station1';
 
+    const STATION_INFO = {
+      station1: { tracks: musicPlaylist,         label: 'RAFADINHO.11 FM' },
+      station2: { tracks: musicPlaylistStation2, label: 'BUBBALUI.007 FM' },
+      station3: { tracks: musicPlaylistStation3, label: 'CB.917 FM' }
+    };
+    const NORMAL_STATION_ORDER = ['station1', 'station2', 'station3'];
+
     function goToStation(key) {
       if (key === 'secret') {
         currentStation = 'secret';
         if (stationLabelEl) stationLabelEl.textContent = 'PLUTO.025 FM';
         if (window.__enterSecretPlaylist) window.__enterSecretPlaylist();
       } else {
-        currentStation = key;
-        tracks = (key === 'station2') ? musicPlaylistStation2 : musicPlaylist;
-        if (stationLabelEl) {
-          stationLabelEl.textContent = (key === 'station2') ? 'BUBBALUI.007 FM' : 'RAFADINHO.11 FM';
-        }
+        currentStation = STATION_INFO[key] ? key : 'station1';
+        tracks = STATION_INFO[currentStation].tracks;
+        if (stationLabelEl) stationLabelEl.textContent = STATION_INFO[currentStation].label;
         musicHistory.length = 0;
         renderMiniPlaylist();
         loadTrack(0);
@@ -6346,22 +6355,18 @@ startBtnEl.addEventListener('click', (e) => {
     window.__setStation = goToStation;
     window.__getStationKey = () => currentStation;
     window.__setStationBookkeepingOnly = function (key) {
-      currentStation = key;
-      tracks = (key === 'station2') ? musicPlaylistStation2 : musicPlaylist;
-      if (stationLabelEl) {
-        stationLabelEl.textContent = (key === 'station2') ? 'BUBBALUI.007 FM' : 'RAFADINHO.11 FM';
-      }
+      currentStation = STATION_INFO[key] ? key : 'station1';
+      tracks = STATION_INFO[currentStation].tracks;
+      if (stationLabelEl) stationLabelEl.textContent = STATION_INFO[currentStation].label;
     };
 
     if (stationToggleBtn) {
       stationToggleBtn.addEventListener('click', () => {
-        if (window.secretTrackMode) {
-          const order = ['station1', 'station2', 'secret'];
-          const idx = order.indexOf(currentStation);
-          goToStation(order[(idx + 1) % order.length]);
-        } else {
-          goToStation(currentStation === 'station1' ? 'station2' : 'station1');
-        }
+        const order = window.secretTrackMode
+          ? NORMAL_STATION_ORDER.concat('secret')
+          : NORMAL_STATION_ORDER;
+        const idx = order.indexOf(currentStation);
+        goToStation(order[(idx + 1) % order.length]);
       });
     }
 
